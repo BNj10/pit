@@ -1,0 +1,2 @@
+-- Local development seed data runs after migrations on first start and db reset.
+-- Add INSERT statements here as application tables are introduced.
