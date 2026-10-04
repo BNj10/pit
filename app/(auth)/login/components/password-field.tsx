@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export function PasswordField() {
+export function PasswordField({ error }: { error?: string }) {
   const [visible, setVisible] = useState(false);
 
   return (
@@ -23,6 +23,8 @@ export function PasswordField() {
           autoComplete="current-password"
           placeholder="Enter your password"
           required
+          aria-invalid={Boolean(error)}
+          aria-describedby={error ? "password-error" : undefined}
           className="h-12 rounded-md bg-card pr-14 pl-3.5 text-base md:text-base"
         />
         <Button
@@ -38,6 +40,11 @@ export function PasswordField() {
           {visible ? <EyeOff aria-hidden="true" /> : <Eye aria-hidden="true" />}
         </Button>
       </div>
+      {error && (
+        <p id="password-error" role="alert" className="text-sm text-destructive">
+          {error}
+        </p>
+      )}
     </div>
   );
 }
