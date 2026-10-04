@@ -7,14 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { EMAIL_PATTERN, STUDENT_ID_PATTERN } from "@/lib/auth-validation";
 
 import { PasswordField } from "./password-field";
 
 const SIGN_IN_UNAVAILABLE =
   "Sign-in is currently unavailable. Please contact the registrar’s office for assistance.";
-
-const EMAIL_PATTERN = /^[a-z\d!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z\d!#$%&'*+/=?^_`{|}~-]+)*@[a-z\d](?:[a-z\d-]*[a-z\d])?(?:\.[a-z\d](?:[a-z\d-]*[a-z\d])?)+$/i;
-const STUDENT_ID_PATTERN = /^\d{2}-\d{4}-\d{3}$/;
 
 type FieldErrors = {
   identifier?: string;
