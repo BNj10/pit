@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { LoginForm } from "./components/login-form";
-import { WelcomePanel } from "./components/welcome-panel";
+import { WelcomePanel } from "../components/welcome-panel";
 
 export const metadata: Metadata = {
   title: "Log in | PIT Enroll",
