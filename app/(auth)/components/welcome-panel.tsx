@@ -37,7 +37,7 @@ export function WelcomePanel() {
       </div>
 
       <p className="hidden text-xs leading-body text-on-primary-muted lg:block">
-        Palompon, Leyte &nbsp;•&nbsp; PIT Enroll
+        Palompon, Leyte &nbsp;•&nbsp; 2026
       </p>
     </aside>
   );
