@@ -71,6 +71,8 @@
   --color-info-soft: var(--info-soft);
   --color-info-border: var(--info-border);
   --color-sidebar-muted: var(--sidebar-muted);
+  --color-sidebar-label: var(--sidebar-label);
+  --color-sidebar-icon: var(--sidebar-icon);
   --color-overlay: var(--overlay);
   --color-body-primary: var(--text-primary);
   --color-body-secondary: var(--text-secondary);
@@ -196,6 +198,8 @@
   --sidebar: #025043;
   --sidebar-foreground: #ffffff;
   --sidebar-muted: #dcece9;
+  --sidebar-label: #a1a1aa;
+  --sidebar-icon: #d4d4d8;
   --sidebar-primary: #ffffff;
   --sidebar-primary-foreground: #025043;
   --sidebar-accent: #ffffff1f;
