@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -123,7 +123,6 @@ export function ForgotPasswordForm() {
         className="h-12 w-full gap-2.5 rounded-md text-sm font-semibold hover:bg-primary-hover"
       >
         Send reset instructions
-        <ArrowRight aria-hidden="true" className="size-[17px]" />
       </Button>
     </form>
   );
