@@ -63,5 +63,4 @@ export interface PortalSidebarProps {
 export interface PortalLayoutProps extends PortalSidebarProps {
   children: ReactNode;
   header?: ReactNode;
-  defaultOpen?: boolean;
 }

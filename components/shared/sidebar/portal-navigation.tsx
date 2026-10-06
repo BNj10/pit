@@ -14,14 +14,15 @@ import {
   LayoutDashboard,
   Library,
   MessageSquareCheck,
+  UserRound,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { SidebarMenu, SidebarMenuItem } from "@/components/ui/sidebar";
 
-import { getActivePortalItem } from "@/role-config";
+import { getActivePortalItem, isPortalPathActive } from "@/role-config";
 import { PortalLogout } from "./portal-logout";
-import type { PortalNavigationIcon, PortalNavigationItem } from "@/types/sidebar-types";
+import type { PortalNavigationIcon, PortalNavigationItem, PortalRoleConfig } from "@/types/sidebar-types";
 
 const navigationIcons = {
   dashboard: LayoutDashboard,
@@ -40,6 +41,7 @@ const navigationIcons = {
 interface PortalNavigationProps {
   label: string;
   items: readonly PortalNavigationItem[];
+  account: PortalRoleConfig["account"];
   logoutLabel: string;
   onLogout?: () => void | Promise<void>;
   onNavigate?: () => void;
@@ -49,6 +51,7 @@ interface PortalNavigationProps {
 export function PortalNavigation({
   label,
   items,
+  account,
   logoutLabel,
   onLogout,
   onNavigate,
@@ -56,25 +59,30 @@ export function PortalNavigation({
 }: PortalNavigationProps) {
   const pathname = usePathname();
   const activeItem = getActivePortalItem(pathname, items);
+  const activeHref = isPortalPathActive(pathname, account.href) ? account.href : activeItem?.href;
+  const links = [
+    ...items.map((item) => ({ ...item, Icon: navigationIcons[item.icon], compactOnly: false })),
+    { ...account, Icon: UserRound, compactOnly: true },
+  ];
 
   return (
-    <nav aria-label={label} className={cn("px-3 py-5", className)}>
-      <p className="mb-1 text-[10px] leading-3 font-semibold tracking-[0.06em] text-sidebar-label">
+    <nav aria-label={label} className={cn("relative px-3 pt-7 pb-5 lg:py-5", className)}>
+      <p className="absolute top-2 left-6 text-[10px] leading-3 font-semibold tracking-[0.06em] text-sidebar-label lg:static lg:mb-1">
         {label}
       </p>
-      <SidebarMenu className="gap-1">
-        {items.map((item) => {
-          const Icon = navigationIcons[item.icon];
-          const active = item.href === activeItem?.href;
+      <SidebarMenu className="gap-1.5 lg:gap-1">
+        {links.map((item) => {
+          const { Icon } = item;
+          const active = item.href === activeHref;
 
           return (
-            <SidebarMenuItem key={item.href}>
+            <SidebarMenuItem key={item.href} className={item.compactOnly ? "lg:hidden" : undefined}>
               <Link
                 href={item.href}
-                onNavigate={onNavigate}
+                onClick={onNavigate}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "flex h-[42px] items-center gap-3 rounded-lg px-3 text-[13px] leading-4 font-medium text-sidebar-foreground outline-sidebar-ring transition-colors",
+                  "flex h-12 items-center gap-3 rounded-lg px-3 text-[13px] leading-4 font-medium text-sidebar-foreground outline-sidebar-ring transition-colors lg:h-[42px]",
                   "hover:bg-sidebar-accent focus-visible:ring-2 focus-visible:ring-sidebar-ring",
                   active && "bg-sidebar-accent font-semibold",
                 )}

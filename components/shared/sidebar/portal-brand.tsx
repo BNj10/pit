@@ -11,9 +11,9 @@ export function PortalBrand({ audience, href, onNavigate }: PortalBrandProps) {
   return (
     <Link
       href={href}
-      onNavigate={onNavigate}
+      onClick={onNavigate}
       aria-label={`University Portal — ${audience}`}
-      className="flex h-[72px] shrink-0 items-center gap-3 px-6 text-sidebar-foreground outline-sidebar-ring"
+      className="flex h-[72px] min-w-0 flex-1 shrink-0 items-center gap-2.5 pl-4 text-sidebar-foreground outline-sidebar-ring lg:gap-3 lg:px-6"
     >
       <Image
         src="/images-removebg-preview.png"

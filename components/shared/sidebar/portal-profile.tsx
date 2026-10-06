@@ -24,7 +24,7 @@ export function PortalProfile({ user, account, onNavigate }: PortalProfileProps)
       </Avatar>
       <Link
         href={account.href}
-        onNavigate={onNavigate}
+        onClick={onNavigate}
         aria-current={active ? "page" : undefined}
         aria-label={`${account.label} — ${user.name}`}
         className="flex min-w-0 flex-1 flex-col gap-0.5 text-sidebar-foreground outline-sidebar-ring"

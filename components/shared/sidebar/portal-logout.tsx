@@ -42,7 +42,7 @@ export function PortalLogout({ label, onLogout }: PortalLogoutProps) {
       aria-busy={pending}
       onClick={handleLogout}
       className={cn(
-        "flex h-[42px] w-full items-center gap-3 rounded-lg px-3 text-left text-[13px] leading-4 font-semibold text-sidebar-foreground outline-sidebar-ring",
+        "flex h-12 w-full items-center gap-3 rounded-lg px-3 text-left text-[13px] leading-4 font-semibold text-sidebar-foreground outline-sidebar-ring lg:h-[42px]",
         "hover:bg-sidebar-accent focus-visible:ring-2 focus-visible:ring-sidebar-ring disabled:opacity-50",
       )}
     >

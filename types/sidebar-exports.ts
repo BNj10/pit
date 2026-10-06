@@ -1,5 +1,6 @@
 export { PortalActiveTerm } from "@/components/shared/sidebar/portal-active-term";
 export { PortalBrand } from "@/components/shared/sidebar/portal-brand";
+export { PortalHeader } from "@/components/shared/sidebar/portal-header";
 export { PortalLayout } from "@/components/shared/sidebar/portal-layout";
 export { PortalLogout } from "@/components/shared/sidebar/portal-logout";
 export { PortalNavigation } from "@/components/shared/sidebar/portal-navigation";

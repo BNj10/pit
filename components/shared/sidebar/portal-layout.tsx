@@ -11,17 +11,17 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 import { getActivePortalItem, isPortalPathActive, portalRoleConfig } from "@/role-config";
 import { PortalSidebar } from "./portal-sidebar";
+import { PortalHeader } from "./portal-header";
 import type { PortalLayoutProps } from "@/types/sidebar-types";
 
 export function PortalLayout({
   children,
   header,
-  defaultOpen = true,
   ...sidebarProps
 }: PortalLayoutProps) {
   const pathname = usePathname();
@@ -53,18 +53,17 @@ export function PortalLayout({
 
   return (
     <TooltipProvider>
-      <SidebarProvider defaultOpen={defaultOpen} className="[--sidebar-width:17rem]!">
+      <SidebarProvider className="[--sidebar-width:17rem]!">
         <a href="#portal-content" className="sr-only fixed top-3 left-3 z-50 rounded-md bg-card px-4 py-2 text-foreground focus:not-sr-only">
           Skip to content
         </a>
         <PortalSidebar {...sidebarProps} />
         <SidebarInset className="min-w-0">
-          <header className="flex min-h-[72px] shrink-0 items-center gap-4 border-b border-border bg-card px-4 md:px-8">
-            <SidebarTrigger className="size-9" />
+          <PortalHeader>
             {header ?? (
               <>
                 <h1 className="sr-only">{title}</h1>
-                <Breadcrumb>
+                <Breadcrumb className="hidden lg:block">
                   <BreadcrumbList>
                     {breadcrumbs.map((item, index) => (
                       <Fragment key={`${index}:${item.href}`}>
@@ -86,7 +85,7 @@ export function PortalLayout({
                 </Breadcrumb>
               </>
             )}
-          </header>
+          </PortalHeader>
           <div id="portal-content" tabIndex={-1} className="page-container flex-1 outline-none">
             {children}
           </div>
