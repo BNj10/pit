@@ -389,6 +389,10 @@
     padding: var(--page-padding);
   }
 
+  .page-container:has(> [data-page="subjects-enrolled"]) {
+    --page-padding: 1.25rem;
+  }
+
   .stack {
     display: flex;
     flex-direction: column;
