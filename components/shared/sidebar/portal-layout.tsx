@@ -58,7 +58,7 @@ export function PortalLayout({
           Skip to content
         </a>
         <PortalSidebar {...sidebarProps} />
-        <SidebarInset className="min-w-0">
+        <SidebarInset className="portal-shell min-w-0">
           <PortalHeader>
             {header ?? (
               <>
@@ -86,8 +86,16 @@ export function PortalLayout({
               </>
             )}
           </PortalHeader>
-          <div id="portal-content" tabIndex={-1} className="page-container flex-1 outline-none">
-            {children}
+          <div
+            id="portal-content"
+            role="region"
+            aria-label={`${title} content`}
+            tabIndex={0}
+            className="portal-scroll-region flex-1"
+          >
+            <div className="portal-page-content page-container">
+              {children}
+            </div>
           </div>
         </SidebarInset>
       </SidebarProvider>
