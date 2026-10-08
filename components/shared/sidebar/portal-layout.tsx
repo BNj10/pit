@@ -60,7 +60,6 @@ export function PortalLayout({
         </a>
         <PortalSidebar {...sidebarProps} />
         <SidebarInset className="portal-shell min-w-0">
-        <SidebarInset className="portal-shell min-w-0">
           <PortalHeader>
             {header ?? (
               <>
