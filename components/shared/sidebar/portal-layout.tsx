@@ -12,6 +12,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 import { getActivePortalItem, isPortalPathActive, portalRoleConfig } from "@/role-config";
@@ -59,6 +60,7 @@ export function PortalLayout({
         </a>
         <PortalSidebar {...sidebarProps} />
         <SidebarInset className="portal-shell min-w-0">
+        <SidebarInset className="portal-shell min-w-0">
           <PortalHeader>
             {header ?? (
               <>
@@ -86,17 +88,21 @@ export function PortalLayout({
               </>
             )}
           </PortalHeader>
-          <div
-            id="portal-content"
-            role="region"
-            aria-label={`${title} content`}
-            tabIndex={0}
+          <ScrollArea
+            type="auto"
             className="portal-scroll-region flex-1"
+            viewportProps={{
+              id: "portal-content",
+              role: "region",
+              "aria-label": `${title} content`,
+              tabIndex: 0,
+              className: "portal-scroll-viewport",
+            }}
           >
             <div className="portal-page-content page-container">
               {children}
             </div>
-          </div>
+          </ScrollArea>
         </SidebarInset>
       </SidebarProvider>
     </TooltipProvider>
