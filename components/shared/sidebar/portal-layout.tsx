@@ -54,12 +54,12 @@ export function PortalLayout({
 
   return (
     <TooltipProvider>
-      <SidebarProvider className="[--sidebar-width:17rem]!">
+      <SidebarProvider className="h-dvh min-h-0 overflow-hidden [--sidebar-width:17rem]!">
         <a href="#portal-content" className="sr-only fixed top-3 left-3 z-50 rounded-md bg-card px-4 py-2 text-foreground focus:not-sr-only">
           Skip to content
         </a>
         <PortalSidebar {...sidebarProps} />
-        <SidebarInset className="portal-shell min-w-0">
+        <SidebarInset className="portal-shell min-h-0 min-w-0">
           <PortalHeader>
             {header ?? (
               <>
@@ -88,8 +88,8 @@ export function PortalLayout({
             )}
           </PortalHeader>
           <ScrollArea
-            type="auto"
-            className="portal-scroll-region flex-1"
+            type="always"
+            className="portal-scroll-region min-h-0 flex-1 [&>[data-slot=scroll-area-scrollbar]]:bg-card [&_[data-slot=scroll-area-thumb]]:bg-muted-foreground"
             viewportProps={{
               id: "portal-content",
               role: "region",
