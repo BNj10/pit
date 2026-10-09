@@ -675,3 +675,420 @@
 .portal-page-content {
   min-height: 100%;
 }
+
+/* Academic Records: namespaced, unlayered rules preserve the design over UI utilities. */
+.portal-page-content:has(> .academic-records-content) {
+  height: 100%;
+  padding: 0;
+}
+
+.academic-records-content,
+.academic-records-record {
+  color: var(--foreground);
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-regular);
+  line-height: 1.3;
+}
+
+.academic-records-content {
+  display: flex;
+  min-width: 0;
+  min-height: 100%;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+  padding: 24px;
+  background: var(--background);
+}
+
+.academic-records-controls,
+.academic-records-record {
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 0;
+  background: var(--background);
+  box-shadow: none;
+}
+
+.academic-records-controls {
+  display: flex;
+  min-height: 108px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 20px;
+}
+
+.academic-records-introduction {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.academic-records-page-title {
+  margin: 0;
+  color: var(--foreground);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  line-height: 29px;
+  letter-spacing: normal;
+}
+
+.academic-records-subtitle,
+.academic-records-semester-dates {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-regular);
+  line-height: 15px;
+}
+
+.academic-records-actions {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 12px;
+}
+
+.academic-records-semester-select,
+.academic-records-reload-button {
+  height: 40px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: var(--weight-medium);
+  line-height: 16px;
+  box-shadow: none;
+}
+
+.academic-records-semester-select {
+  display: flex;
+  width: 243px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 0 12px;
+}
+
+.academic-records-semester-select svg {
+  width: 16px;
+  height: 16px;
+  color: var(--muted-foreground);
+}
+
+.academic-records-reload-button {
+  width: 146px;
+  gap: 8px;
+  padding: 0 14px;
+}
+
+.academic-records-reload-button:hover:not(:disabled),
+.academic-records-semester-select:hover:not(:disabled) {
+  background: var(--muted);
+  color: var(--foreground);
+}
+
+.academic-records-semester-select:focus-visible,
+.academic-records-reload-button:focus-visible,
+.academic-records-table-scroll:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+  box-shadow: none;
+}
+
+.academic-records-semester-menu {
+  scrollbar-gutter: stable;
+  --popover: var(--background);
+  --popover-foreground: var(--foreground);
+  display: flex;
+  width: 300px;
+  min-width: 0;
+  max-width: calc(100vw - 32px);
+  flex-direction: column;
+  gap: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 8px;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-ui);
+  box-shadow: var(--shadow-dropdown);
+}
+
+.academic-records-semester-menu-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 8px 12px;
+  color: var(--foreground);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  line-height: 17px;
+}
+
+.academic-records-semester-menu-heading p:last-child {
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-weight: var(--weight-regular);
+  line-height: 13px;
+}
+
+.academic-records-semester-options,
+.academic-records-semester-year {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.academic-records-semester-year {
+  gap: 2px;
+}
+
+.academic-records-semester-divider {
+  height: 1px;
+  flex-shrink: 0;
+  margin: 0;
+  background: var(--border);
+}
+
+.academic-records-semester-option {
+  min-height: 40px;
+  gap: 10px;
+  border-radius: 5px;
+  padding: 0 36px 0 10px;
+  color: var(--foreground);
+  font-size: 13px;
+  font-weight: var(--weight-medium);
+  line-height: 16px;
+}
+
+.academic-records-semester-option > span {
+  right: 10px;
+}
+
+.academic-records-semester-option[data-highlighted],
+.academic-records-semester-option[data-state="checked"] {
+  background: var(--accent);
+  color: var(--primary);
+}
+
+.academic-records-empty-record {
+  gap: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 24px;
+  background: var(--background);
+  color: var(--muted-foreground);
+  font-size: var(--text-xs);
+  box-shadow: none;
+}
+
+.academic-records-empty-record h3 {
+  color: var(--foreground);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+}
+
+.academic-records-semester-header {
+  display: flex;
+  min-height: 80px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-radius: 8px 8px 0 0;
+  padding: 16px 24px;
+}
+
+.academic-records-semester-copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.academic-records-semester-title {
+  margin: 0;
+  color: var(--foreground);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  line-height: 24px;
+  letter-spacing: normal;
+}
+
+.academic-records-gpa {
+  display: flex;
+  flex-shrink: 0;
+  flex-direction: column;
+  gap: 1px;
+  margin: 0;
+  border-left: 3px solid var(--primary);
+  padding-left: 12px;
+  text-align: right;
+}
+
+.academic-records-gpa dt {
+  color: var(--muted-foreground);
+  font-size: 9px;
+  font-weight: var(--weight-bold);
+  line-height: 11px;
+  letter-spacing: 1px;
+}
+
+.academic-records-gpa dd {
+  margin: 0;
+  color: var(--primary);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  line-height: 22px;
+}
+
+.academic-records-table-scroll:focus-visible {
+  outline-offset: -2px;
+}
+
+.academic-records-table {
+  width: 100%;
+  min-width: 960px;
+  border-collapse: collapse;
+  table-layout: fixed;
+  color: var(--foreground);
+  font-size: var(--text-xs);
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+}
+
+.academic-records-code-column { width: 121px; }
+.academic-records-section-column { width: 118px; }
+.academic-records-units-column { width: 74px; }
+.academic-records-grade-column { width: 94px; }
+.academic-records-status-column { width: 147px; }
+
+.academic-records-table th,
+.academic-records-table td {
+  height: auto;
+  padding: 0 7px;
+  color: var(--foreground);
+  font-weight: var(--weight-regular);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.academic-records-table th:first-child,
+.academic-records-table td:first-child {
+  padding-left: 24px;
+}
+
+.academic-records-table th:last-child,
+.academic-records-table td:last-child {
+  padding-right: 24px;
+}
+
+.academic-records-table thead {
+  background: var(--muted);
+}
+
+.academic-records-table tr {
+  border: 0;
+  background: transparent;
+}
+
+.academic-records-table thead tr {
+  height: 42px;
+}
+
+.academic-records-table thead th {
+  color: var(--muted-foreground);
+  font-size: 10px;
+  font-weight: var(--weight-bold);
+}
+
+.academic-records-table tbody tr {
+  height: 54px;
+  border-top: 1px solid var(--border);
+}
+
+.academic-records-table tbody tr:nth-child(even) {
+  background: var(--surface-hover);
+}
+
+.academic-records-table tbody th,
+.academic-records-table .academic-records-units {
+  font-weight: var(--weight-semibold);
+}
+
+.academic-records-table .academic-records-subject-title {
+  white-space: normal;
+}
+
+.academic-records-table .academic-records-numeric {
+  text-align: center;
+}
+
+.academic-records-table .academic-records-muted,
+.academic-records-table .academic-records-status {
+  color: var(--muted-foreground);
+}
+
+.academic-records-table .academic-records-status {
+  font-size: 11px;
+}
+
+.academic-records-record-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 24px;
+  border: 0;
+  border-radius: 0 0 8px 8px;
+  padding: 16px 24px;
+  background: transparent;
+}
+
+.academic-records-grading-note {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: 11px;
+  line-height: 13px;
+}
+
+.academic-records-total-units {
+  flex-shrink: 0;
+  margin: 0;
+  color: var(--primary);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  line-height: 15px;
+}
+
+@media (max-width: 1100px) {
+  .academic-records-controls {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 767px) {
+  .academic-records-content {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .academic-records-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .academic-records-semester-select {
+    width: 100%;
+  }
+}
