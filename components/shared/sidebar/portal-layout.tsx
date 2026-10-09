@@ -12,6 +12,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 import { getActivePortalItem, isPortalPathActive, portalRoleConfig } from "@/role-config";
@@ -53,12 +54,12 @@ export function PortalLayout({
 
   return (
     <TooltipProvider>
-      <SidebarProvider className="[--sidebar-width:17rem]!">
+      <SidebarProvider className="h-dvh min-h-0 overflow-hidden [--sidebar-width:17rem]!">
         <a href="#portal-content" className="sr-only fixed top-3 left-3 z-50 rounded-md bg-card px-4 py-2 text-foreground focus:not-sr-only">
           Skip to content
         </a>
         <PortalSidebar {...sidebarProps} />
-        <SidebarInset className="portal-shell min-w-0">
+        <SidebarInset className="portal-shell min-h-0 min-w-0">
           <PortalHeader>
             {header ?? (
               <>
@@ -86,17 +87,21 @@ export function PortalLayout({
               </>
             )}
           </PortalHeader>
-          <div
-            id="portal-content"
-            role="region"
-            aria-label={`${title} content`}
-            tabIndex={0}
-            className="portal-scroll-region flex-1"
+          <ScrollArea
+            type="always"
+            className="portal-scroll-region min-h-0 flex-1 [&>[data-slot=scroll-area-scrollbar]]:bg-card [&_[data-slot=scroll-area-thumb]]:bg-muted-foreground"
+            viewportProps={{
+              id: "portal-content",
+              role: "region",
+              "aria-label": `${title} content`,
+              tabIndex: 0,
+              className: "portal-scroll-viewport",
+            }}
           >
             <div className="portal-page-content page-container">
               {children}
             </div>
-          </div>
+          </ScrollArea>
         </SidebarInset>
       </SidebarProvider>
     </TooltipProvider>
