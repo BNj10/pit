@@ -655,3 +655,23 @@
     scroll-behavior: auto;
   }
 }
+
+/* Shared portal layout: keep the header outside the viewport's scroll region. */
+.portal-shell {
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.portal-scroll-region {
+  min-height: 0;
+  /* The Radix viewport owns scrolling; its wrapper needs no native gutter. */
+  overflow: hidden;
+}
+
+.portal-scroll-region:focus-visible {
+  outline-offset: calc(-1 * var(--focus-width));
+}
+
+.portal-page-content {
+  min-height: 100%;
+}
