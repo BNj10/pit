@@ -39,9 +39,9 @@ export function ApprovedSubjectsTable({
       <Table
         containerProps={{
           role: "region",
-          "aria-label": "Approved subject details; scroll to view all subjects and columns",
+          "aria-label": "Approved subject details; scroll horizontally to view all columns",
           tabIndex: 0,
-          className: "max-h-[468px] overflow-y-auto focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
+          className: "table-scroll focus-visible:-outline-offset-2",
         }}
         aria-labelledby="approved-subjects-title"
         aria-describedby="approved-subjects-term"
@@ -56,7 +56,7 @@ export function ApprovedSubjectsTable({
           <col className="w-[76px]" />
           <col className="w-[90px]" />
         </colgroup>
-        <TableHeader className="sticky top-0 z-10 bg-[#f4f4f5]">
+        <TableHeader className="bg-[#f4f4f5]">
           <TableRow className="h-9 hover:bg-transparent [&_th]:h-9 [&_th]:px-1.5 [&_th]:text-[10px] [&_th]:font-bold [&_th]:text-muted-foreground">
             <TableHead scope="col" className="pl-5!">CODE</TableHead>
             <TableHead scope="col">SUBJECT TITLE</TableHead>
