@@ -7,12 +7,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export function PasswordField({ error }: { error?: string }) {
+export function PasswordField({
+  invalid = false,
+  errorMessageId,
+}: {
+  invalid?: boolean;
+  errorMessageId?: string;
+}) {
   const [visible, setVisible] = useState(false);
 
   return (
-    <div className="space-y-2">
-      <Label htmlFor="password" className="text-sm font-medium">
+    <div className="flex flex-col gap-2">
+      <Label htmlFor="password" className="text-[13px] leading-4 font-medium">
         Password
       </Label>
       <div className="relative">
@@ -23,9 +29,9 @@ export function PasswordField({ error }: { error?: string }) {
           autoComplete="current-password"
           placeholder="Enter your password"
           required
-          aria-invalid={Boolean(error)}
-          aria-describedby={error ? "password-error" : undefined}
-          className="h-12 rounded-md bg-card pr-14 pl-3.5 text-base md:text-base"
+          aria-invalid={invalid}
+          aria-describedby={invalid ? errorMessageId : undefined}
+          className="h-12 rounded-md border-border bg-card pr-14 pl-3.5 text-base aria-invalid:ring-0 focus-visible:aria-invalid:ring-3 md:text-sm"
         />
         <Button
           type="button"
@@ -35,16 +41,11 @@ export function PasswordField({ error }: { error?: string }) {
           aria-controls="password"
           aria-pressed={visible}
           onClick={() => setVisible((current) => !current)}
-          className="absolute top-0.5 right-0.5 size-11 rounded-sm text-muted-foreground hover:bg-muted [&_svg]:size-5"
+          className="absolute top-0.5 right-px size-11 rounded-sm text-muted-foreground hover:bg-muted [&_svg]:size-[18px]"
         >
           {visible ? <EyeOff aria-hidden="true" /> : <Eye aria-hidden="true" />}
         </Button>
       </div>
-      {error && (
-        <p id="password-error" role="alert" className="text-sm text-destructive">
-          {error}
-        </p>
-      )}
     </div>
   );
 }
