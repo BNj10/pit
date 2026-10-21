@@ -641,6 +641,23 @@
   }
 }
 
+/* Keep the exit transition within Sonner's 200ms unmount delay. */
+.toaster [data-sonner-toast] {
+  transition-duration: var(--duration-normal);
+  transition-timing-function: var(--ease-standard);
+}
+
+.toaster [data-sonner-toast][data-removed="true"] {
+  transition-duration: var(--duration-fast);
+  pointer-events: none;
+}
+
+@starting-style {
+  .toaster [data-sonner-toast][data-mounted="true"] {
+    opacity: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   :root {
     --duration-fast: 0ms;
