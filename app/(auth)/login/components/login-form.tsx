@@ -87,7 +87,7 @@ export function LoginForm() {
       ),
       {
         id: toastId,
-        duration: 12_000,
+        duration: 5_000,
         className: "w-full",
         onDismiss: () => setIsValidationToastVisible(false),
         onAutoClose: () => setIsValidationToastVisible(false),
