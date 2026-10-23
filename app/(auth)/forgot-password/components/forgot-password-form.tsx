@@ -96,7 +96,7 @@ export function ForgotPasswordForm() {
             setError(null);
             setNotice(null);
           }}
-          className="h-12 rounded-md border-border bg-card px-3.5 text-base md:text-sm"
+          className="h-12 rounded-md border-border bg-card px-3.5 text-base aria-invalid:ring-0 focus-visible:aria-invalid:ring-3 md:text-sm"
         />
         {error && (
           <p
