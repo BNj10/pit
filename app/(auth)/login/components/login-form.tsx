@@ -58,8 +58,8 @@ export function LoginForm() {
     toast.dismiss(toastId);
   }
 
-  function showErrorToast(isValidationError = false) {
-    setIsValidationToastVisible(isValidationError);
+  function showErrorToast() {
+    setIsValidationToastVisible(true);
     toast.custom(
       () => (
         <div className="flex w-full items-center gap-3 rounded-lg border border-border bg-background px-4 py-3 font-sans shadow-dropdown">
@@ -108,14 +108,17 @@ export function LoginForm() {
     };
 
     setErrors(nextErrors);
-    showErrorToast(nextErrors.identifier || nextErrors.password);
 
     if (nextErrors.identifier || nextErrors.password) {
+      showErrorToast();
       const field = form.elements.namedItem(
         nextErrors.identifier ? "identifier" : "password",
       );
       if (field instanceof HTMLInputElement) field.focus();
+      return;
     }
+
+    dismissToast();
   }
 
   return (
@@ -142,7 +145,6 @@ export function LoginForm() {
       <Button
         type="button"
         variant="outline"
-        onClick={() => showErrorToast()}
         className="h-12 w-full gap-2.5 rounded-md bg-card text-sm font-medium"
       >
         <Image
