@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { ResetRequestSent } from "../components/reset-request-sent";
+import { ResetRequestSent } from "./components/reset-request-sent";
 
 export const metadata: Metadata = {
   title: "Check your email | PIT Enroll",

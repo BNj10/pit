@@ -35,7 +35,7 @@ export function ForgotPasswordForm() {
       return;
     }
 
-    router.push("/forgot-password/request-sent");
+    router.push("/request-sent");
   }
 
   return (
