@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, LoaderCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -14,12 +15,22 @@ import type { NewPasswordErrors } from "@/types/auth-types";
 import { PasswordField } from "../../components/password-field";
 
 export function SetNewPasswordForm() {
+  const router = useRouter();
+  const submitTimerRef = useRef<number | null>(null);
   const [errors, setErrors] = useState<NewPasswordErrors>({});
-  const [notice, setNotice] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      if (submitTimerRef.current !== null) {
+        window.clearTimeout(submitTimerRef.current);
+      }
+    };
+  }, []);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setNotice(null);
+    if (submitTimerRef.current !== null) return;
 
     const form = event.currentTarget;
     const formData = new FormData(form);
@@ -38,9 +49,10 @@ export function SetNewPasswordForm() {
       return;
     }
 
-    setNotice(
-      "Password setup is currently unavailable. Please contact the registrar’s office for assistance.",
-    );
+    setIsSubmitting(true);
+    submitTimerRef.current = window.setTimeout(() => {
+      router.replace("/password-updated");
+    }, 1_500);
   }
 
   return (
@@ -49,7 +61,6 @@ export function SetNewPasswordForm() {
       method="post"
       noValidate
       onSubmit={handleSubmit}
-      onChange={() => setNotice(null)}
       className="flex w-full max-w-[420px] flex-col gap-6"
     >
       <Link
@@ -73,46 +84,52 @@ export function SetNewPasswordForm() {
         </p>
       </header>
 
-      <PasswordField
-        id="new-password"
-        name="password"
-        label="New password"
-        placeholder="Enter your new password"
-        autoComplete="new-password"
-        autoCapitalize="none"
-        spellCheck={false}
-        minLength={MIN_PASSWORD_LENGTH}
-        aria-describedby="password-match-guidance"
-        error={errors.password}
-      />
-      <PasswordField
-        id="confirm-password"
-        name="confirmPassword"
-        label="Confirm new password"
-        placeholder="Re-enter your new password"
-        autoComplete="new-password"
-        autoCapitalize="none"
-        spellCheck={false}
-        minLength={MIN_PASSWORD_LENGTH}
-        aria-describedby="password-match-guidance"
-        error={errors.confirmPassword}
-      />
-      
-      {notice && (
-        <p
-          role="status"
-          className="rounded-md border border-info-border bg-info-soft p-3 text-sm leading-body text-info"
-        >
-          {notice}
-        </p>
-      )}
-
-      <Button
-        type="submit"
-        className="h-12 w-full rounded-md text-sm font-semibold hover:bg-primary-hover"
+      <fieldset
+        disabled={isSubmitting}
+        className="flex min-w-0 flex-col gap-6"
       >
-        Reset password
-      </Button>
+        <PasswordField
+          id="new-password"
+          name="password"
+          label="New password"
+          placeholder="Enter your new password"
+          autoComplete="new-password"
+          autoCapitalize="none"
+          spellCheck={false}
+          minLength={MIN_PASSWORD_LENGTH}
+          error={errors.password}
+        />
+        <PasswordField
+          id="confirm-password"
+          name="confirmPassword"
+          label="Confirm new password"
+          placeholder="Re-enter your new password"
+          autoComplete="new-password"
+          autoCapitalize="none"
+          spellCheck={false}
+          minLength={MIN_PASSWORD_LENGTH}
+          error={errors.confirmPassword}
+        />
+
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          aria-busy={isSubmitting}
+          className="h-12 w-full rounded-md text-sm font-semibold hover:bg-primary-hover"
+        >
+          {isSubmitting && (
+            <LoaderCircle
+              aria-hidden="true"
+              className="size-4 animate-spin motion-reduce:animate-none"
+            />
+          )}
+          {isSubmitting ? "Resetting password…" : "Reset password"}
+        </Button>
+      </fieldset>
+
+      <p role="status" className="sr-only">
+        {isSubmitting ? "Resetting your password. Please wait." : ""}
+      </p>
     </form>
   );
 }
