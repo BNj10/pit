@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { EMAIL_PATTERN, STUDENT_ID_PATTERN } from "@/lib/auth-validation";
 
-import { PasswordField } from "./password-field";
+import { PasswordField } from "../../components/password-field";
 
 const LOGIN_ERROR_MESSAGE = "Invalid login credentials.";
 
