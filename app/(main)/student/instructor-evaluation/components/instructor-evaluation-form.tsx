@@ -10,6 +10,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { getEvaluationProgress, validateEvaluationSubmission } from "@/lib/instructor-evaluation";
 import type { EvaluationDraft, InstructorEvaluationFormProps } from "@/types/instructor-evaluation-exports";
+import { LeaveEvaluationDialog } from "./leave-evaluation-dialog";
 
 export function InstructorEvaluationForm({
   subject, context, questionnaire, onSubmit,
@@ -19,6 +20,7 @@ export function InstructorEvaluationForm({
   const [showMissingRatings, setShowMissingRatings] = useState(false);
   const progress = getEvaluationProgress(questionnaire, draft);
   const questions = questionnaire.groups.flatMap((group) => group.questions);
+  const hasUnsavedChanges = Object.keys(draft.ratings).length > 0 || draft.comments.length > 0;
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -49,7 +51,6 @@ export function InstructorEvaluationForm({
           {progress.answered} of {progress.total} answered
         </Badge>
       </header>
-      <p className="instructor-evaluation-preview-note">Preview only. Submit completes this demonstration; no responses are sent to the university. Your answers are discarded if you leave this page before submitting.</p>
       <form className="instructor-evaluation-card instructor-evaluation-form" onSubmit={handleSubmit} noValidate>
         <div className="instructor-evaluation-form-header">
           <div>
@@ -154,6 +155,13 @@ export function InstructorEvaluationForm({
           <Button type="submit"><Send aria-hidden="true" /> Submit evaluation</Button>
         </footer>
       </form>
+      {hasUnsavedChanges && (
+        <LeaveEvaluationDialog onDiscard={() => {
+          setDraft({ ratings: {}, comments: "" });
+          setValidationMessage("");
+          setShowMissingRatings(false);
+        }} />
+      )}
     </section>
   );
 }
