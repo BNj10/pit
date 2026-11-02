@@ -55,10 +55,5 @@ export interface InstructorEvaluationFormProps {
   subject: InstructorEvaluationSubject;
   context: InstructorEvaluationContext;
   questionnaire: InstructorEvaluationQuestionnaire;
-  draft: EvaluationDraft;
-  onChange: (draft: EvaluationDraft) => void;
-  onSave: (draft: EvaluationDraft) => void;
-  onSubmit: (draft: EvaluationDraft) => void;
-  statusMessage: string;
-  errorMessage: string;
+  onSubmit: (draft: EvaluationDraft) => boolean;
 }

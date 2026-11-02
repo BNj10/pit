@@ -16,14 +16,14 @@ import {
 import { useInstructorEvaluation } from "./instructor-evaluation-provider";
 
 export function InstructorEvaluationContent() {
-  const { subjects: evaluations, statusMessage, errorMessage } = useInstructorEvaluation();
+  const { subjects: evaluations } = useInstructorEvaluation();
 
   return (
     <section className="instructor-evaluation-content" aria-labelledby="instructor-evaluation-title">
       <header className="instructor-evaluation-heading">
         <h2 id="instructor-evaluation-title">Instructor Evaluations</h2>
         <p id="instructor-evaluation-description">
-          Select a subject to evaluate its assigned instructor. You may save an evaluation and continue later.
+          Select a subject to evaluate its assigned instructor.
         </p>
       </header>
       <div className="instructor-evaluation-card">
@@ -96,8 +96,6 @@ export function InstructorEvaluationContent() {
           <p>Your evaluation is anonymous. Faculty can only view aggregated results after the evaluation period.</p>
         </footer>
       </div>
-      {statusMessage && <p className="instructor-evaluation-feedback" role="status">{statusMessage}</p>}
-      {errorMessage && <p className="instructor-evaluation-error" role="alert">{errorMessage}</p>}
     </section>
   );
 }

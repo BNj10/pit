@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import { InstructorEvaluationForm } from "../../components/instructor-evaluation-form";
@@ -9,15 +8,9 @@ import { useInstructorEvaluation } from "../../components/instructor-evaluation-
 export function CreateEvaluationContent({ evaluationID }: { evaluationID: string }) {
   const router = useRouter();
   const {
-    subjects, context, questionnaire, drafts, statusMessage, errorMessage,
-    openEvaluation, changeDraft, saveDraft, submitPreview, clearFeedback,
+    subjects, context, questionnaire, submitPreview,
   } = useInstructorEvaluation();
   const subject = subjects.find((item) => item.id === evaluationID);
-
-  useEffect(() => { clearFeedback(); }, [clearFeedback]);
-  useEffect(() => {
-    if (subject) openEvaluation(subject);
-  }, [subject, openEvaluation]);
 
   if (!subject) return null;
 
@@ -35,14 +28,11 @@ export function CreateEvaluationContent({ evaluationID }: { evaluationID: string
         subject={subject}
         context={context}
         questionnaire={questionnaire}
-        draft={drafts[subject.id] ?? { ratings: {}, comments: "" }}
-        onChange={(draft) => changeDraft(subject, draft)}
-        onSave={(draft) => saveDraft(subject, draft)}
         onSubmit={(draft) => {
-          if (submitPreview(subject, draft)) router.push("/student/instructor-evaluation");
+          const submitted = submitPreview(subject, draft);
+          if (submitted) router.push("/student/instructor-evaluation");
+          return submitted;
         }}
-        statusMessage={statusMessage}
-        errorMessage={errorMessage}
       />
     </div>
   );

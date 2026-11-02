@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { Info, Save, Send } from "lucide-react";
+import { Info, Send } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,12 +9,12 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { getEvaluationProgress, validateEvaluationSubmission } from "@/lib/instructor-evaluation";
-import type { InstructorEvaluationFormProps } from "@/types/instructor-evaluation-exports";
+import type { EvaluationDraft, InstructorEvaluationFormProps } from "@/types/instructor-evaluation-exports";
 
 export function InstructorEvaluationForm({
-  subject, context, questionnaire, draft, onChange, onSave, onSubmit,
-  statusMessage, errorMessage,
+  subject, context, questionnaire, onSubmit,
 }: InstructorEvaluationFormProps) {
+  const [draft, setDraft] = useState<EvaluationDraft>({ ratings: {}, comments: "" });
   const [validationMessage, setValidationMessage] = useState("");
   const [showMissingRatings, setShowMissingRatings] = useState(false);
   const progress = getEvaluationProgress(questionnaire, draft);
@@ -33,7 +33,9 @@ export function InstructorEvaluationForm({
       return;
     }
     setValidationMessage("");
-    onSubmit(result.data);
+    if (!onSubmit(result.data)) {
+      setValidationMessage("This evaluation is no longer available for submission.");
+    }
   }
 
   return (
@@ -47,7 +49,7 @@ export function InstructorEvaluationForm({
           {progress.answered} of {progress.total} answered
         </Badge>
       </header>
-      <p className="instructor-evaluation-preview-note">Preview only. Submit completes this demonstration; no responses are sent to the university. Saved drafts stay in this browser tab until it closes.</p>
+      <p className="instructor-evaluation-preview-note">Preview only. Submit completes this demonstration; no responses are sent to the university. Your answers are discarded if you leave this page before submitting.</p>
       <form className="instructor-evaluation-card instructor-evaluation-form" onSubmit={handleSubmit} noValidate>
         <div className="instructor-evaluation-form-header">
           <div>
@@ -112,7 +114,7 @@ export function InstructorEvaluationForm({
                       const scale = questionnaire.scales.find((item) => item.value.toString() === value);
                       if (scale) {
                         const nextDraft = { ...draft, ratings: { ...draft.ratings, [question.id]: scale.value } };
-                        onChange(nextDraft);
+                        setDraft(nextDraft);
                         if (getEvaluationProgress(questionnaire, nextDraft).answered === progress.total) setValidationMessage("");
                       }
                     }}
@@ -139,22 +141,17 @@ export function InstructorEvaluationForm({
             maxLength={5000}
             placeholder="Write your recommendations or suggestions for your instructor here…"
             onChange={(event) => {
-              onChange({ ...draft, comments: event.target.value });
+              setDraft({ ...draft, comments: event.target.value });
               if (progress.answered === progress.total) setValidationMessage("");
             }}
           />
         </div>
         <div className="instructor-evaluation-form-feedback">
           <p id="evaluation-validation-error" role="alert">{validationMessage}</p>
-          {errorMessage && <p role="alert">{errorMessage}</p>}
-          {statusMessage && <p role="status">{statusMessage}</p>}
         </div>
         <footer className="instructor-evaluation-form-footer">
           <p>Overall Points: {progress.points} / {progress.maximumPoints}</p>
-          <div>
-            <Button type="button" variant="outline" onClick={() => { setValidationMessage(""); onSave(draft); }}><Save aria-hidden="true" /> Save draft</Button>
-            <Button type="submit"><Send aria-hidden="true" /> Submit evaluation</Button>
-          </div>
+          <Button type="submit"><Send aria-hidden="true" /> Submit evaluation</Button>
         </footer>
       </form>
     </section>

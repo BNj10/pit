@@ -823,16 +823,6 @@
   font-size: var(--text-xs);
 }
 
-.instructor-evaluation-feedback {
-  color: var(--success);
-  font-size: var(--text-xs);
-}
-
-.instructor-evaluation-error {
-  color: var(--destructive);
-  font-size: var(--text-xs);
-}
-
 .instructor-evaluation-table tbody .instructor-evaluation-empty {
   padding: var(--space-6) var(--space-4);
   color: var(--muted-foreground);
@@ -1168,7 +1158,6 @@
 }
 
 .instructor-evaluation-form-feedback [role="alert"] { color: var(--destructive); }
-.instructor-evaluation-form-feedback [role="status"] { color: var(--success); }
 .instructor-evaluation-form-feedback p:not(:empty) { padding-bottom: 12px; }
 
 .instructor-evaluation-form-footer {
@@ -1183,7 +1172,6 @@
 }
 
 .instructor-evaluation-form-footer > p { color: var(--primary); font-size: 11px; font-weight: var(--weight-bold); }
-.instructor-evaluation-form-footer > div { display: flex; flex-wrap: wrap; gap: var(--space-3); }
 .instructor-evaluation-form-footer button {
   height: auto;
   min-height: 40px;
