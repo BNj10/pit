@@ -90,7 +90,7 @@ export function InstructorEvaluationProvider({
     setEvaluations((current) => current.map((item): InstructorEvaluationSubject => item.id === subject.id
       ? { ...item, evaluationStatus: "submitted" }
       : item));
-    setStatusMessage(`Evaluation for ${subject.title} completed in this preview. No responses were sent to the university.`);
+    setStatusMessage("");
     return true;
   }
 
