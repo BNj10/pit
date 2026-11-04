@@ -393,6 +393,10 @@
     --page-padding: 1.25rem;
   }
 
+  .portal-shell[data-route="/student/enrollment"] .page-container {
+    --page-padding: 1.5rem;
+  }
+
   .stack {
     display: flex;
     flex-direction: column;
