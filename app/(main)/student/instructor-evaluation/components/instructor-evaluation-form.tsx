@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
-import { Info, Send } from "lucide-react";
+import { useEffect, useRef, useState, useTransition, type FormEvent } from "react";
+import { Info, LoaderCircle, Send } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -18,12 +18,23 @@ export function InstructorEvaluationForm({
   const [draft, setDraft] = useState<EvaluationDraft>({ ratings: {}, comments: "" });
   const [validationMessage, setValidationMessage] = useState("");
   const [showMissingRatings, setShowMissingRatings] = useState(false);
+  const [isSubmitting, startSubmission] = useTransition();
+  const submissionRef = useRef<AbortController | null>(null);
+  const submissionMessage = isSubmitting
+    ? "Submitting your evaluation. Please wait and keep this page open."
+    : "";
   const progress = getEvaluationProgress(questionnaire, draft);
   const questions = questionnaire.groups.flatMap((group) => group.questions);
   const hasUnsavedChanges = Object.keys(draft.ratings).length > 0 || draft.comments.length > 0;
 
+  useEffect(() => () => {
+    submissionRef.current?.abort();
+    submissionRef.current = null;
+  }, []);
+
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (submissionRef.current) return;
     const result = validateEvaluationSubmission(questionnaire, draft);
     if (!result.success) {
       const missing = questions.find((question) => draft.ratings[question.id] === undefined);
@@ -35,9 +46,26 @@ export function InstructorEvaluationForm({
       return;
     }
     setValidationMessage("");
-    if (!onSubmit(result.data)) {
-      setValidationMessage("This evaluation is no longer available for submission.");
-    }
+    const submission = new AbortController();
+    submissionRef.current = submission;
+    startSubmission(async () => {
+      // Simulate a five-second submission before updating the preview and navigating.
+      await new Promise<void>((resolve) => setTimeout(resolve, 5000));
+      if (submission.signal.aborted) return;
+
+      // Updates after an await need their own transition to keep navigation pending.
+      startSubmission(() => {
+        try {
+          if (!onSubmit(result.data)) {
+            submissionRef.current = null;
+            setValidationMessage("This evaluation is no longer available for submission.");
+          }
+        } catch {
+          submissionRef.current = null;
+          setValidationMessage("Unable to submit your evaluation. Your responses have been kept. Please try again.");
+        }
+      });
+    });
   }
 
   return (
@@ -51,7 +79,9 @@ export function InstructorEvaluationForm({
           {progress.answered} of {progress.total} answered
         </Badge>
       </header>
-      <form className="instructor-evaluation-card instructor-evaluation-form" onSubmit={handleSubmit} noValidate>
+      {/* Keep announcements outside the busy form so assistive technology can read them immediately. */}
+      <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">{submissionMessage}</p>
+      <form className="instructor-evaluation-card instructor-evaluation-form" onSubmit={handleSubmit} aria-busy={isSubmitting} noValidate>
         <div className="instructor-evaluation-form-header">
           <div>
             <p className="instructor-evaluation-annex">ANNEX A · STUDENT EVALUATION OF TEACHERS</p>
@@ -107,6 +137,7 @@ export function InstructorEvaluationForm({
                     orientation="horizontal"
                     className="instructor-evaluation-ratings"
                     value={draft.ratings[question.id]?.toString() ?? ""}
+                    disabled={isSubmitting}
                     aria-labelledby={`evaluation-question-${question.id}`}
                     aria-describedby={missing ? "evaluation-rating-instructions evaluation-validation-error" : "evaluation-rating-instructions"}
                     aria-invalid={missing}
@@ -139,6 +170,7 @@ export function InstructorEvaluationForm({
             id="evaluation-comments"
             aria-describedby="evaluation-comments-guidance"
             value={draft.comments}
+            disabled={isSubmitting}
             maxLength={5000}
             placeholder="Write your recommendations or suggestions for your instructor here…"
             onChange={(event) => {
@@ -150,13 +182,26 @@ export function InstructorEvaluationForm({
         <div className="instructor-evaluation-form-feedback">
           <p id="evaluation-validation-error" role="alert">{validationMessage}</p>
         </div>
+        {isSubmitting && (
+          <div className="flex min-h-8 items-center gap-2 bg-primary-soft px-4 py-2 text-[11px] text-primary" aria-hidden="true">
+            <Info className="size-4 shrink-0" />
+            <p>{submissionMessage}</p>
+          </div>
+        )}
         <footer className="instructor-evaluation-form-footer">
           <p>Overall Points: {progress.points} / {progress.maximumPoints}</p>
-          <Button type="submit"><Send aria-hidden="true" /> Submit evaluation</Button>
+          <Button type="submit" className="w-[214px] max-w-full aria-disabled:pointer-events-none aria-disabled:opacity-60" aria-disabled={isSubmitting}>
+            {isSubmitting
+              ? <LoaderCircle className="size-5 animate-spin motion-reduce:[animation-duration:3s]" aria-hidden="true" />
+              : <Send aria-hidden="true" />}
+            {isSubmitting ? "Submitting…" : "Submit evaluation"}
+          </Button>
         </footer>
       </form>
       {hasUnsavedChanges && (
         <LeaveEvaluationDialog onDiscard={() => {
+          submissionRef.current?.abort();
+          submissionRef.current = null;
           setDraft({ ratings: {}, comments: "" });
           setValidationMessage("");
           setShowMissingRatings(false);
