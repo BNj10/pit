@@ -684,6 +684,35 @@
   min-height: 100%;
 }
 
+/* Application header from enrollment design MJh0x. */
+.portal-shell[data-route="/student/enrollment"] > .portal-header {
+  background: var(--background);
+}
+
+@media (min-width: 1024px) {
+  .portal-shell[data-route="/student/enrollment"] [data-slot="breadcrumb-list"] {
+    gap: 8px;
+    font-size: var(--text-xs);
+    line-height: 1.4;
+  }
+
+  .portal-shell[data-route="/student/enrollment"] [data-slot="breadcrumb-link"]:not([aria-current="page"]):not(:hover) {
+    color: var(--muted-foreground);
+  }
+
+  .portal-shell[data-route="/student/enrollment"] .portal-notifications {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--border);
+    color: var(--foreground);
+  }
+
+  .portal-shell[data-route="/student/enrollment"] .portal-notifications svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
 /* Enrollment: not-yet-open preview from design node JeuFm. */
 /* Fill the Radix content wrapper so the card uses the available portal height. */
 .portal-scroll-viewport:has(.enrollment-not-open) > div {
