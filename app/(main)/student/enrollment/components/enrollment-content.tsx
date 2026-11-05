@@ -8,13 +8,13 @@ import {
   AlertDialogDescription, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Pagination, PaginationContent, PaginationItem } from "@/components/ui/pagination";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { findEnrollmentScheduleConflict, formatEnrollmentSchedule, getEnrollmentSubmissionIssue, getEnrollmentTotalUnits } from "@/lib/enrollment";
 import type { EnrollmentData, EnrollmentDialogIssue, EnrollmentOffering } from "@/types/enrollment-types";
+import { EnrollmentSubmitted } from "./enrollment-submitted";
 import { EnrollmentValidationDialog } from "./enrollment-validation-dialog";
 
 const OFFERINGS_PER_PAGE = 8;
@@ -36,6 +36,7 @@ export function EnrollmentContent({
     return offering && !enrolledSubjectCodes.has(offering.code);
   }));
   const [message, setMessage] = useState("");
+  const [submitted, setSubmitted] = useState(false);
   const [validationIssue, setValidationIssue] = useState<EnrollmentDialogIssue | null>(null);
   const validationFocusRef = useRef<(() => void) | null>(null);
   const searchRef = useRef<HTMLInputElement>(null);
@@ -134,6 +135,25 @@ export function EnrollmentContent({
     setMessage(`Removed ${offering.code} from your enrollment summary.`);
     summaryTitleRef.current?.focus({ preventScroll: true });
   }
+
+  function submitEnrollment(event: MouseEvent<HTMLButtonElement>) {
+    if (enrollment.length === 0) return;
+    const issue = getEnrollmentSubmissionIssue(enrollment, unitLimit, requirementIssues);
+    if (issue) {
+      if (issue.type === "unit-limit") {
+        setMessage(`Your load is ${issue.totalUnits} units, above the ${issue.unitLimit}-unit limit. Remove subjects from your summary before submitting.`);
+        requestAnimationFrame(() => feedbackRef.current?.focus());
+      } else {
+        showValidationIssue(issue, event.currentTarget);
+      }
+      return;
+    }
+    // Demo-only transition; connect the enrollment service before persisting a submission.
+    setSubmitted(true);
+    requestAnimationFrame(() => document.getElementById("enrollment-submitted-title")?.focus());
+  }
+
+  if (submitted) return <EnrollmentSubmitted />;
 
   return (
     <section data-page="enrollment" className="flex min-w-0 flex-col gap-3.5" aria-labelledby="enrollment-title">
@@ -335,27 +355,7 @@ export function EnrollmentContent({
                 </div>
               </AlertDialogContent>
             </AlertDialog>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button type="button" disabled={enrollment.length === 0} className="h-10 flex-1 rounded-md text-xs font-semibold" onClick={(event) => {
-                  const issue = getEnrollmentSubmissionIssue(enrollment, unitLimit, requirementIssues);
-                  if (issue) {
-                    event.preventDefault();
-                    if (issue.type === "unit-limit") {
-                      setMessage(`Your load is ${issue.totalUnits} units, above the ${issue.unitLimit}-unit limit. Remove subjects from your summary before submitting.`);
-                      requestAnimationFrame(() => feedbackRef.current?.focus());
-                    } else {
-                      showValidationIssue(issue, event.currentTarget);
-                    }
-                  }
-                }}>Submit</Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogTitle>Enrollment preview</DialogTitle>
-                <DialogDescription>Your proposed load contains {enrollment.length} {enrollment.length === 1 ? "subject" : "subjects"} totaling {totalUnits} {totalUnits === 1 ? "unit" : "units"}. This preview has not sent an enrollment request. Final eligibility checks and enrollment submission still require the university&apos;s enrollment service.</DialogDescription>
-                <DialogClose asChild><Button type="button">Back to subjects</Button></DialogClose>
-              </DialogContent>
-            </Dialog>
+            <Button type="button" disabled={enrollment.length === 0} onClick={submitEnrollment} className="h-10 flex-1 rounded-md text-xs font-semibold">Submit</Button>
           </div>
         </section>
       </div>
