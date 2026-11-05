@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, type MouseEvent } from "react";
 import { BookOpen, CalendarRange, ChevronLeft, ChevronRight, Info, Plus, X } from "lucide-react";
 
 import {
@@ -13,12 +13,14 @@ import { Input } from "@/components/ui/input";
 import { Pagination, PaginationContent, PaginationItem } from "@/components/ui/pagination";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import type { EnrollmentData, EnrollmentOffering } from "@/types/enrollment-types";
+import { findEnrollmentScheduleConflict, formatEnrollmentSchedule, getEnrollmentSubmissionIssue, getEnrollmentTotalUnits } from "@/lib/enrollment";
+import type { EnrollmentData, EnrollmentDialogIssue, EnrollmentOffering } from "@/types/enrollment-types";
+import { EnrollmentValidationDialog } from "./enrollment-validation-dialog";
 
 const OFFERINGS_PER_PAGE = 8;
 
 export function EnrollmentContent({
-  term, unitLimit, offerings, initialEnrollmentIds, initialSelectedIds,
+  term, unitLimit, offerings, initialEnrollmentIds, initialSelectedIds, requirementIssues,
 }: EnrollmentData) {
   const [search, setSearch] = useState("");
   const [department, setDepartment] = useState("all");
@@ -26,9 +28,12 @@ export function EnrollmentContent({
   const [selectedIds, setSelectedIds] = useState<readonly string[]>(initialSelectedIds);
   const [enrollmentIds, setEnrollmentIds] = useState<readonly string[]>(initialEnrollmentIds);
   const [message, setMessage] = useState("");
+  const [validationIssue, setValidationIssue] = useState<EnrollmentDialogIssue | null>(null);
+  const validationFocusRef = useRef<(() => void) | null>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const firstOfferingRef = useRef<HTMLButtonElement>(null);
   const summaryTitleRef = useRef<HTMLHeadingElement>(null);
+  const feedbackRef = useRef<HTMLDivElement>(null);
   const departments = [...new Set(offerings.map((offering) => offering.department))];
   const query = search.trim().toLocaleLowerCase();
   const filteredOfferings = offerings.filter((offering) =>
@@ -42,7 +47,23 @@ export function EnrollmentContent({
     const offering = offerings.find((item) => item.id === id);
     return offering ? [offering] : [];
   });
-  const totalUnits = enrollment.reduce((total, offering) => total + offering.lectureUnits + offering.labUnits, 0);
+  const totalUnits = getEnrollmentTotalUnits(enrollment);
+  const remainingUnits = Math.max(0, unitLimit - totalUnits);
+  const additions: EnrollmentOffering[] = [];
+  const subjectCodes = new Set(enrollment.map((offering) => offering.code));
+  for (const offering of offerings) {
+    if (selectedIds.includes(offering.id) && !subjectCodes.has(offering.code)) {
+      additions.push(offering);
+      subjectCodes.add(offering.code);
+    }
+  }
+  const nextEnrollment = [...enrollment, ...additions];
+  const proposedUnits = getEnrollmentTotalUnits(nextEnrollment);
+  const exceedsUnitLimit = proposedUnits > unitLimit;
+  const additionLimitMessage = additions.length > 0 && exceedsUnitLimit
+    ? `Adding these subjects would bring your load to ${proposedUnits} units, above the ${unitLimit}-unit limit. Remove subjects from your summary or change your selection.`
+    : "";
+  const feedback = additionLimitMessage || message;
 
   function changePage(nextPage: number) {
     if (nextPage === currentPage) return;
@@ -56,17 +77,42 @@ export function EnrollmentContent({
     setMessage("");
   }
 
-  function addSelectedSubjects() {
-    const nextEnrollment = [...enrollment];
-    for (const offering of offerings) {
-      if (selectedIds.includes(offering.id) && !nextEnrollment.some((item) => item.code === offering.code)) {
-        nextEnrollment.push(offering);
-      }
+  function showValidationIssue(issue: EnrollmentDialogIssue, trigger: HTMLButtonElement) {
+    validationFocusRef.current = () => { if (trigger.isConnected) trigger.focus(); };
+    setValidationIssue(issue);
+  }
+
+  function reviewValidationIssue() {
+    if (!validationIssue) return;
+    if (validationIssue.type === "schedule-conflict") {
+      const id = validationIssue.selected.id;
+      setSearch("");
+      setDepartment("all");
+      setPage(Math.floor(Math.max(0, offerings.findIndex((offering) => offering.id === id)) / OFFERINGS_PER_PAGE) + 1);
+      validationFocusRef.current = () => (document.getElementById(`enrollment-offering-${id}`) ?? searchRef.current)?.focus();
+    } else {
+      const id = validationIssue.requirements[0]?.offeringId;
+      validationFocusRef.current = () => (document.getElementById(`enrollment-remove-${id}`) ?? summaryTitleRef.current)?.focus();
     }
-    const added = nextEnrollment.length - enrollment.length;
+    setValidationIssue(null);
+  }
+
+  function addSelectedSubjects(event: MouseEvent<HTMLButtonElement>) {
+    const added = additions.length;
     if (added === 0) {
       setMessage("The selected subjects are already in your enrollment summary.");
       return;
+    }
+    if (exceedsUnitLimit) {
+      setMessage(additionLimitMessage);
+      return;
+    }
+    for (let index = 0; index < additions.length; index++) {
+      const conflict = findEnrollmentScheduleConflict([additions[index]], nextEnrollment.slice(0, enrollment.length + index));
+      if (conflict) {
+        showValidationIssue(conflict, event.currentTarget);
+        return;
+      }
     }
     setEnrollmentIds(nextEnrollment.map((offering) => offering.id));
     setSelectedIds([]);
@@ -147,6 +193,7 @@ export function EnrollmentContent({
                   >
                     <TableHead scope="row" className="py-4 pr-1.5 pl-5 text-xs text-inherit">
                       <button
+                        id={`enrollment-offering-${offering.id}`}
                         ref={index === 0 ? firstOfferingRef : undefined}
                         type="button"
                         aria-label={`Select ${offering.code}, ${offering.title}, ${offering.section}`}
@@ -159,7 +206,7 @@ export function EnrollmentContent({
                       </button>
                     </TableHead>
                     <TableCell>{offering.section}</TableCell>
-                    <TableCell className="whitespace-pre-line">{offering.schedule}</TableCell>
+                    <TableCell className="whitespace-pre-line">{formatEnrollmentSchedule(offering.meetings)}</TableCell>
                     <TableCell className="whitespace-pre-line">{offering.rooms}</TableCell>
                     <TableCell>{offering.lectureUnits.toFixed(1)}/{offering.labUnits.toFixed(1)}</TableCell>
                     <TableCell className="pr-5!">{(offering.lectureUnits + offering.labUnits).toFixed(1)}</TableCell>
@@ -200,13 +247,14 @@ export function EnrollmentContent({
               </PaginationContent>
             </Pagination>
           </div>
-          <div role="status" aria-atomic="true" className="text-xs text-primary">
-            {message && <p className="flex items-start gap-2 bg-primary-soft px-5 py-3"><Info className="size-4 shrink-0" aria-hidden="true" />{message}</p>}
+          <div ref={feedbackRef} id="enrollment-add-feedback" role="status" aria-atomic="true" tabIndex={-1} className="text-xs text-primary">
+            {feedback && <p className="flex items-start gap-2 bg-primary-soft px-5 py-3"><Info className="size-4 shrink-0" aria-hidden="true" />{feedback}</p>}
           </div>
-          <footer className="flex min-h-[68px] flex-wrap items-center justify-end gap-3 border-t border-border px-5 py-4">
+          <footer className="flex min-h-[68px] flex-wrap items-center justify-between gap-3 border-t border-border px-5 py-4">
+            <p className="text-xs leading-[1.4] text-muted-foreground">{remainingUnits} {remainingUnits === 1 ? "unit" : "units"} available</p>
             <div className="flex flex-wrap items-center gap-2.5">
               <p className="text-xs leading-[1.4] font-bold text-primary" aria-live="polite">{selectedIds.length} {selectedIds.length === 1 ? "section" : "sections"} selected</p>
-              <Button type="button" onClick={addSelectedSubjects} disabled={selectedIds.length === 0} className="min-h-9 gap-1.5 rounded-md px-3 text-xs leading-[1.4] font-semibold max-sm:min-h-11">
+              <Button type="button" onClick={addSelectedSubjects} disabled={additions.length === 0 || exceedsUnitLimit} aria-describedby={additionLimitMessage ? "enrollment-add-feedback" : undefined} className="min-h-9 gap-1.5 rounded-md px-3 text-xs leading-[1.4] font-semibold max-sm:min-h-11">
                 Add selected subjects <Plus className="size-3" aria-hidden="true" />
               </Button>
             </div>
@@ -222,7 +270,7 @@ export function EnrollmentContent({
               <li key={offering.id} className="flex min-h-[100px] flex-col gap-1 border-t border-border px-4 py-2">
                 <div className="flex items-center justify-between gap-3">
                   <p className="text-xs leading-[1.4] font-semibold text-primary">{offering.code} · {offering.section}</p>
-                  <Button type="button" variant="ghost" size="icon" aria-label={`Remove ${offering.code} from enrollment`} onClick={() => removeSubject(offering)} className="h-[26px] w-7 rounded-md bg-destructive-soft text-destructive hover:bg-destructive-soft hover:text-destructive max-sm:size-11">
+                  <Button id={`enrollment-remove-${offering.id}`} type="button" variant="ghost" size="icon" aria-label={`Remove ${offering.code} from enrollment`} onClick={() => removeSubject(offering)} className="h-[26px] w-7 rounded-md bg-destructive-soft text-destructive hover:bg-destructive-soft hover:text-destructive max-sm:size-11">
                     <X className="size-3" aria-hidden="true" />
                   </Button>
                 </div>
@@ -246,7 +294,7 @@ export function EnrollmentContent({
               <p className="text-sm font-bold text-primary" aria-live="polite">{totalUnits} of {unitLimit}</p>
             </div>
             <progress aria-labelledby="enrollment-unit-label" aria-valuetext={`${totalUnits} of ${unitLimit} units`} value={totalUnits} max={unitLimit} className="h-[7px] w-full overflow-hidden rounded bg-border accent-primary [&::-webkit-progress-bar]:bg-border [&::-webkit-progress-value]:bg-primary [&::-moz-progress-bar]:bg-primary" />
-            <p className="text-xs leading-[1.4] text-muted-foreground">Review prerequisites, available slots, and schedule conflicts before submitting.</p>
+            <p className="text-xs leading-[1.4] text-muted-foreground">Subjects that exceed the unit limit cannot be added. Remove subjects to make room.</p>
           </div>
           <div className="flex gap-3 px-5 pt-2 pb-5">
             <AlertDialog>
@@ -269,17 +317,35 @@ export function EnrollmentContent({
             </AlertDialog>
             <Dialog>
               <DialogTrigger asChild>
-                <Button type="button" disabled={enrollment.length === 0} className="h-10 flex-1 rounded-md text-xs font-semibold">Submit</Button>
+                <Button type="button" disabled={enrollment.length === 0} className="h-10 flex-1 rounded-md text-xs font-semibold" onClick={(event) => {
+                  const issue = getEnrollmentSubmissionIssue(enrollment, unitLimit, requirementIssues);
+                  if (issue) {
+                    event.preventDefault();
+                    if (issue.type === "unit-limit") {
+                      setMessage(`Your load is ${issue.totalUnits} units, above the ${issue.unitLimit}-unit limit. Remove subjects from your summary before submitting.`);
+                      requestAnimationFrame(() => feedbackRef.current?.focus());
+                    } else {
+                      showValidationIssue(issue, event.currentTarget);
+                    }
+                  }
+                }}>Submit</Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogTitle>Enrollment preview</DialogTitle>
-                <DialogDescription>Your proposed load contains {enrollment.length} {enrollment.length === 1 ? "subject" : "subjects"} totaling {totalUnits} {totalUnits === 1 ? "unit" : "units"}. This preview has not sent an enrollment request. Enrollment submission and eligibility checks are not connected yet.</DialogDescription>
+                <DialogDescription>Your proposed load contains {enrollment.length} {enrollment.length === 1 ? "subject" : "subjects"} totaling {totalUnits} {totalUnits === 1 ? "unit" : "units"}. This preview has not sent an enrollment request. Final eligibility checks and enrollment submission still require the university&apos;s enrollment service.</DialogDescription>
                 <DialogClose asChild><Button type="button">Back to subjects</Button></DialogClose>
               </DialogContent>
             </Dialog>
           </div>
         </section>
       </div>
+      <EnrollmentValidationDialog
+        issue={validationIssue}
+        offerings={offerings}
+        onClose={() => setValidationIssue(null)}
+        onReview={reviewValidationIssue}
+        onReturnFocus={() => validationFocusRef.current?.()}
+      />
     </section>
   );
 }
