@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, type FormEvent, type ReactNode } from "react";
-import { Camera, GraduationCap, Info, KeyRound, LockKeyhole, Mail, MapPin, Pencil, Save, X } from "lucide-react";
+import { Camera, GraduationCap, KeyRound, LockKeyhole, Mail, MapPin, Pencil, Save, X } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -110,7 +110,7 @@ export function StudentAccountContent({ account }: { account: StudentAccount }) 
           <SectionHeading id="account-address-heading" icon={<MapPin />} title={editing ? "Personal details" : "Address details"} />
           <dl className="mt-5 flex flex-col gap-5">
             <ContactField label="Current address" id="account-current-address" value={displayed.currentAddress} editing={editing}>
-              <Textarea id="account-current-address" name="currentAddress" autoComplete="street-address" aria-describedby="account-edit-note" value={draft.currentAddress} onChange={(event) => updateField("currentAddress", event.target.value)} maxLength={500} placeholder="Enter your current address" className="min-h-[88px] rounded-md border-border p-3 text-base md:text-xs" />
+              <Textarea id="account-current-address" name="currentAddress" autoComplete="street-address" value={draft.currentAddress} onChange={(event) => updateField("currentAddress", event.target.value)} maxLength={500} placeholder="Enter your current address" className="min-h-[88px] rounded-md border-border p-3 text-base md:text-xs" />
             </ContactField>
             <ContactField label="Permanent address" id="account-permanent-address" value={displayed.permanentAddress} editing={editing}>
               <Textarea id="account-permanent-address" name="permanentAddress" value={draft.permanentAddress} onChange={(event) => updateField("permanentAddress", event.target.value)} maxLength={500} className="min-h-[88px] rounded-md border-border p-3 text-base md:text-xs" />
@@ -140,11 +140,6 @@ export function StudentAccountContent({ account }: { account: StudentAccount }) 
           <Button type="button" variant="outline" className="h-10 gap-2 rounded-md border-primary px-4 text-xs font-semibold text-primary hover:text-primary max-sm:h-11"><KeyRound aria-hidden="true" />Change password</Button>
         </ChangePasswordDialog>
       </section>
-
-      <aside id="account-edit-note" className="flex items-start gap-3 rounded-lg bg-primary-soft p-[18px] text-primary">
-        <Info className="size-[18px] shrink-0" aria-hidden="true" />
-        <p className="text-xs leading-[1.45]">{editing ? "Your name and student ID are maintained by the university. Review your address and contact details before saving. This preview keeps changes only until you leave or reload the page." : "Use Edit profile to keep your address and contact details current. Your name and student ID are maintained by the university."}</p>
-      </aside>
 
       {photoOpen && <ProfilePhotoDialog photoUrl={draft.photoUrl} onClose={closePhoto} onSave={(photoUrl) => { updateField("photoUrl", photoUrl); closePhoto(); }} />}
     </form>
