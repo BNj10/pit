@@ -390,7 +390,7 @@
   }
 
   .page-container:has(> [data-page="subjects-enrolled"]) {
-    --page-padding: 1.25rem;
+    --page-padding: clamp(1rem, 3vw, 1.5rem);
   }
 
   .stack {
