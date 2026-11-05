@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, type MouseEvent } from "react";
-import { BookOpen, CalendarRange, Check, ChevronLeft, ChevronRight, Info, Plus, X } from "lucide-react";
+import { BookOpen, CalendarRange, ChevronLeft, ChevronRight, Info, Plus, X } from "lucide-react";
 
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -234,14 +234,7 @@ export function EnrollmentContent({
                         onClick={() => toggleOffering(offering)}
                         className="flex min-h-11 w-full cursor-pointer flex-col gap-2 rounded-sm text-left leading-[1.55] font-normal whitespace-normal outline-offset-4 focus-visible:outline-2 focus-visible:outline-current disabled:cursor-not-allowed disabled:text-muted-foreground/60"
                       >
-                        <span className="flex flex-wrap items-center gap-x-2 gap-y-1 font-semibold">
-                          <span>{offering.code}</span>
-                          {alreadyAdded && (
-                            <span className="inline-flex items-center gap-1 rounded-full border border-border-strong bg-background px-2 py-0.5 text-[11px] leading-4 font-semibold text-muted-foreground">
-                              <Check className="size-3" aria-hidden="true" />Already added
-                            </span>
-                          )}
-                        </span>
+                        <span className="font-semibold">{offering.code}</span>
                         <span>{offering.title}</span>
                       </button>
                     </TableHead>
