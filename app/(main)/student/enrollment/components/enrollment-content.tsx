@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, type MouseEvent } from "react";
-import { BookOpen, CalendarRange, ChevronLeft, ChevronRight, Info, Plus, X } from "lucide-react";
+import { BookOpen, CalendarRange, Check, ChevronLeft, ChevronRight, Info, Plus, X } from "lucide-react";
 
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -25,13 +25,21 @@ export function EnrollmentContent({
   const [search, setSearch] = useState("");
   const [department, setDepartment] = useState("all");
   const [page, setPage] = useState(1);
-  const [selectedIds, setSelectedIds] = useState<readonly string[]>(initialSelectedIds);
   const [enrollmentIds, setEnrollmentIds] = useState<readonly string[]>(initialEnrollmentIds);
+  const enrollment = enrollmentIds.flatMap((id) => {
+    const offering = offerings.find((item) => item.id === id);
+    return offering ? [offering] : [];
+  });
+  const enrolledSubjectCodes = new Set(enrollment.map((offering) => offering.code));
+  const [selectedIds, setSelectedIds] = useState<readonly string[]>(() => initialSelectedIds.filter((id) => {
+    const offering = offerings.find((item) => item.id === id);
+    return offering && !enrolledSubjectCodes.has(offering.code);
+  }));
   const [message, setMessage] = useState("");
   const [validationIssue, setValidationIssue] = useState<EnrollmentDialogIssue | null>(null);
   const validationFocusRef = useRef<(() => void) | null>(null);
   const searchRef = useRef<HTMLInputElement>(null);
-  const firstOfferingRef = useRef<HTMLButtonElement>(null);
+  const offeringsRef = useRef<HTMLDivElement>(null);
   const summaryTitleRef = useRef<HTMLHeadingElement>(null);
   const feedbackRef = useRef<HTMLDivElement>(null);
   const departments = [...new Set(offerings.map((offering) => offering.department))];
@@ -43,14 +51,10 @@ export function EnrollmentContent({
   const currentPage = Math.min(page, pageCount);
   const pageStart = (currentPage - 1) * OFFERINGS_PER_PAGE;
   const visibleOfferings = filteredOfferings.slice(pageStart, pageStart + OFFERINGS_PER_PAGE);
-  const enrollment = enrollmentIds.flatMap((id) => {
-    const offering = offerings.find((item) => item.id === id);
-    return offering ? [offering] : [];
-  });
   const totalUnits = getEnrollmentTotalUnits(enrollment);
   const remainingUnits = Math.max(0, unitLimit - totalUnits);
   const additions: EnrollmentOffering[] = [];
-  const subjectCodes = new Set(enrollment.map((offering) => offering.code));
+  const subjectCodes = new Set(enrolledSubjectCodes);
   for (const offering of offerings) {
     if (selectedIds.includes(offering.id) && !subjectCodes.has(offering.code)) {
       additions.push(offering);
@@ -69,10 +73,16 @@ export function EnrollmentContent({
     if (nextPage === currentPage) return;
     setPage(nextPage);
     // Bring the new results into view and keep keyboard focus out of disabled controls.
-    requestAnimationFrame(() => firstOfferingRef.current?.focus());
+    requestAnimationFrame(() => {
+      const container = offeringsRef.current;
+      const firstAvailable = container?.querySelector<HTMLButtonElement>("button:not(:disabled)");
+      (firstAvailable ?? container)?.focus();
+    });
   }
 
-  function toggleOffering(id: string) {
+  function toggleOffering(offering: EnrollmentOffering) {
+    if (enrolledSubjectCodes.has(offering.code)) return;
+    const id = offering.id;
     setSelectedIds((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
     setMessage("");
   }
@@ -165,7 +175,7 @@ export function EnrollmentContent({
             id="enrollment-offerings-table"
             className="min-w-[742px] table-fixed"
             aria-labelledby="enrollment-offerings-title"
-            containerProps={{ role: "region", "aria-label": "Available offerings; scroll horizontally to view all columns", tabIndex: 0, className: "table-scroll focus-visible:-outline-offset-2" }}
+            containerProps={{ ref: offeringsRef, role: "region", "aria-label": "Available offerings; scroll horizontally to view all columns", tabIndex: 0, className: "table-scroll focus-visible:-outline-offset-2" }}
           >
             <colgroup>
               <col /><col className="w-[84px]" /><col className="w-[140px]" />
@@ -180,28 +190,38 @@ export function EnrollmentContent({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {visibleOfferings.map((offering, index) => {
-                const selected = selectedIds.includes(offering.id);
+              {visibleOfferings.map((offering) => {
+                const alreadyAdded = enrolledSubjectCodes.has(offering.code);
+                const selected = !alreadyAdded && selectedIds.includes(offering.id);
                 return (
                   <TableRow
                     key={offering.id}
                     data-selected={selected || undefined}
-                    className="h-[104px] cursor-pointer [&_td]:px-1.5 [&_td]:py-4 [&_td]:text-xs [&_td]:leading-[1.55] data-selected:bg-primary data-selected:text-primary-foreground data-selected:hover:bg-primary hover:bg-surface-hover"
+                    data-disabled={alreadyAdded || undefined}
+                    aria-disabled={alreadyAdded || undefined}
+                    className="h-[104px] cursor-pointer [&_td]:px-1.5 [&_td]:py-4 [&_td]:text-xs [&_td]:leading-[1.55] data-selected:bg-primary data-selected:text-primary-foreground data-selected:hover:bg-primary hover:bg-surface-hover data-disabled:cursor-not-allowed data-disabled:bg-border/50 data-disabled:text-muted-foreground data-disabled:hover:bg-border/50 data-disabled:[&_td]:opacity-60"
                     onClick={(event) => {
-                      if (!(event.target instanceof Element) || !event.target.closest("button")) toggleOffering(offering.id);
+                      if (!(event.target instanceof Element) || !event.target.closest("button")) toggleOffering(offering);
                     }}
                   >
                     <TableHead scope="row" className="py-4 pr-1.5 pl-5 text-xs text-inherit">
                       <button
                         id={`enrollment-offering-${offering.id}`}
-                        ref={index === 0 ? firstOfferingRef : undefined}
                         type="button"
-                        aria-label={`Select ${offering.code}, ${offering.title}, ${offering.section}`}
+                        disabled={alreadyAdded}
+                        aria-label={`${alreadyAdded ? "Already added" : "Select"} ${offering.code}, ${offering.title}, ${offering.section}`}
                         aria-pressed={selected}
-                        onClick={() => toggleOffering(offering.id)}
-                        className="flex min-h-11 w-full cursor-pointer flex-col gap-2 rounded-sm text-left leading-[1.55] font-normal whitespace-normal outline-offset-4 focus-visible:outline-2 focus-visible:outline-current"
+                        onClick={() => toggleOffering(offering)}
+                        className="flex min-h-11 w-full cursor-pointer flex-col gap-2 rounded-sm text-left leading-[1.55] font-normal whitespace-normal outline-offset-4 focus-visible:outline-2 focus-visible:outline-current disabled:cursor-not-allowed disabled:text-muted-foreground/60"
                       >
-                        <span className="font-semibold">{offering.code}</span>
+                        <span className="flex flex-wrap items-center gap-x-2 gap-y-1 font-semibold">
+                          <span>{offering.code}</span>
+                          {alreadyAdded && (
+                            <span className="inline-flex items-center gap-1 rounded-full border border-border-strong bg-background px-2 py-0.5 text-[11px] leading-4 font-semibold text-muted-foreground">
+                              <Check className="size-3" aria-hidden="true" />Already added
+                            </span>
+                          )}
+                        </span>
                         <span>{offering.title}</span>
                       </button>
                     </TableHead>
