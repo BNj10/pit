@@ -31,17 +31,17 @@ export const portalRoleConfig = {
     support: { label: "Faculty guide", href: "/department-chair/guide" },
     logoutLabel: "Logout",
   },
-  admin: {
-    label: "Administrator",
-    audience: "ADMINISTRATION",
+  dean: {
+    label: "Dean",
+    audience: "DEAN",
     navigationLabel: "WORKSPACE",
     navigation: [
-      { label: "Dashboard", href: "/admin", icon: "dashboard", exact: true },
-      { label: "Colleges & Departments", href: "/admin/colleges-and-departments", icon: "colleges" },
-      { label: "Faculty Evaluation", href: "/admin/faculty-evaluation", icon: "faculty-evaluation" },
+      { label: "Dashboard", href: "/dean", icon: "dashboard", exact: true },
+      { label: "Colleges & Departments", href: "/dean/colleges-and-departments", icon: "colleges" },
+      { label: "Faculty Evaluation", href: "/dean/faculty-evaluation", icon: "faculty-evaluation" },
     ],
-    account: { label: "Admin Account", href: "/admin/account" },
-    support: { label: "Admin guide", href: "/admin/guide" },
+    account: { label: "Dean Account", href: "/dean/account" },
+    support: { label: "Dean guide", href: "/dean/guide" },
     logoutLabel: "Logout",
   },
 } as const satisfies Record<PortalRole, PortalRoleConfig>;
