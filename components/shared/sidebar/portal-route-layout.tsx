@@ -18,9 +18,9 @@ const previewUsers: Record<PortalRole, PortalUser> = {
     description: "Student records coordinator",
     initials: "AM",
   },
-  admin: {
+  dean: {
     name: "Alex Morgan",
-    description: "Registrar administrator",
+    description: "Dean",
     initials: "AM",
   },
 };
@@ -29,7 +29,7 @@ export function PortalRouteLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const segment = pathname.split("/")[1];
   const role: PortalRole =
-    segment === "admin" || segment === "department-chair" ? segment : "student";
+    segment === "department-chair" || segment === "dean" ? segment : "student";
 
   return (
     <PortalLayout
