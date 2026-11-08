@@ -10,7 +10,7 @@ export function PortalHeader({ children }: { children: ReactNode }) {
   const { openMobile, setOpenMobile, mobileTriggerRef } = useSidebar();
 
   return (
-    <header className="flex h-16 shrink-0 items-center gap-3 border-b border-border bg-card px-4 md:h-[72px] md:px-6 lg:gap-4 lg:px-8">
+    <header className="flex min-h-16 shrink-0 flex-wrap items-center gap-x-3 gap-y-2 border-b border-border bg-card px-4 py-2 md:min-h-[72px] md:px-6 lg:flex-nowrap lg:gap-4 lg:px-8 lg:py-0">
       <div className="flex min-w-0 flex-1 items-center gap-3 lg:hidden">
         <button
           ref={mobileTriggerRef}
@@ -35,7 +35,7 @@ export function PortalHeader({ children }: { children: ReactNode }) {
           University Portal
         </span>
       </div>
-      <div className="min-w-0 lg:flex lg:flex-1 lg:items-center lg:gap-4">
+      <div className="order-last w-full min-w-0 lg:order-none lg:flex lg:w-auto lg:flex-1 lg:items-center lg:gap-4">
         {children}
       </div>
       <button

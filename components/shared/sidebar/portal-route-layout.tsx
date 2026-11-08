@@ -4,6 +4,8 @@ import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 
 import { PortalLayout } from "./portal-layout";
+import { CollegeManagementLayout } from "@/app/(main)/dean/colleges-and-departments/components/college-management-layout";
+import { isPortalPathActive } from "@/role-config";
 import type { PortalRole, PortalUser } from "@/types/sidebar-types";
 
 // Design preview data. Replace with the authenticated role, user, and active term.
@@ -30,14 +32,17 @@ export function PortalRouteLayout({ children }: { children: ReactNode }) {
   const segment = pathname.split("/")[1];
   const role: PortalRole =
     segment === "department-chair" || segment === "dean" ? segment : "student";
+  const Layout = isPortalPathActive(pathname, "/dean/colleges-and-departments")
+    ? CollegeManagementLayout
+    : PortalLayout;
 
   return (
-    <PortalLayout
+    <Layout
       role={role}
       activeTerm="AY 2025–2026"
       user={previewUsers[role]}
     >
       {children}
-    </PortalLayout>
+    </Layout>
   );
 }
