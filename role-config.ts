@@ -46,6 +46,12 @@ export const portalRoleConfig = {
   },
 } as const satisfies Record<PortalRole, PortalRoleConfig>;
 
+export type StudentRecordsRole = "department-chair" | "admin";
+
+export function getStudentRecordsHref(role: StudentRecordsRole) {
+  return `/${role}/student-records` as const;
+}
+
 function normalizePath(path: string) {
   return path.replace(/\/+$/, "") || "/";
 }

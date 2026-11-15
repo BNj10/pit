@@ -2607,6 +2607,11 @@
   outline-offset: calc(-1 * var(--focus-width));
 }
 
+.portal-scroll-viewport > div {
+  /* Keep Radix's measuring wrapper within the viewport so tables scroll locally. */
+  display: block !important;
+}
+
 .portal-page-content {
   min-height: 100%;
 }
@@ -3499,19 +3504,12 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 8px 24px;
   border: 0;
   border-radius: 0 0 8px 8px;
   padding: 16px 24px;
   background: transparent;
-}
-
-.academic-records-grading-note {
-  margin: 0;
-  color: var(--muted-foreground);
-  font-size: 11px;
-  line-height: 13px;
 }
 
 .academic-records-total-units {
@@ -3544,5 +3542,898 @@
 
   .academic-records-semester-select {
     width: 100%;
+  }
+}
+
+/* STAFF STUDENT RECORDS DIRECTORY */
+.page-container:has(> [data-page="student-records"]) {
+  --page-padding: 28px;
+}
+
+.student-records-content {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.student-records-introduction h1 {
+  color: var(--foreground);
+  font-size: 26px;
+  font-weight: var(--weight-bold);
+  line-height: 34px;
+  letter-spacing: normal;
+}
+
+.student-records-introduction p {
+  margin-top: 4px;
+  color: var(--muted-foreground);
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.student-records-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.student-records-search {
+  position: relative;
+  min-width: 220px;
+  flex: 1;
+}
+
+.student-records-search > svg {
+  position: absolute;
+  top: 50%;
+  left: 13px;
+  width: 15px;
+  height: 15px;
+  transform: translateY(-50%);
+  color: var(--muted-foreground);
+  pointer-events: none;
+}
+
+.student-records-search input,
+.student-records-filter-select {
+  height: 40px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 12px;
+  font-weight: var(--weight-regular);
+  box-shadow: none;
+}
+
+.student-records-search input {
+  padding-left: 36px;
+}
+
+.student-records-filter-select {
+  min-width: 132px;
+  gap: 8px;
+  padding-inline: 12px;
+}
+
+.student-records-filter-select:last-child {
+  min-width: 142px;
+}
+
+.student-records-filter-select [data-slot="select-value"] {
+  flex: 1;
+  text-align: left;
+}
+
+.student-records-filter-select svg {
+  width: 14px;
+  height: 14px;
+  color: var(--muted-foreground);
+  stroke-width: 1.5;
+}
+
+.student-records-card {
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 0;
+  background: var(--background);
+  box-shadow: none;
+  --tw-ring-shadow: 0 0 #0000;
+}
+
+.student-records-table {
+  width: 100%;
+  min-width: 980px;
+  table-layout: fixed;
+}
+
+.student-records-name-column { width: 24%; }
+.student-records-email-column { width: 21%; }
+.student-records-id-column { width: 13%; }
+.student-records-year-column { width: 10%; }
+.student-records-action-column { width: 13%; }
+
+.student-records-table thead tr {
+  border: 0;
+  background: var(--muted);
+}
+
+.student-records-table thead th {
+  height: 38px;
+  padding: 0 12px;
+  color: var(--muted-foreground);
+  font-size: 9px;
+  font-weight: var(--weight-medium);
+}
+
+.student-records-table tbody tr {
+  height: 64px;
+  border-color: var(--border);
+}
+
+.student-records-table tbody tr:hover {
+  background: var(--surface-hover);
+}
+
+.student-records-table tbody th,
+.student-records-table tbody td {
+  height: 64px;
+  padding: 12px;
+  font-size: 12px;
+  font-weight: var(--weight-regular);
+  line-height: 18px;
+}
+
+.student-records-table th:first-child {
+  padding-left: 16px;
+}
+
+.student-records-table th:last-child,
+.student-records-table td:last-child {
+  padding-right: 16px;
+}
+
+.student-records-student {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: var(--weight-semibold);
+  white-space: normal;
+}
+
+.student-records-avatar {
+  width: 32px;
+  height: 32px;
+}
+
+.student-records-avatar-fallback {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-size: 11px;
+  font-weight: var(--weight-semibold);
+}
+
+.student-records-muted {
+  color: var(--muted-foreground);
+}
+
+.student-records-email {
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.student-records-records-button {
+  width: 100%;
+  max-width: 100px;
+  height: 30px;
+  gap: 6px;
+  border-radius: var(--radius-control);
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 11px;
+  font-weight: var(--weight-medium);
+}
+
+.student-records-records-button svg {
+  width: 13px;
+  height: 13px;
+  color: var(--primary);
+  stroke-width: 1.5;
+}
+
+.student-records-table .student-records-no-results {
+  height: 160px;
+  color: var(--muted-foreground);
+  text-align: center;
+}
+
+.student-records-footer {
+  display: flex;
+  min-height: 46px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+}
+
+.student-records-count {
+  color: var(--muted-foreground);
+  font-size: 10px;
+  line-height: 16px;
+}
+
+.student-records-pagination {
+  width: auto;
+  justify-content: flex-end;
+  margin: 0;
+}
+
+.student-records-pagination > ul {
+  gap: 6px;
+}
+
+.student-records-pagination button,
+.student-records-page-ellipsis {
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  padding: 0;
+  font-size: 10px;
+}
+
+.student-records-pagination button[aria-current="page"] {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.student-records-pagination button svg,
+.student-records-page-ellipsis svg {
+  width: 12px;
+  height: 12px;
+}
+
+@media (max-width: 767px) {
+  .page-container:has(> [data-page="student-records"]) {
+    --page-padding: 16px;
+  }
+
+  .student-records-content {
+    gap: 16px;
+  }
+
+  .student-records-search {
+    flex-basis: 100%;
+  }
+
+  .student-records-search input {
+    height: 44px;
+    font-size: 16px;
+  }
+
+  .student-records-filter-select {
+    height: 44px;
+    flex: 1;
+  }
+
+  .student-records-records-button {
+    min-height: 40px;
+  }
+
+  .student-records-pagination button,
+  .student-records-page-ellipsis {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* STAFF STUDENT GRADES */
+.page-container:has(> [data-page="student-grades"]) {
+  --page-padding: 28px;
+}
+
+.student-grades-content {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.student-grades-toolbar,
+.student-grades-record {
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 0;
+  background: var(--card);
+  box-shadow: none;
+  --tw-ring-shadow: 0 0 #0000;
+}
+
+.student-grades-toolbar {
+  display: flex;
+  min-height: 88px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 16px;
+}
+
+.student-grades-title {
+  color: var(--foreground);
+  font-size: 20px;
+  font-weight: var(--weight-bold);
+  line-height: 26px;
+  letter-spacing: normal;
+}
+
+.student-grades-subtitle {
+  margin-top: 3px;
+  color: var(--muted-foreground);
+  font-size: 11px;
+  line-height: 16px;
+}
+
+.student-grades-controls {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 8px;
+}
+
+.student-grades-semester-select,
+.student-grades-reload,
+.student-grades-empty-actions > button {
+  height: 34px;
+  border-radius: var(--radius-control);
+  background: var(--card);
+  color: var(--foreground);
+  font-size: 11px;
+  font-weight: var(--weight-regular);
+  box-shadow: none;
+}
+
+.student-grades-semester-select {
+  width: 210px;
+  padding-inline: 10px;
+}
+
+.student-grades-reload {
+  gap: 7px;
+  padding-inline: 12px;
+}
+
+.student-grades-reload svg,
+.student-grades-semester-select svg {
+  width: 12px;
+  height: 12px;
+}
+
+.student-grades-semester-select:hover:not(:disabled),
+.student-grades-semester-select[data-state="open"] {
+  background: var(--muted);
+}
+
+.student-grades-semester-select[data-state="open"] > svg {
+  transform: rotate(180deg);
+}
+
+.student-grades-semester-select > svg {
+  color: var(--muted-foreground);
+  transition: transform 150ms ease;
+}
+
+.student-grades-semester-menu {
+  --popover: var(--background);
+  --popover-foreground: var(--foreground);
+  width: 280px;
+  max-width: calc(100vw - 32px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 0;
+  box-shadow: 0 12px 32px -12px rgb(15 23 42 / 0.18);
+  --tw-ring-shadow: 0 0 #0000;
+}
+
+.student-grades-semester-menu > [data-radix-select-viewport] {
+  padding: 8px;
+}
+
+.student-grades-semester-menu-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin: 0;
+  padding: 6px 8px 10px;
+  color: var(--foreground);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  line-height: 17px;
+}
+
+.student-grades-semester-menu-heading span:last-child {
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-weight: var(--weight-regular);
+  line-height: 13px;
+}
+
+.student-grades-semester-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.student-grades-semester-divider {
+  margin: 6px 0;
+}
+
+.student-grades-semester-group-label {
+  padding: 6px 10px 4px;
+  color: var(--muted-foreground);
+  font-size: 10px;
+  font-weight: var(--weight-semibold);
+  line-height: 12px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.student-grades-semester-option {
+  min-height: 38px;
+  border-radius: 6px;
+  padding: 0 34px 0 10px;
+  color: var(--foreground);
+  font-size: 13px;
+  font-weight: var(--weight-medium);
+  line-height: 16px;
+}
+
+.student-grades-semester-option * {
+  color: inherit;
+}
+
+.student-grades-semester-option > span:first-child {
+  right: 10px;
+  color: var(--primary);
+}
+
+.student-grades-semester-option[data-highlighted],
+.student-grades-semester-option[data-state="checked"] {
+  background: var(--accent);
+  color: var(--primary);
+}
+
+.student-grades-record-header {
+  display: flex;
+  min-height: 68px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px;
+}
+
+.student-grades-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.student-grades-record-header h2 {
+  font-size: 16px;
+  font-weight: var(--weight-semibold);
+  line-height: 21px;
+  letter-spacing: normal;
+}
+
+.student-grades-gpa {
+  min-width: 80px;
+  margin: 0;
+  border-left: 2px solid var(--primary);
+  padding-left: 10px;
+}
+
+.student-grades-gpa dt {
+  color: var(--muted-foreground);
+  font-size: 8px;
+  line-height: 12px;
+  letter-spacing: 0.08em;
+}
+
+.student-grades-gpa dd {
+  margin: 0;
+  color: var(--primary);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.student-grades-table {
+  width: 100%;
+  min-width: 680px;
+  table-layout: fixed;
+}
+
+.student-grades-code-column { width: 12%; }
+.student-grades-grade-column { width: 14%; }
+.student-grades-status-column { width: 15%; }
+
+.student-grades-table thead tr {
+  border: 0;
+  background: var(--muted);
+}
+
+.student-grades-table thead th {
+  height: 34px;
+  padding: 0 10px;
+  color: var(--muted-foreground);
+  font-size: 8px;
+  font-weight: var(--weight-regular);
+  letter-spacing: 0.04em;
+}
+
+.student-grades-table th:first-child,
+.student-grades-table td:first-child {
+  padding-left: 18px;
+}
+
+.student-grades-table th:last-child,
+.student-grades-table td:last-child {
+  padding-right: 18px;
+}
+
+.student-grades-table tbody tr {
+  height: 60px;
+  border-color: var(--border);
+}
+
+.student-grades-table tbody th,
+.student-grades-table tbody td {
+  height: 60px;
+  padding: 10px;
+  font-size: 11px;
+  line-height: 16px;
+}
+
+.student-grades-table tbody th {
+  font-size: 10px;
+  font-weight: var(--weight-semibold);
+}
+
+.student-grades-subject-title {
+  font-weight: var(--weight-medium);
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.student-grades-value,
+.student-grades-status {
+  color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
+}
+
+.student-grades-edit {
+  display: flex;
+  width: 100%;
+  min-height: 34px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-control);
+  padding: 6px 9px;
+  background: var(--card);
+  color: var(--foreground);
+  font-size: 11px;
+  font-weight: var(--weight-medium);
+  box-shadow: none;
+}
+
+.student-grades-edit[data-empty="true"] {
+  color: var(--muted-foreground);
+  font-size: 10px;
+  font-weight: var(--weight-regular);
+}
+
+.student-grades-edit svg {
+  width: 12px;
+  height: 12px;
+  color: var(--primary);
+  stroke-width: 1.5;
+}
+
+.student-grades-footer {
+  min-height: 70px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px 20px;
+  border-top: 1px solid var(--border);
+  padding: 16px 18px;
+  background: transparent;
+}
+
+.student-grades-publication {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: 11px;
+  line-height: 16px;
+}
+
+.student-grades-footer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-left: auto;
+}
+
+.student-grades-footer button {
+  height: 34px;
+  border-radius: var(--radius-control);
+  padding-inline: 14px;
+  font-size: 11px;
+}
+
+.student-grades-empty {
+  display: flex;
+  min-height: 340px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px 48px;
+  text-align: center;
+}
+
+.student-grades-empty-icon {
+  display: grid;
+  width: 52px;
+  height: 52px;
+  place-items: center;
+  margin-bottom: 14px;
+  border-radius: var(--radius-pill);
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.student-grades-empty-icon svg {
+  width: 22px;
+  height: 22px;
+  stroke-width: 1.5;
+}
+
+.student-grades-empty h3 {
+  font-size: 14px;
+  font-weight: var(--weight-semibold);
+  line-height: 20px;
+  letter-spacing: normal;
+}
+
+.student-grades-empty-description {
+  margin-top: 5px;
+  color: var(--muted-foreground);
+  font-size: 11px;
+  line-height: 18px;
+}
+
+.student-grades-empty-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.student-grades-empty-actions > .student-grades-create {
+  gap: 6px;
+  padding-inline: 14px;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-weight: var(--weight-semibold);
+}
+
+.student-grades-empty-actions > .student-grades-create:hover:not(:disabled) {
+  background: var(--primary-hover);
+}
+
+.student-grades-create svg {
+  width: 13px;
+  height: 13px;
+}
+
+.student-grades-empty-note {
+  margin-top: 16px;
+  color: var(--muted-foreground);
+  font-size: 9px;
+  line-height: 16px;
+}
+
+.student-grade-dialog {
+  display: block;
+  width: 430px;
+  max-width: calc(100vw - 32px);
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 0;
+  background: var(--card);
+}
+
+.student-grade-dialog-header {
+  gap: 4px;
+  border-bottom: 1px solid var(--border);
+  padding: 20px;
+  padding-right: 44px;
+}
+
+.student-grade-dialog-header [data-slot="dialog-title"] {
+  font-size: 16px;
+  font-weight: var(--weight-bold);
+  line-height: 22px;
+  letter-spacing: normal;
+}
+
+.student-grade-dialog-header [data-slot="dialog-description"] {
+  font-size: 11px;
+  line-height: 16px;
+}
+
+.student-grade-dialog-body {
+  padding: 18px 20px;
+}
+
+.student-grade-dialog-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+  font-size: 11px;
+  font-weight: var(--weight-semibold);
+  line-height: 16px;
+}
+
+.student-grade-dialog-label > span:last-child {
+  color: var(--muted-foreground);
+  font-size: 10px;
+  font-weight: var(--weight-regular);
+}
+
+.student-grade-options {
+  gap: 0;
+}
+
+.student-grade-numeric-options,
+.student-grade-other-options {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.student-grade-option {
+  position: relative;
+  width: 100%;
+  height: 36px;
+  gap: 4px;
+  border-radius: var(--radius-control);
+  padding: 4px;
+  background: var(--card);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  box-shadow: none;
+}
+
+.student-grade-option svg {
+  width: 11px;
+  height: 11px;
+}
+
+.student-grade-option[data-state="checked"],
+.student-grade-option[data-state="checked"]:hover {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.student-grade-outcomes-label {
+  margin: 10px 0 6px;
+  color: var(--muted-foreground);
+  font-size: 10px;
+  line-height: 14px;
+}
+
+.student-grade-other-options {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.student-grade-outcome > span {
+  color: var(--muted-foreground);
+  font-weight: var(--weight-regular);
+}
+
+.student-grade-outcome[data-state="checked"] > span {
+  color: inherit;
+}
+
+.student-grade-dialog-footer {
+  flex-direction: row;
+  justify-content: flex-end;
+  gap: 8px;
+  margin: 0;
+  border-radius: 0;
+  padding: 14px 20px;
+  background: transparent;
+}
+
+.student-grade-dialog-footer button {
+  height: 34px;
+  gap: 6px;
+  border-radius: var(--radius-control);
+  padding-inline: 14px;
+  font-size: 11px;
+}
+
+.student-grade-dialog-footer svg {
+  width: 13px;
+  height: 13px;
+}
+
+.student-grades-reloading {
+  animation: student-grades-spin 1s linear infinite;
+}
+
+@keyframes student-grades-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 1100px) {
+  .student-grades-toolbar {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 767px) {
+  .page-container:has(> [data-page="student-grades"]) {
+    --page-padding: 16px;
+  }
+
+  .student-grades-toolbar {
+    padding: 16px;
+  }
+
+  .student-grades-controls {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .student-grades-semester-select {
+    flex: 1;
+  }
+
+  .student-grades-semester-option {
+    min-height: 44px;
+  }
+
+  .student-grades-empty-actions {
+    flex-wrap: wrap;
+  }
+
+  .student-grades-edit,
+  .student-grade-option,
+  .student-grade-dialog-footer button,
+  .student-grades-footer button,
+  .student-grades-controls > button,
+  .student-grades-empty-actions > button {
+    min-height: 40px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .student-grades-reloading {
+    animation: none;
   }
 }
