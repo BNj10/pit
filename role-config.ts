@@ -26,6 +26,7 @@ export const portalRoleConfig = {
       { label: "Student Records", href: "/department-chair/student-records", icon: "students" },
       { label: "Sections", href: "/department-chair/sections", icon: "sections" },
       { label: "Enrollment Management", href: "/department-chair/enrollment-management", icon: "enrollment-management" },
+      { label: "Instructor Evaluation", href: "/department-chair/instructor-evaluation", icon: "evaluation" },
     ],
     account: { label: "Department Chair Account", href: "/department-chair/account" },
     support: { label: "Department Chair guide", href: "/department-chair/guide" },

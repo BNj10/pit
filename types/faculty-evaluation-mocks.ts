@@ -263,3 +263,6 @@ export const facultyEvaluationPreview: FacultyEvaluationData = {
     },
   ],
 };
+
+/** Preview fixture: the signed-in chair's department until sessions are implemented. */
+export const departmentChairEvaluationPreviewDepartment = "Electrical Engineering";

@@ -4438,9 +4438,131 @@
   }
 }
 
+/* DEPARTMENT CHAIR INSTRUCTOR EVALUATION */
+.chair-evaluation-page .instructor-records-filters {
+  background: var(--background);
+}
+
+.chair-evaluation-status-trigger {
+  min-width: 100px;
+  height: 34px;
+  gap: 20px;
+  border-color: var(--border);
+  border-radius: var(--radius-control);
+  padding-inline: 10px;
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 12px;
+  font-weight: var(--weight-semibold);
+  box-shadow: none;
+}
+
+.chair-evaluation-status-trigger:hover:not(:disabled),
+.chair-evaluation-status-trigger[data-state="open"] {
+  background: var(--muted);
+}
+
+.chair-evaluation-status-trigger[data-state="open"] {
+  border-color: var(--primary);
+}
+
+.chair-evaluation-status-menu {
+  --popover: var(--background);
+  --popover-foreground: var(--foreground);
+  min-width: 180px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 0;
+  box-shadow: 0 12px 32px -12px rgb(15 23 42 / 0.18);
+  --tw-ring-shadow: 0 0 #0000;
+}
+
+.chair-evaluation-status-menu > [data-radix-select-viewport] {
+  padding: 6px;
+}
+
+.chair-evaluation-status-option {
+  min-height: 34px;
+  border-radius: 6px;
+  padding: 0 32px 0 10px;
+  font-size: 12px;
+  font-weight: var(--weight-medium);
+}
+
+.chair-evaluation-status-option * {
+  color: inherit;
+}
+
+.chair-evaluation-status-option > span:first-child {
+  right: 10px;
+  color: var(--primary);
+}
+
+.chair-evaluation-status-option[data-highlighted],
+.chair-evaluation-status-option[data-state="checked"] {
+  background: var(--accent);
+  color: var(--primary);
+}
+
+.chair-evaluation-table th:last-child {
+  padding-right: 36px;
+}
+
+.chair-evaluation-loading {
+  color: var(--muted-foreground);
+  font-size: 12px;
+}
+
+.chair-evaluation-notice {
+  display: flex;
+  min-height: 280px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 32px 16px;
+  background: var(--background);
+  text-align: center;
+}
+
+.chair-evaluation-notice > svg {
+  width: 28px;
+  height: 28px;
+  margin-bottom: 2px;
+  color: var(--muted-foreground);
+}
+
+.chair-evaluation-notice h2 {
+  font-size: 15px;
+  font-weight: var(--weight-semibold);
+}
+
+.chair-evaluation-notice p {
+  max-width: 420px;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.chair-evaluation-notice [data-slot="button"] {
+  margin-top: 6px;
+}
+
 .supervisor-evaluation-back {
   flex-shrink: 0;
   gap: 8px;
   min-height: 36px;
   color: var(--foreground);
+}
+
+@media (max-width: 767px) {
+  .chair-evaluation-page .instructor-records-filters {
+    flex-wrap: wrap;
+  }
+
+  .chair-evaluation-status-trigger {
+    width: 100%;
+    min-height: 44px;
+  }
 }

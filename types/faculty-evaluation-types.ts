@@ -143,3 +143,14 @@ export interface SupervisorEvaluationProps {
   listHref: string;
   listLabel: string;
 }
+
+export type DepartmentChairEvaluationStatusFilter = "all" | "pending" | "evaluated";
+
+export interface DepartmentChairEvaluationProps {
+  /** Preview fixture; production must resolve this from the chair's verified session. */
+  department: string;
+}
+
+export interface DepartmentChairEvaluationResultProps {
+  instructor: EvaluationInstructor;
+}
