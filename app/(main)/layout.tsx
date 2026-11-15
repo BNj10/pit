@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter, Geist_Mono } from "next/font/google";
 import { PortalRouteLayout } from "@/types/sidebar-exports";
 import { Toaster } from "@/components/ui/sonner";
+import { EvaluationProvider } from "@/components/shared/faculty-evaluation/evaluation-provider";
+import { facultyEvaluationPreview } from "@/types/faculty-evaluation-mocks";
 import "../globals.css";
 
 const inter = Inter({
@@ -27,7 +29,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${inter.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <PortalRouteLayout>{children}</PortalRouteLayout>
+        <EvaluationProvider
+          key={JSON.stringify(facultyEvaluationPreview.window)}
+          data={facultyEvaluationPreview}
+        >
+          <PortalRouteLayout>{children}</PortalRouteLayout>
+        </EvaluationProvider>
         <Toaster />
       </body>
     </html>
