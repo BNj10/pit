@@ -91,7 +91,7 @@ export function ApprovedSubjectsTable({
         </TableBody>
       </Table>
       <div className="flex min-h-11 flex-wrap items-center justify-between gap-3 border-t border-border px-5 py-2.5">
-        <p className="text-[11px] text-muted-foreground">Only subjects approved by the administrator are shown.</p>
+        <p className="text-[11px] text-muted-foreground">Only subjects approved by your department chair are shown.</p>
         <p className="text-[13px] font-bold text-primary">
           {subjects.length} {subjects.length === 1 ? "SUBJECT" : "SUBJECTS"} · {totalUnits} {totalUnits === 1 ? "UNIT" : "UNITS"}
         </p>
