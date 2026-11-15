@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 
+import { DeanAccountProvider, useDeanAccount } from "@/components/shared/account/dean-account-provider";
 import { PortalLayout } from "./portal-layout";
 import type { PortalRole, PortalUser } from "@/types/sidebar-types";
 
@@ -18,18 +19,31 @@ const previewUsers: Record<PortalRole, PortalUser> = {
     description: "Student records coordinator",
     initials: "AM",
   },
-  admin: {
+  dean: {
     name: "Alex Morgan",
-    description: "Registrar administrator",
+    description: "College Dean",
     initials: "AM",
   },
 };
+
+function DeanPortal({ children }: { children: ReactNode }) {
+  const { user } = useDeanAccount();
+  return <PortalLayout role="dean" activeTerm="AY 2025–2026" user={user}>{children}</PortalLayout>;
+}
 
 export function PortalRouteLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const segment = pathname.split("/")[1];
   const role: PortalRole =
-    segment === "admin" || segment === "department-chair" ? segment : "student";
+    segment === "department-chair" || segment === "dean" ? segment : "student";
+
+  if (role === "dean") {
+    return (
+      <DeanAccountProvider user={previewUsers.dean}>
+        <DeanPortal>{children}</DeanPortal>
+      </DeanAccountProvider>
+    );
+  }
 
   return (
     <PortalLayout

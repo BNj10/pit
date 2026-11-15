@@ -2,11 +2,12 @@
 
 ## Direction and Sources of Truth
 
-- Build a role-based enrollment and academic records portal for students, department chairs, and administrators.
+- Build a role-based enrollment and academic records portal with three portal roles: students, department chairs, and deans. The Administrator maintains the system through direct database access, creates all accounts, and has no portal UI. See [docs/adr/0001-three-portal-roles.md](docs/adr/0001-three-portal-roles.md).
+- Use [GLOSSARY.md](GLOSSARY.md) for domain vocabulary. Update it when a term is settled.
 - The current stage is UI implementation with preview data. The shared portal shell and student Academic Records screen exist; authentication and database integration are pending.
 - Read [README.md](README.md) for setup and [docs/PROJECT_PLAN.md](docs/PROJECT_PLAN.md) for status, priorities, dependencies, and completion criteria. Update them when implemented behavior changes.
 - Use `role-config.ts` and `types/sidebar-types.ts` for the current role and navigation vocabulary. A navigation entry does not mean its route is implemented or authorized.
-- Use `de73435c-7278-4869-ae39-ba644826491b/pencil-new.pen` as the current design reference. Design labels such as Faculty and Supervisor are not new application roles; resolve their permissions before implementing them.
+- Use `de73435c-7278-4869-ae39-ba644826491b/pencil-new.pen` as the current design reference. Design labels such as Administrator, Registrar, Faculty, and Supervisor are not portal roles; map them to the roles in ADR 0001 and the glossary before implementing them.
 - Preserve unrelated work in progress. Trace existing behavior and invariants before editing; reuse the responsible component, helper, or platform feature before adding new structure.
 
 ## Next.js Version Rules
@@ -88,7 +89,7 @@ npm run build
 - Keep type definitions separate from runtime mock values, and use `import type` / `export type` for type-only dependencies. Replacing mocks with validated API data should preserve the receiving function/component contract; TypeScript types do not replace runtime validation of API responses.
 - Keep preview users, terms, subjects, grades, and GPA values clearly identified as fixtures. Do not treat the hard-coded academic year as the current institutional term.
 - A URL segment selects the preview shell; it does not establish an authenticated role. The current logout callback is not connected to a session, and refreshing Academic Records does not fetch live records.
-- Preserve the distinction between no record, an unposted grade (`null`), and a posted grade. Do not convert missing values to zero or infer a pass/fail result without an approved grading policy.
+- Preserve the distinction between no record, an unpublished grade (`null` or still a draft; students see Pending), and a published grade, including INC and DROP. Do not convert missing values to zero or infer a pass/fail result without an approved grading policy.
 - Confirm the institution's grade scale, GPA weighting and rounding, term lifecycle, enrollment transitions, review authority, prerequisites, and unit limits before encoding them as production rules. Design examples are not policy.
 
 ## Authentication and Database Rules
