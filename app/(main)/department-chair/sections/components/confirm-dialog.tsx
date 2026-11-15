@@ -1,6 +1,6 @@
 "use client";
 
-import { Trash2, X } from "lucide-react";
+import { Send, Trash2, X } from "lucide-react";
 
 import {
   AlertDialog,
@@ -10,9 +10,11 @@ import {
   AlertDialogDescription,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import type { ConfirmRemovalDialogProps } from "@/types/sections-exports";
+import type { ConfirmDialogProps } from "@/types/sections-exports";
 
-export function ConfirmRemovalDialog({ title, description, confirmLabel, onClose, onConfirm }: ConfirmRemovalDialogProps) {
+export function ConfirmDialog({ title, description, details = [], confirmLabel, tone, onClose, onConfirm }: ConfirmDialogProps) {
+  const Icon = tone === "destructive" ? Trash2 : Send;
+
   return (
     <AlertDialog open onOpenChange={(open) => { if (!open) onClose(); }}>
       <AlertDialogContent className="section-delete-dialog">
@@ -23,14 +25,19 @@ export function ConfirmRemovalDialog({ title, description, confirmLabel, onClose
           </AlertDialogCancel>
         </header>
         <AlertDialogDescription>{description}</AlertDialogDescription>
+        {details.length > 0 && (
+          <ul className="section-confirm-details">
+            {details.map((detail) => <li key={detail}>{detail}</li>)}
+          </ul>
+        )}
         <footer className="section-delete-dialog-actions">
           <AlertDialogCancel variant="outline">
             Cancel
             <X aria-hidden="true" />
           </AlertDialogCancel>
-          <AlertDialogAction className="section-delete-confirm" onClick={onConfirm}>
+          <AlertDialogAction className={tone === "destructive" ? "section-delete-confirm" : undefined} onClick={onConfirm}>
             {confirmLabel}
-            <Trash2 aria-hidden="true" />
+            <Icon aria-hidden="true" />
           </AlertDialogAction>
         </footer>
       </AlertDialogContent>
