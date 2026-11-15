@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import type { StudentAccount, StudentContactDetails } from "@/types/student-account-types";
 import { ChangePasswordDialog } from "./change-password-dialog";
-import { ProfilePhotoDialog } from "./profile-photo-dialog";
+import { ProfilePhotoDialog } from "@/components/shared/account/profile-photo-dialog";
 
 export function StudentAccountContent({ account }: { account: StudentAccount }) {
   const [contact, setContact] = useState(account.contact);
