@@ -1,5 +1,7 @@
 import type {
+  CrossDepartmentAccess,
   CurriculumSubject,
+  CurriculumYearLevel,
   MeetingDay,
   OfferingTerm,
   SectionClassType,
@@ -7,6 +9,7 @@ import type {
   SectionEntryConflict,
   SectionEntryDraft,
   SectionEntryValidation,
+  SectionsWorkspace,
   SubjectOffering,
 } from "@/types/sections-types";
 
@@ -97,6 +100,60 @@ export function countLabel(count: number, singular: string, plural = `${singular
 
 const normalize = (value: string) => value.trim().replace(/\s+/g, " ").toLocaleUpperCase();
 
+/** "TBA" holds a room slot without booking a real room, so it never causes a room conflict. */
+export function isUnassignedRoom(room: string) {
+  return normalize(room) === "TBA";
+}
+
+export function subjectUnits(subject: Pick<CurriculumSubject, "lectureUnits" | "laboratoryUnits">) {
+  return subject.lectureUnits + subject.laboratoryUnits;
+}
+
+/** e.g. "2 lec · 1 lab units" or "3 lec units". */
+export function describeSubjectUnits(subject: Pick<CurriculumSubject, "lectureUnits" | "laboratoryUnits">) {
+  const parts = [
+    subject.lectureUnits > 0 ? `${formatHours(subject.lectureUnits)} lec` : null,
+    subject.laboratoryUnits > 0 ? `${formatHours(subject.laboratoryUnits)} lab` : null,
+  ].filter((part) => part !== null);
+  return `${parts.join(" · ")} ${subjectUnits(subject) === 1 ? "unit" : "units"}`;
+}
+
+export function academicYearLabel(academicYear: string) {
+  return `A.Y. ${academicYear}`;
+}
+
+/** Access times are Philippine local time, independent of the viewer's device. */
+export function accessTimestamp(value: string) {
+  return new Date(`${value}+08:00`).getTime();
+}
+
+const accessDateFormatter = new Intl.DateTimeFormat("en-GB", {
+  timeZone: "Asia/Manila",
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+});
+
+export function formatAccessDate(value: string) {
+  const timestamp = accessTimestamp(value);
+  return Number.isFinite(timestamp) ? accessDateFormatter.format(timestamp) : "—";
+}
+
+/**
+ * Whether other departments' students can currently take remaining seats.
+ * isOpen is null while the current time is unknown (server render).
+ */
+export function crossDepartmentAccessState(access: CrossDepartmentAccess, now: number | null) {
+  if (access.mode === "open") return { isOpen: true, label: "Open to all departments" };
+  if (access.mode === "reserved") return { isOpen: false, label: "Own department only" };
+  const opensAt = accessTimestamp(access.opensAt);
+  if (now !== null && now >= opensAt) return { isOpen: true, label: "Open to all departments" };
+  return { isOpen: now === null ? null : false, label: `Own department until ${formatAccessDate(access.opensAt)}` };
+}
+
 function overlaps(a: Pick<SectionEntry, "days" | "startTime" | "endTime">, b: SectionEntry) {
   const aStart = timeToMinutes(a.startTime);
   const aEnd = timeToMinutes(a.endTime);
@@ -106,24 +163,25 @@ function overlaps(a: Pick<SectionEntry, "days" | "startTime" | "endTime">, b: Se
   return a.days.some((day) => b.days.includes(day)) && aStart < bEnd && bStart < aEnd;
 }
 
-/** Other entries that meet at the same time in the same room or for the same section block. */
+/** Other entries that meet at the same time for the same section block, room, or faculty member. */
 export function findSectionConflicts(
-  candidate: Pick<SectionEntry, "section" | "days" | "startTime" | "endTime" | "room">,
+  candidate: Pick<SectionEntry, "section" | "days" | "startTime" | "endTime" | "room" | "facultyId">,
   entries: readonly SectionEntry[],
   ignoreId?: string,
 ): SectionEntryConflict[] {
   return entries.flatMap((entry): SectionEntryConflict[] => {
     if (entry.id === ignoreId || !overlaps(candidate, entry)) return [];
     if (normalize(entry.section) === normalize(candidate.section)) return [{ kind: "section", entry }];
-    if (normalize(entry.room) === normalize(candidate.room)) return [{ kind: "room", entry }];
+    if (!isUnassignedRoom(candidate.room) && normalize(entry.room) === normalize(candidate.room)) return [{ kind: "room", entry }];
+    if (candidate.facultyId !== null && entry.facultyId === candidate.facultyId) return [{ kind: "faculty", entry }];
     return [];
   });
 }
 
 export function draftFromEntry(entry?: SectionEntry): SectionEntryDraft {
   return entry
-    ? { ...entry, capacity: String(entry.capacity) }
-    : { section: "", capacity: "", classType: "lecture", days: [], startTime: "", endTime: "", room: "" };
+    ? { ...entry, capacity: String(entry.capacity), facultyId: entry.facultyId ?? "" }
+    : { section: "", capacity: "", classType: "lecture", facultyId: "", days: [], startTime: "", endTime: "", room: "" };
 }
 
 /**
@@ -162,7 +220,7 @@ export function validateSectionEntry(
     .reduce((sum, entry) => sum + (weeklyHours(entry) ?? 0), 0);
   const totalHours = entryHours === null ? null : sameBlockHours + entryHours;
   const conflicts = scheduleComplete && draft.room.trim() && draft.section.trim()
-    ? findSectionConflicts(draft, entries, ignoreId)
+    ? findSectionConflicts({ ...draft, facultyId: draft.facultyId || null }, entries, ignoreId)
     : [];
 
   return {
@@ -182,6 +240,7 @@ export function entryFromDraft(draft: SectionEntryDraft, offering: SubjectOfferi
     subjectCode: offering.subjectCode,
     section: draft.section.trim().replace(/\s+/g, " "),
     classType: draft.classType,
+    facultyId: draft.facultyId || null,
     capacity: Number(draft.capacity),
     days: meetingDays.filter((day) => draft.days.includes(day)),
     startTime: draft.startTime,
@@ -196,4 +255,30 @@ export function compareSectionEntries(a: SectionEntry, b: SectionEntry) {
   return typeOrder(a) - typeOrder(b) ||
     a.section.localeCompare(b.section, undefined, { numeric: true }) ||
     a.startTime.localeCompare(b.startTime);
+}
+
+/**
+ * Content fingerprint of one year level's offerings. It ignores generated ids, so
+ * undoing a change (or re-adding a removed subject) matches the published version again.
+ */
+export function yearOfferingSignature(workspace: SectionsWorkspace, academicYear: string, yearLevel: CurriculumYearLevel) {
+  const offerings = workspace.offerings.filter((offering) =>
+    offering.academicYear === academicYear && offering.yearLevel === yearLevel,
+  );
+  const offeringKeys = new Map(offerings.map((offering) => [offering.id, `${offering.term}|${offering.subjectCode}`]));
+  const access = offerings.map((offering) => `${offering.term}|${offering.subjectCode}|${JSON.stringify(offering.crossDepartmentAccess)}`);
+  const entries = workspace.entries.flatMap((entry) => {
+    const key = offeringKeys.get(entry.offeringId);
+    if (!key) return [];
+    return [[key, entry.section, entry.classType, entry.facultyId ?? "", entry.capacity, entry.days.join(""), entry.startTime, entry.endTime, entry.room].join("|")];
+  });
+  return JSON.stringify({
+    terms: workspace.termGroups
+      .filter((group) => group.academicYear === academicYear && group.yearLevel === yearLevel)
+      .map((group) => group.term)
+      .sort(),
+    offerings: [...offeringKeys.values()].sort(),
+    access: access.sort(),
+    entries: entries.sort(),
+  });
 }

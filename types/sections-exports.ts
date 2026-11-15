@@ -1,10 +1,14 @@
 export { sectionsPreview } from "./sections-mocks";
 export type {
+  AcademicTerm,
   AddOfferedSubjectsDialogProps,
-  ConfirmRemovalDialogProps,
+  ConfirmDialogProps,
+  CrossDepartmentAccess,
+  CrossDepartmentAccessDialogProps,
   CurriculumSemester,
   CurriculumSubject,
   CurriculumYearLevel,
+  FacultyMember,
   MeetingDay,
   OfferingTerm,
   OfferingTermGroup,
@@ -16,6 +20,9 @@ export type {
   SectionEntryValidation,
   SectionsData,
   SectionsManagerProps,
+  SectionsWorkspace,
   SubjectOffering,
   SubjectSectionsProps,
+  YearPublicationBarProps,
+  YearPublicationStatus,
 } from "./sections-types";
