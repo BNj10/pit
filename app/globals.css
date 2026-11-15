@@ -1101,3 +1101,293 @@
     width: 100%;
   }
 }
+
+/* STAFF STUDENT RECORDS DIRECTORY */
+.page-container:has(> [data-page="student-records"]) {
+  --page-padding: 28px;
+}
+
+.student-records-content {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.student-records-introduction h1 {
+  color: var(--foreground);
+  font-size: 26px;
+  font-weight: var(--weight-bold);
+  line-height: 34px;
+  letter-spacing: normal;
+}
+
+.student-records-introduction p {
+  margin-top: 4px;
+  color: var(--muted-foreground);
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.student-records-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.student-records-search {
+  position: relative;
+  min-width: 220px;
+  flex: 1;
+}
+
+.student-records-search > svg {
+  position: absolute;
+  top: 50%;
+  left: 13px;
+  width: 15px;
+  height: 15px;
+  transform: translateY(-50%);
+  color: var(--muted-foreground);
+  pointer-events: none;
+}
+
+.student-records-search input,
+.student-records-filter-select {
+  height: 40px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 12px;
+  font-weight: var(--weight-regular);
+  box-shadow: none;
+}
+
+.student-records-search input {
+  padding-left: 36px;
+}
+
+.student-records-filter-select {
+  min-width: 132px;
+  gap: 8px;
+  padding-inline: 12px;
+}
+
+.student-records-filter-select:last-child {
+  min-width: 142px;
+}
+
+.student-records-filter-select [data-slot="select-value"] {
+  flex: 1;
+  text-align: left;
+}
+
+.student-records-filter-select svg {
+  width: 14px;
+  height: 14px;
+  color: var(--muted-foreground);
+  stroke-width: 1.5;
+}
+
+.student-records-card {
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 0;
+  background: var(--background);
+  box-shadow: none;
+  --tw-ring-shadow: 0 0 #0000;
+}
+
+.student-records-table {
+  width: 100%;
+  min-width: 980px;
+  table-layout: fixed;
+}
+
+.student-records-name-column { width: 24%; }
+.student-records-email-column { width: 21%; }
+.student-records-id-column { width: 13%; }
+.student-records-year-column { width: 10%; }
+.student-records-action-column { width: 13%; }
+
+.student-records-table thead tr {
+  border: 0;
+  background: var(--muted);
+}
+
+.student-records-table thead th {
+  height: 38px;
+  padding: 0 12px;
+  color: var(--muted-foreground);
+  font-size: 9px;
+  font-weight: var(--weight-medium);
+}
+
+.student-records-table tbody tr {
+  height: 64px;
+  border-color: var(--border);
+}
+
+.student-records-table tbody tr:hover {
+  background: var(--surface-hover);
+}
+
+.student-records-table tbody th,
+.student-records-table tbody td {
+  height: 64px;
+  padding: 12px;
+  font-size: 12px;
+  font-weight: var(--weight-regular);
+  line-height: 18px;
+}
+
+.student-records-table th:first-child {
+  padding-left: 16px;
+}
+
+.student-records-table th:last-child,
+.student-records-table td:last-child {
+  padding-right: 16px;
+}
+
+.student-records-student {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: var(--weight-semibold);
+  white-space: normal;
+}
+
+.student-records-avatar {
+  width: 32px;
+  height: 32px;
+}
+
+.student-records-avatar-fallback {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-size: 11px;
+  font-weight: var(--weight-semibold);
+}
+
+.student-records-muted {
+  color: var(--muted-foreground);
+}
+
+.student-records-email {
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.student-records-records-button {
+  width: 100%;
+  max-width: 100px;
+  height: 30px;
+  gap: 6px;
+  border-radius: var(--radius-control);
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 11px;
+  font-weight: var(--weight-medium);
+}
+
+.student-records-records-button svg {
+  width: 13px;
+  height: 13px;
+  color: var(--primary);
+  stroke-width: 1.5;
+}
+
+.student-records-table .student-records-no-results {
+  height: 160px;
+  color: var(--muted-foreground);
+  text-align: center;
+}
+
+.student-records-footer {
+  display: flex;
+  min-height: 46px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+}
+
+.student-records-count {
+  color: var(--muted-foreground);
+  font-size: 10px;
+  line-height: 16px;
+}
+
+.student-records-pagination {
+  width: auto;
+  justify-content: flex-end;
+  margin: 0;
+}
+
+.student-records-pagination > ul {
+  gap: 6px;
+}
+
+.student-records-pagination button,
+.student-records-page-ellipsis {
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  padding: 0;
+  font-size: 10px;
+}
+
+.student-records-pagination button[aria-current="page"] {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.student-records-pagination button svg,
+.student-records-page-ellipsis svg {
+  width: 12px;
+  height: 12px;
+}
+
+@media (max-width: 767px) {
+  .page-container:has(> [data-page="student-records"]) {
+    --page-padding: 16px;
+  }
+
+  .student-records-content {
+    gap: 16px;
+  }
+
+  .student-records-search {
+    flex-basis: 100%;
+  }
+
+  .student-records-search input {
+    height: 44px;
+    font-size: 16px;
+  }
+
+  .student-records-filter-select {
+    height: 44px;
+    flex: 1;
+  }
+
+  .student-records-records-button {
+    min-height: 40px;
+  }
+
+  .student-records-pagination button,
+  .student-records-page-ellipsis {
+    width: 32px;
+    height: 32px;
+  }
+}
+

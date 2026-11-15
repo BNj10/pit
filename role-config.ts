@@ -32,12 +32,13 @@ export const portalRoleConfig = {
     logoutLabel: "Logout",
   },
   admin: {
-    label: "Administrator",
-    audience: "ADMINISTRATION",
+    label: "Dean",
+    audience: "DEAN",
     navigationLabel: "WORKSPACE",
     navigation: [
       { label: "Dashboard", href: "/admin", icon: "dashboard", exact: true },
       { label: "Colleges & Departments", href: "/admin/colleges-and-departments", icon: "colleges" },
+      { label: "Student Records", href: "/admin/student-records", icon: "students" },
       { label: "Faculty Evaluation", href: "/admin/faculty-evaluation", icon: "faculty-evaluation" },
     ],
     account: { label: "Admin Account", href: "/admin/account" },
@@ -45,6 +46,12 @@ export const portalRoleConfig = {
     logoutLabel: "Logout",
   },
 } as const satisfies Record<PortalRole, PortalRoleConfig>;
+
+export type StudentRecordsRole = "department-chair" | "admin";
+
+export function getStudentRecordsHref(role: StudentRecordsRole) {
+  return `/${role}/student-records` as const;
+}
 
 function normalizePath(path: string) {
   return path.replace(/\/+$/, "") || "/";
