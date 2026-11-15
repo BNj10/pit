@@ -5,11 +5,19 @@ import { Card } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
+  SelectSeparator,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { GradesToolbarProps } from "@/types/student-grades-exports";
+import type { GradesToolbarProps, StudentGradesSemester } from "@/types/student-grades-exports";
+
+const semesterGroupLabels = {
+  current: "Current school year",
+  completed: "Completed school years",
+} satisfies Record<StudentGradesSemester["schoolYearStatus"], string>;
 
 export function GradesToolbar({
   semesters,
@@ -18,6 +26,10 @@ export function GradesToolbar({
   onSemesterChange,
   onReload,
 }: GradesToolbarProps) {
+  const semesterGroups = (["current", "completed"] as const)
+    .map((status) => ({ status, semesters: semesters.filter((semester) => semester.schoolYearStatus === status) }))
+    .filter((group) => group.semesters.length > 0);
+
   return (
     <Card className="student-grades-toolbar">
       <header>
@@ -29,9 +41,21 @@ export function GradesToolbar({
           <SelectTrigger className="student-grades-semester-select" aria-label="Academic semester">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent position="popper" align="end">
-            {semesters.map((semester) => (
-              <SelectItem key={semester.value} value={semester.value}>{semester.label}</SelectItem>
+          <SelectContent position="popper" align="end" sideOffset={8} className="student-grades-semester-menu">
+            <p className="student-grades-semester-menu-heading" aria-hidden="true">
+              <span>Academic semester</span>
+              <span>Select a semester to review grades</span>
+            </p>
+            {semesterGroups.map((group, index) => (
+              <SelectGroup key={group.status} className="student-grades-semester-group">
+                {index > 0 && <SelectSeparator className="student-grades-semester-divider" />}
+                <SelectLabel className="student-grades-semester-group-label">{semesterGroupLabels[group.status]}</SelectLabel>
+                {group.semesters.map((semester) => (
+                  <SelectItem key={semester.value} value={semester.value} className="student-grades-semester-option">
+                    {semester.label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
             ))}
           </SelectContent>
         </Select>
