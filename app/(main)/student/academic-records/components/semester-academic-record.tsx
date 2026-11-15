@@ -1,4 +1,5 @@
 import type { SemesterAcademicRecordData } from "@/types/academic-records-exports";
+import { getSemesterGpa, getSubjectGradeResult } from "@/lib/student-grades";
 
 import {
   Card,
@@ -19,10 +20,10 @@ export function SemesterAcademicRecord({
   id,
   title,
   term,
-  gpa,
   subjects,
 }: SemesterAcademicRecordData) {
   const totalUnits = subjects.reduce((total, subject) => total + subject.units, 0);
+  const gpa = getSemesterGpa(subjects);
 
   return (
     <section aria-labelledby={`${id}-title`} className="min-w-0">
@@ -49,7 +50,6 @@ export function SemesterAcademicRecord({
 
         <Table
           aria-labelledby={`${id}-title`}
-          aria-describedby={`${id}-grading-note`}
           className="academic-records-table"
           containerProps={{
             tabIndex: 0,
@@ -74,7 +74,7 @@ export function SemesterAcademicRecord({
               <TableHead scope="col">SECTION</TableHead>
               <TableHead scope="col" className="academic-records-numeric">UNITS</TableHead>
               <TableHead scope="col" className="academic-records-numeric">MIDTERM</TableHead>
-              <TableHead scope="col" className="academic-records-numeric">FINAL</TableHead>
+              <TableHead scope="col" className="academic-records-numeric">FINALS</TableHead>
               <TableHead scope="col">STATUS</TableHead>
             </TableRow>
           </TableHeader>
@@ -84,32 +84,35 @@ export function SemesterAcademicRecord({
                 <TableCell colSpan={7}>No subjects are recorded for this semester.</TableCell>
               </TableRow>
             )}
-            {subjects.map((subject) => (
-              <TableRow key={subject.code}>
-                <TableHead scope="row">
-                  {subject.code}
-                </TableHead>
-                <TableCell className="academic-records-subject-title">
-                  {subject.title}
-                </TableCell>
-                <TableCell className="academic-records-muted">{subject.section}</TableCell>
-                <TableCell className="academic-records-numeric academic-records-units">
-                  {subject.units.toFixed(1)}
-                </TableCell>
-                <TableCell className="academic-records-numeric academic-records-muted">{subject.midterm?.toFixed(2) ?? "—"}</TableCell>
-                <TableCell className="academic-records-numeric academic-records-muted">{subject.final?.toFixed(2) ?? "—"}</TableCell>
-                <TableCell className="academic-records-status">
-                  {subject.status}
-                </TableCell>
-              </TableRow>
-            ))}
+            {subjects.map((subject) => {
+              const result = getSubjectGradeResult(subject.midterm, subject.final);
+              return (
+                <TableRow key={subject.code}>
+                  <TableHead scope="row">
+                    {subject.code}
+                  </TableHead>
+                  <TableCell className="academic-records-subject-title">
+                    {subject.title}
+                  </TableCell>
+                  <TableCell className="academic-records-muted">{subject.section}</TableCell>
+                  <TableCell className="academic-records-numeric academic-records-units">
+                    {subject.units.toFixed(1)}
+                  </TableCell>
+                  {[subject.midterm, subject.final].map((grade, index) => (
+                    <TableCell key={index} className="academic-records-numeric academic-records-muted">
+                      {typeof grade === "number" ? grade.toFixed(2) : (grade ?? "—")}
+                    </TableCell>
+                  ))}
+                  <TableCell className="academic-records-status">
+                    {result.status ?? "—"}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
 
         <CardFooter className="academic-records-record-footer">
-          <p id={`${id}-grading-note`} className="academic-records-grading-note">
-            Midterm and final grades combine lecture and laboratory results. — = not yet posted.
-          </p>
           <p className="academic-records-total-units">
             TOTAL · {totalUnits} UNITS
           </p>
