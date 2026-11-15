@@ -32,7 +32,7 @@ export const portalRoleConfig = {
     logoutLabel: "Logout",
   },
   dean: {
-    label: "Dean",
+    label: "College Dean",
     audience: "DEAN",
     navigationLabel: "WORKSPACE",
     navigation: [
@@ -40,7 +40,7 @@ export const portalRoleConfig = {
       { label: "Colleges & Departments", href: "/dean/colleges-and-departments", icon: "colleges" },
       { label: "Faculty Evaluation", href: "/dean/faculty-evaluation", icon: "faculty-evaluation" },
     ],
-    account: { label: "Dean Account", href: "/dean/account" },
+    account: { label: "Account", href: "/dean/account" },
     support: { label: "Dean guide", href: "/dean/guide" },
     logoutLabel: "Logout",
   },
