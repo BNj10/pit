@@ -17,6 +17,7 @@ export type PortalNavigationIcon =
 
 export interface PortalNavigationItem {
   label: string;
+  breadcrumbLabel?: string;
   href: string;
   icon: PortalNavigationIcon;
   exact?: boolean;
