@@ -4437,3 +4437,10 @@
     animation: none;
   }
 }
+
+.supervisor-evaluation-back {
+  flex-shrink: 0;
+  gap: 8px;
+  min-height: 36px;
+  color: var(--foreground);
+}

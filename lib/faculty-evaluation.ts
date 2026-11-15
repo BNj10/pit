@@ -81,3 +81,8 @@ export function nextEvaluationWindowDraft(
     ? { academicYear: nextYear, semester: "first", ...dates }
     : { academicYear: previous.academicYear, semester: previous.semester, ...dates };
 }
+
+export function instructorInitials(name: string) {
+  const parts = name.replace(/^(Dr\.|Engr\.|Prof\.)\s+/i, "").split(/\s+/);
+  return `${parts[0]?.[0] ?? ""}${parts.at(-1)?.[0] ?? ""}`;
+}

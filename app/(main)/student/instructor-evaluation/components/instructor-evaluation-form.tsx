@@ -10,7 +10,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { getEvaluationProgress, validateEvaluationSubmission } from "@/lib/instructor-evaluation";
 import type { EvaluationDraft, InstructorEvaluationFormProps } from "@/types/instructor-evaluation-exports";
-import { LeaveEvaluationDialog } from "./leave-evaluation-dialog";
+import { LeaveEvaluationDialog } from "@/components/shared/faculty-evaluation/leave-evaluation-dialog";
 
 export function InstructorEvaluationForm({
   subject, context, questionnaire, onSubmit,

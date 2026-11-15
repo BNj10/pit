@@ -1,4 +1,6 @@
-export type EvaluationAudience = "student" | "dean";
+export type EvaluationAudience = "student" | "department-chair" | "dean";
+/** Raters who use the supervisor instrument and its benchmark statements. */
+export type SupervisorEvaluationAudience = Exclude<EvaluationAudience, "student">;
 export type EvaluationSemester = "first" | "second";
 export type EvaluationWindowStatus = "Open" | "Scheduled" | "Closed";
 
@@ -131,4 +133,13 @@ export interface InstructorRatingFormProps {
   audience: EvaluationAudience;
   submission?: EvaluationSubmission;
   onSubmitted: () => void;
+}
+
+export interface SupervisorEvaluationProps {
+  instructor: EvaluationInstructor;
+  audience: SupervisorEvaluationAudience;
+  title: string;
+  /** Where the evaluator returns after submitting or when going back. */
+  listHref: string;
+  listLabel: string;
 }

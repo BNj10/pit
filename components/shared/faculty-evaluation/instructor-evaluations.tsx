@@ -26,9 +26,21 @@ import { evaluationTermKey, evaluationTermLabel } from "@/lib/faculty-evaluation
 import type {
   InstructorEvaluationsProps,
   InstructorRatingFormProps,
+  SupervisorEvaluationAudience,
 } from "@/types/faculty-evaluation-types";
 import { useEvaluation } from "./evaluation-provider";
 import { InstructorRatingForm } from "./instructor-rating-form";
+
+const supervisorEvaluationRoutes = {
+  dean: {
+    evaluate: "/dean/faculty-evaluation/instructors/evaluate-faculty",
+    results: "/dean/faculty-evaluation/instructors/faculty-evaluation-results",
+  },
+  "department-chair": {
+    evaluate: "/department-chair/instructor-evaluation/evaluate",
+    results: "/department-chair/instructor-evaluation/results",
+  },
+} as const satisfies Record<SupervisorEvaluationAudience, { evaluate: string; results: string }>;
 
 export function InstructorEvaluationAction({
   instructor,
@@ -38,20 +50,20 @@ export function InstructorEvaluationAction({
   const { window, status } = useEvaluation();
   const [open, setOpen] = useState(false);
 
-  if (audience === "dean" && (submission || status === "Open")) {
+  const routes = audience === "student" ? null : supervisorEvaluationRoutes[audience];
+
+  if (routes && (submission || status === "Open")) {
     return (
       <Button asChild variant="outline" className={`instructor-evaluation-action${submission ? " instructor-evaluation-submitted" : ""}`}>
         <Link
           href={{
-            pathname: submission
-              ? "/dean/faculty-evaluation/instructors/faculty-evaluation-results"
-              : "/dean/faculty-evaluation/instructors/evaluate-faculty",
+            pathname: submission ? routes.results : routes.evaluate,
             query: { instructor: instructor.id },
           }}
           aria-label={`${submission ? "View results for" : "Evaluate"} ${instructor.name}`}
         >
           {submission ? <ChartColumn aria-hidden="true" strokeWidth={1.5} /> : <FilePenLine aria-hidden="true" strokeWidth={1.5} />}
-          {submission ? "View Results" : "Evaluate"}
+          {submission ? "View results" : "Evaluate"}
         </Link>
       </Button>
     );
@@ -72,13 +84,13 @@ export function InstructorEvaluationAction({
           ) : (
             <FilePenLine aria-hidden="true" strokeWidth={1.5} />
           )}
-          {submission ? "View Results" : "Evaluate"}
+          {submission ? "View results" : "Evaluate"}
         </Button>
       </DialogTrigger>
       <DialogContent className="faculty-evaluation-dialog faculty-evaluation-rating-dialog">
         <DialogHeader>
           <DialogTitle>
-            {audience === "dean"
+            {audience !== "student"
               ? "Supervisor’s evaluation of faculty"
               : "Student evaluation of teaching"}
           </DialogTitle>
@@ -128,7 +140,7 @@ export function InstructorEvaluations({ audience }: InstructorEvaluationsProps) 
         <TableHeader>
           <TableRow>
             <TableHead scope="col">Instructor</TableHead>
-            <TableHead scope="col">{audience === "dean" ? "Academic rank" : "Subject"}</TableHead>
+            <TableHead scope="col">{audience !== "student" ? "Academic rank" : "Subject"}</TableHead>
             <TableHead scope="col">Evaluation</TableHead>
             <TableHead scope="col">
               <span className="sr-only">Actions</span>
@@ -149,7 +161,7 @@ export function InstructorEvaluations({ audience }: InstructorEvaluationsProps) 
                   <p className="font-medium">{instructor.name}</p>
                   <p className="faculty-evaluation-help">{instructor.department}</p>
                 </TableCell>
-                <TableCell>{audience === "dean" ? instructor.rank : instructor.subject}</TableCell>
+                <TableCell>{audience !== "student" ? instructor.rank : instructor.subject}</TableCell>
                 <TableCell>{submission ? "Submitted" : "Pending"}</TableCell>
                 <TableCell>
                   <InstructorEvaluationAction

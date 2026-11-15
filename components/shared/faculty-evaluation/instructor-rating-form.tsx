@@ -68,7 +68,7 @@ export function InstructorRatingForm({
               >
                 <legend>
                   {criterion.id}.{" "}
-                  {audience === "dean"
+                  {audience !== "student"
                     ? (criterion.supervisorStatement ?? criterion.statement)
                     : criterion.statement}
                 </legend>

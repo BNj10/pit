@@ -2,7 +2,8 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { Info, Send } from "lucide-react";
+import Link from "next/link";
+import { ArrowLeft, Info, Send } from "lucide-react";
 import { toast } from "sonner";
 
 import { useEvaluation } from "@/components/shared/faculty-evaluation/evaluation-provider";
@@ -12,7 +13,8 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { evaluationTermKey } from "@/lib/faculty-evaluation";
-import type { EvaluationInstructor } from "@/types/faculty-evaluation-types";
+import type { SupervisorEvaluationProps } from "@/types/faculty-evaluation-types";
+import { LeaveEvaluationDialog } from "./leave-evaluation-dialog";
 
 const ratingScale = [
   { value: 5, label: "Always", title: "Always manifested", description: "Behavior is evident in almost all relevant situations." },
@@ -22,13 +24,13 @@ const ratingScale = [
   { value: 1, label: "Never", title: "Never / Rarely manifested", description: "Almost never evident, with only isolated instances." },
 ] as const;
 
-export function SupervisorEvaluation({ instructor }: { instructor: EvaluationInstructor }) {
+export function SupervisorEvaluation({ instructor, audience, title, listHref, listLabel }: SupervisorEvaluationProps) {
   const router = useRouter();
   const { data, window, status, submissions, submitEvaluation } = useEvaluation();
   const currentTerm = window ? evaluationTermKey(window) : null;
   const [term] = useState(currentTerm);
   const submission = submissions.find((item) =>
-    item.term === term && item.instructorId === instructor.id && item.audience === "dean",
+    item.term === term && item.instructorId === instructor.id && item.audience === audience,
   );
   const [ratings, setRatings] = useState<Record<string, number>>({ ...submission?.ratings });
   const [comments, setComments] = useState(submission?.comments ?? "");
@@ -38,10 +40,11 @@ export function SupervisorEvaluation({ instructor }: { instructor: EvaluationIns
   const totalPoints = data.criteria.reduce((sum, criterion) => sum + (ratings[criterion.id] ?? 0), 0);
   const available = status === "Open" && term !== null && term === currentTerm;
   const readOnly = !!submission;
+  const hasUnsavedChanges = !readOnly && (ratedCount > 0 || comments.trim() !== "");
   const instructions = readOnly
     ? "Your submitted evaluation is read-only. Ratings and recommendations are locked."
     : term !== currentTerm
-      ? "The evaluation term has changed. Return to Instructors to evaluate the current term."
+      ? `The evaluation term has changed. Return to ${listLabel} to evaluate the current term.`
       : status === "Closed" || status === "Scheduled"
         ? "Evaluations are unavailable outside the open window. Your answers have been kept on this page."
         : "Review each benchmark and its suggested means of verification. Select one rating for every item using the five-point scale above.";
@@ -52,14 +55,14 @@ export function SupervisorEvaluation({ instructor }: { instructor: EvaluationIns
     const problem = submitEvaluation({
       term,
       instructorId: instructor.id,
-      audience: "dean",
+      audience,
       ratings,
       comments: comments.trim(),
     });
     setError(problem);
     if (!problem) {
       toast.success(`Evaluation submitted for ${instructor.name}.`);
-      router.push("/dean/faculty-evaluation/instructors");
+      router.push(listHref);
     }
   }
 
@@ -67,12 +70,18 @@ export function SupervisorEvaluation({ instructor }: { instructor: EvaluationIns
     <main className="instructor-evaluation-form-content supervisor-evaluation-page" aria-labelledby="supervisor-evaluation-title">
       <header className="instructor-evaluation-form-heading">
         <div>
-          <h2 id="supervisor-evaluation-title">Supervisor’s Evaluation of Faculty</h2>
+          <h2 id="supervisor-evaluation-title">{title}</h2>
           <p>Assess faculty performance using documented evidence and the prescribed five-point rating scale.</p>
         </div>
-        <Badge variant="secondary" className="instructor-evaluation-progress" role="status" aria-live="polite" aria-atomic="true">
-          {ratedCount} of {data.criteria.length} rated
-        </Badge>
+        {readOnly ? (
+          <Button asChild variant="outline" className="supervisor-evaluation-back">
+            <Link href={listHref}><ArrowLeft aria-hidden="true" />Back to {listLabel}</Link>
+          </Button>
+        ) : (
+          <Badge variant="secondary" className="instructor-evaluation-progress" role="status" aria-live="polite" aria-atomic="true">
+            {ratedCount} of {data.criteria.length} rated
+          </Badge>
+        )}
       </header>
 
       <form className="instructor-evaluation-card supervisor-evaluation-instrument" onSubmit={submit}>
@@ -198,6 +207,13 @@ export function SupervisorEvaluation({ instructor }: { instructor: EvaluationIns
           </Button>
         </footer>
       </form>
+      {hasUnsavedChanges && (
+        <LeaveEvaluationDialog onDiscard={() => {
+          setRatings({});
+          setComments("");
+          setError(null);
+        }} />
+      )}
     </main>
   );
 }
