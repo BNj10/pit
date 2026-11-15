@@ -2611,6 +2611,11 @@
   outline-offset: calc(-1 * var(--focus-width));
 }
 
+.portal-scroll-viewport > div {
+  /* Keep Radix's measuring wrapper within the viewport so tables scroll locally. */
+  display: block !important;
+}
+
 .portal-page-content {
   min-height: 100%;
 }
