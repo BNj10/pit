@@ -17,6 +17,7 @@ export function PortalSidebar({
   user,
   activeTerm,
   config = portalRoleConfig[role],
+  account,
   onLogout,
   className,
 }: PortalSidebarProps) {
@@ -45,7 +46,7 @@ export function PortalSidebar({
         <PortalNavigation
           label={config.navigationLabel}
           items={config.navigation}
-          account={config.account}
+          account={account}
           logoutLabel={config.logoutLabel}
           onLogout={onLogout}
           onNavigate={closeNavigation}

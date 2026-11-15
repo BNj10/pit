@@ -41,7 +41,7 @@ const navigationIcons = {
 interface PortalNavigationProps {
   label: string;
   items: readonly PortalNavigationItem[];
-  account: PortalRoleConfig["account"];
+  account?: PortalRoleConfig["account"];
   logoutLabel: string;
   onLogout?: () => void | Promise<void>;
   onNavigate?: () => void;
@@ -59,10 +59,10 @@ export function PortalNavigation({
 }: PortalNavigationProps) {
   const pathname = usePathname();
   const activeItem = getActivePortalItem(pathname, items);
-  const activeHref = isPortalPathActive(pathname, account.href) ? account.href : activeItem?.href;
+  const activeHref = account && isPortalPathActive(pathname, account.href) ? account.href : activeItem?.href;
   const links = [
     ...items.map((item) => ({ ...item, Icon: navigationIcons[item.icon], compactOnly: false })),
-    { ...account, Icon: UserRound, compactOnly: true },
+    ...(account ? [{ ...account, Icon: UserRound, compactOnly: true }] : []),
   ];
 
   return (

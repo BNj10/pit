@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-export type PortalRole = "student" | "department-chair" | "admin";
+export type PortalRole = "student" | "department-chair" | "dean";
 
 export type PortalNavigationIcon =
   | "dashboard"
@@ -57,6 +57,8 @@ export interface PortalSidebarProps {
   user: PortalUser;
   activeTerm: string;
   config?: PortalRoleConfig;
+  /** Optional account link in the mobile navigation; the profile footer uses config.account. */
+  account?: PortalRoleConfig["account"];
   onLogout?: () => void | Promise<void>;
   className?: string;
 }
