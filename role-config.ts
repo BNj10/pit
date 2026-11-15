@@ -38,6 +38,7 @@ export const portalRoleConfig = {
     navigation: [
       { label: "Dashboard", href: "/dean", icon: "dashboard", exact: true },
       { label: "Colleges & Departments", href: "/dean/colleges-and-departments", icon: "colleges" },
+      { label: "Student Records", href: "/dean/student-records", icon: "students" },
       { label: "Faculty Evaluation", href: "/dean/faculty-evaluation", icon: "faculty-evaluation" },
     ],
     account: { label: "Dean Account", href: "/dean/account" },
@@ -46,7 +47,7 @@ export const portalRoleConfig = {
   },
 } as const satisfies Record<PortalRole, PortalRoleConfig>;
 
-export type StudentRecordsRole = "department-chair" | "admin";
+export type StudentRecordsRole = "department-chair" | "dean";
 
 export function getStudentRecordsHref(role: StudentRecordsRole) {
   return `/${role}/student-records` as const;

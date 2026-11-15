@@ -3,5 +3,5 @@ import { getStudentRecordsHref } from "@/role-config";
 import { studentRecordsPreview } from "@/types/student-records-exports";
 
 export default function StudentRecordsPage() {
-  return <StudentRecordsContent data={studentRecordsPreview} recordsHref={`${getStudentRecordsHref("admin")}/grades`} />;
+  return <StudentRecordsContent data={studentRecordsPreview} recordsHref={`${getStudentRecordsHref("dean")}/grades`} />;
 }
