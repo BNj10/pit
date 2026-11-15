@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   classTypeLabels,
   draftFromEntry,
@@ -19,6 +20,7 @@ import {
   validateSectionEntry,
 } from "@/lib/sections";
 import type {
+  FacultyMember,
   SectionClassType,
   SectionEntryDialogProps,
   SectionEntryDraft,
@@ -26,20 +28,24 @@ import type {
 } from "@/types/sections-exports";
 
 const classTypeIcons = { lecture: Presentation, laboratory: FlaskConical } as const;
+// Radix Select reserves the empty string, so "unassigned" stands in for no faculty member.
+const unassignedValue = "unassigned";
 
-function ValidationSummary({ validation, draft, subjectCode }: {
+function ValidationSummary({ validation, draft, subjectCode, faculty }: {
   validation: SectionEntryValidation;
   draft: SectionEntryDraft;
   subjectCode: string;
+  faculty: readonly FacultyMember[];
 }) {
   const typeLabel = classTypeLabels[draft.classType].label.toLocaleLowerCase();
   const overLimit = validation.totalHours !== null && validation.totalHours > validation.hourLimit;
   const problems = [
     ...validation.conflicts.map(({ kind, entry }) => {
       const meeting = `${entry.subjectCode} ${classTypeLabels[entry.classType].short} (${formatSectionSchedule(entry)})`;
-      return kind === "section"
-        ? `${entry.section} already meets for ${meeting}.`
-        : `${entry.room} is already used by ${entry.section} for ${meeting}.`;
+      if (kind === "section") return `${entry.section} already meets for ${meeting}.`;
+      if (kind === "room") return `${entry.room} is already used by ${entry.section} for ${meeting}.`;
+      const name = faculty.find((member) => member.id === entry.facultyId)?.name ?? "This faculty member";
+      return `${name} already teaches ${entry.section} ${meeting}.`;
     }),
     ...(overLimit
       ? [`${draft.section.trim()} ${typeLabel} would total ${formatHours(validation.totalHours ?? 0)} hrs/week; ${subjectCode} allows ${formatHours(validation.hourLimit)}.`]
@@ -71,7 +77,7 @@ function ValidationSummary({ validation, draft, subjectCode }: {
   );
 }
 
-export function SectionEntryDialog({ subject, offering, entry, entries, onClose, onSave }: SectionEntryDialogProps) {
+export function SectionEntryDialog({ subject, offering, entry, entries, faculty, onClose, onSave }: SectionEntryDialogProps) {
   const [draft, setDraft] = useState(() => draftFromEntry(entry));
   const validation = validateSectionEntry(draft, subject, entries, entry?.id);
   const editing = entry !== undefined;
@@ -128,6 +134,26 @@ export function SectionEntryDialog({ subject, offering, entry, entries, onClose,
                 onChange={(event) => update({ capacity: event.target.value })}
               />
             </div>
+          </div>
+
+          <div className="section-entry-field">
+            <Label id="section-entry-faculty-label">Faculty member</Label>
+            <Select
+              value={draft.facultyId || unassignedValue}
+              onValueChange={(value) => update({ facultyId: value === unassignedValue ? "" : value })}
+            >
+              <SelectTrigger className="section-entry-faculty-trigger" aria-labelledby="section-entry-faculty-label">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent position="popper" sideOffset={4} className="section-entry-faculty-menu">
+                <SelectItem value={unassignedValue} className="section-entry-faculty-option">Unassigned</SelectItem>
+                {faculty.map((member) => (
+                  <SelectItem key={member.id} value={member.id} className="section-entry-faculty-option">
+                    {member.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <fieldset className="section-entry-class-type">
@@ -210,7 +236,7 @@ export function SectionEntryDialog({ subject, offering, entry, entries, onClose,
                 <Input
                   id="section-entry-room"
                   value={draft.room}
-                  placeholder="ENG 204"
+                  placeholder="ENG 204 or TBA"
                   autoComplete="off"
                   required
                   onChange={(event) => update({ room: event.target.value })}
@@ -219,7 +245,7 @@ export function SectionEntryDialog({ subject, offering, entry, entries, onClose,
             </div>
           </div>
 
-          <ValidationSummary validation={validation} draft={draft} subjectCode={subject.code} />
+          <ValidationSummary validation={validation} draft={draft} subjectCode={subject.code} faculty={faculty} />
 
           <footer className="section-entry-dialog-actions">
             <DialogClose asChild>

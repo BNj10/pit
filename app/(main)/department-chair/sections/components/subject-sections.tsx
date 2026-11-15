@@ -1,15 +1,25 @@
 "use client";
 
-import { ChevronDown, ChevronRight, Pencil, Plus, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronRight, Lock, LockOpen, Pencil, Plus, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { classTypeLabels, countLabel, describeSectionSchedule, formatSectionSchedule, subjectSectionsId } from "@/lib/sections";
+import {
+  classTypeLabels,
+  countLabel,
+  crossDepartmentAccessState,
+  describeSectionSchedule,
+  describeSubjectUnits,
+  formatSectionSchedule,
+  subjectSectionsId,
+} from "@/lib/sections";
 import type { SubjectSectionsProps } from "@/types/sections-exports";
 
 export function SubjectSections({
   subject,
+  faculty,
   offering,
+  now,
   entries,
   expanded,
   onToggle,
@@ -17,8 +27,11 @@ export function SubjectSections({
   onEdit,
   onDelete,
   onRemove,
+  onEditAccess,
 }: SubjectSectionsProps) {
   const panelId = subjectSectionsId(offering.id);
+  const access = crossDepartmentAccessState(offering.crossDepartmentAccess, now);
+  const AccessIcon = access.isOpen ? LockOpen : Lock;
 
   return (
     <section className="subject-sections" data-expanded={expanded} aria-label={`${subject.code} ${subject.title}`}>
@@ -28,6 +41,7 @@ export function SubjectSections({
             <span className="subject-sections-title">
               <span className="subject-sections-code">{subject.code}</span>
               <span>{subject.title}</span>
+              <span className="subject-sections-units">{describeSubjectUnits(subject)}</span>
             </span>
             <span className="subject-sections-count" data-empty={entries.length === 0}>
               {entries.length === 0 ? "No schedule yet" : countLabel(entries.length, "schedule")}
@@ -35,6 +49,18 @@ export function SubjectSections({
             </span>
           </button>
         </h5>
+        <Button
+          type="button"
+          variant="outline"
+          className="subject-sections-access"
+          data-open={access.isOpen === true}
+          aria-haspopup="dialog"
+          aria-label={`Other departments' access for ${subject.code}: ${access.label}. Change`}
+          onClick={onEditAccess}
+        >
+          <AccessIcon aria-hidden="true" />
+          {access.label}
+        </Button>
         <Button
           type="button"
           variant="ghost"
@@ -66,6 +92,7 @@ export function SubjectSections({
                   <TableHead scope="col">Type</TableHead>
                   <TableHead scope="col">Schedule</TableHead>
                   <TableHead scope="col">Room</TableHead>
+                  <TableHead scope="col">Faculty</TableHead>
                   <TableHead scope="col">Capacity</TableHead>
                   <TableHead scope="col" className="subject-sections-actions">Actions</TableHead>
                 </TableRow>
@@ -84,6 +111,9 @@ export function SubjectSections({
                         <span className="sr-only">{describeSectionSchedule(entry)}</span>
                       </TableCell>
                       <TableCell>{entry.room}</TableCell>
+                      <TableCell className="subject-sections-faculty" data-unassigned={entry.facultyId === null}>
+                        {faculty.find((member) => member.id === entry.facultyId)?.name ?? "Unassigned"}
+                      </TableCell>
                       <TableCell>{entry.capacity}</TableCell>
                       <TableCell className="subject-sections-actions">
                         <div>

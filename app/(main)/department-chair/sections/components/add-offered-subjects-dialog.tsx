@@ -6,7 +6,7 @@ import { Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
-import { countLabel } from "@/lib/sections";
+import { countLabel, describeSubjectUnits } from "@/lib/sections";
 import type { AddOfferedSubjectsDialogProps } from "@/types/sections-exports";
 
 export function AddOfferedSubjectsDialog({ termLabel, yearLabel, subjects, onClose, onAdd }: AddOfferedSubjectsDialogProps) {
@@ -62,7 +62,7 @@ export function AddOfferedSubjectsDialog({ termLabel, yearLabel, subjects, onClo
                     <span className="offered-subjects-copy">
                       <span><strong>{subject.code}</strong> {subject.title}</span>
                       <span>
-                        {subject.units} units · Curriculum: {subject.semester === 1 ? "1st" : "2nd"} semester
+                        {describeSubjectUnits(subject)} · Curriculum: {subject.semester === 1 ? "1st" : "2nd"} semester
                       </span>
                     </span>
                   </label>
