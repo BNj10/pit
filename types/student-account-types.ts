@@ -1,10 +1,4 @@
-export interface StudentContactDetails {
-  currentAddress: string;
-  permanentAddress: string;
-  email: string;
-  mobile: string;
-  photoUrl: string | null;
-}
+import type { AccountProfileDetails } from "./account-types";
 
 export interface StudentAccount {
   readonly name: string;
@@ -14,5 +8,6 @@ export interface StudentAccount {
   readonly status: string;
   readonly batch: string;
   readonly yearLevel: string;
-  contact: StudentContactDetails;
+  /** Initial editable details; saved edits live in the portal AccountProvider. */
+  profile: AccountProfileDetails;
 }

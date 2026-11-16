@@ -9,11 +9,11 @@ export const studentAccountPreview: StudentAccount = {
   status: "Regular",
   batch: "2020–2024",
   yearLevel: "1st Year",
-  contact: {
+  profile: {
     currentAddress: "",
     permanentAddress: "42 Rizal Avenue, Barangay Poblacion, San Pablo City, Laguna 4000",
     email: "alyssa.santos@university.edu",
     mobile: "+63 917 842 1963",
-    photoUrl: null,
+    avatarUrl: null,
   },
 };

@@ -7,14 +7,16 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useAccount } from "@/components/shared/account/account-provider";
 import { cn } from "@/lib/utils";
-import type { StudentAccount, StudentContactDetails } from "@/types/student-account-types";
+import type { AccountProfileDetails } from "@/types/account-types";
+import type { StudentAccount } from "@/types/student-account-types";
 import { ChangePasswordDialog } from "./change-password-dialog";
 import { ProfilePhotoDialog } from "@/components/shared/account/profile-photo-dialog";
 
 export function StudentAccountContent({ account }: { account: StudentAccount }) {
-  const [contact, setContact] = useState(account.contact);
-  const [draft, setDraft] = useState(account.contact);
+  const { details: contact, saveDetails } = useAccount();
+  const [draft, setDraft] = useState(contact);
   const [editing, setEditing] = useState(false);
   const [photoOpen, setPhotoOpen] = useState(false);
   const [notice, setNotice] = useState("");
@@ -23,7 +25,7 @@ export function StudentAccountContent({ account }: { account: StudentAccount }) 
   const photoButtonRef = useRef<HTMLButtonElement>(null);
   const displayed = editing ? draft : contact;
 
-  function updateField(field: keyof StudentContactDetails, value: string | null) {
+  function updateField(field: keyof AccountProfileDetails, value: string | null) {
     setDraft((current) => ({ ...current, [field]: value }));
   }
 
@@ -46,14 +48,14 @@ export function StudentAccountContent({ account }: { account: StudentAccount }) 
 
   function saveProfile(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setContact({
+    saveDetails({
       ...draft,
       currentAddress: draft.currentAddress.trim(),
       permanentAddress: draft.permanentAddress.trim(),
       email: draft.email.trim(),
       mobile: draft.mobile.trim(),
     });
-    setNotice("Profile updated for this preview. Changes reset when you leave or reload this page.");
+    setNotice("Profile updated for this session. Changes reset when you reload the page.");
     finishEditing();
   }
 
@@ -83,10 +85,10 @@ export function StudentAccountContent({ account }: { account: StudentAccount }) 
       <section aria-label="Student identity" className="flex items-center gap-4 rounded-[10px] bg-primary p-5 text-primary-foreground sm:gap-6 sm:p-7">
         {editing ? (
           <button ref={photoButtonRef} type="button" aria-label="Edit profile photo" aria-haspopup="dialog" onClick={() => setPhotoOpen(true)} className="relative shrink-0 rounded-full outline-offset-4 focus-visible:outline-2 focus-visible:outline-primary-foreground">
-            <AccountAvatar photoUrl={displayed.photoUrl} initials={account.initials} />
+            <AccountAvatar photoUrl={displayed.avatarUrl} initials={account.initials} />
             <span className="absolute right-0 bottom-0 flex size-7 items-center justify-center rounded-full border-2 border-primary bg-primary-foreground text-primary"><Camera className="size-3.5" aria-hidden="true" /></span>
           </button>
-        ) : <AccountAvatar photoUrl={displayed.photoUrl} initials={account.initials} />}
+        ) : <AccountAvatar photoUrl={displayed.avatarUrl} initials={account.initials} />}
         <div className="min-w-0">
           <p className="text-xl leading-[1.45] font-semibold wrap-anywhere sm:text-[26px]">{account.name}</p>
           <p className="mt-1.5 text-[13px] leading-[1.45] text-on-primary-muted">Student ID · {account.studentId}</p>
@@ -141,7 +143,7 @@ export function StudentAccountContent({ account }: { account: StudentAccount }) 
         </ChangePasswordDialog>
       </section>
 
-      {photoOpen && <ProfilePhotoDialog photoUrl={draft.photoUrl} onClose={closePhoto} onSave={(photoUrl) => { updateField("photoUrl", photoUrl); closePhoto(); }} />}
+      {photoOpen && <ProfilePhotoDialog photoUrl={draft.avatarUrl} onClose={closePhoto} onSave={(avatarUrl) => { updateField("avatarUrl", avatarUrl); closePhoto(); }} />}
     </form>
   );
 }
