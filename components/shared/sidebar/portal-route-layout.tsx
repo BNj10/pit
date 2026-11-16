@@ -3,8 +3,11 @@
 import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 
-import { DeanAccountProvider, useDeanAccount } from "@/components/shared/account/dean-account-provider";
+import { AccountProvider, useAccount } from "@/components/shared/account/account-provider";
 import { PortalLayout } from "./portal-layout";
+import type { AccountProfileDetails } from "@/types/account-types";
+import { deanProfilePreview } from "@/types/dean-account-mocks";
+import { departmentChairAccountPreview } from "@/types/department-chair-account-mocks";
 import type { PortalRole, PortalUser } from "@/types/sidebar-types";
 
 // Design preview data. Replace with the authenticated role, user, and active term.
@@ -16,7 +19,7 @@ const previewUsers: Record<PortalRole, PortalUser> = {
   },
   "department-chair": {
     name: "Alex Morgan",
-    description: "Student records coordinator",
+    description: "Department Chair",
     initials: "AM",
   },
   dean: {
@@ -26,9 +29,16 @@ const previewUsers: Record<PortalRole, PortalUser> = {
   },
 };
 
-function DeanPortal({ children }: { children: ReactNode }) {
-  const { user } = useDeanAccount();
-  return <PortalLayout role="dean" activeTerm="AY 2025–2026" user={user}>{children}</PortalLayout>;
+// Portals with an account page keep saved profile edits in AccountProvider so
+// the sidebar profile reflects them.
+const previewProfiles: Partial<Record<PortalRole, AccountProfileDetails>> = {
+  "department-chair": departmentChairAccountPreview.profile,
+  dean: deanProfilePreview,
+};
+
+function AccountPortal({ role, children }: { role: PortalRole; children: ReactNode }) {
+  const { user } = useAccount();
+  return <PortalLayout role={role} activeTerm="AY 2025–2026" user={user}>{children}</PortalLayout>;
 }
 
 export function PortalRouteLayout({ children }: { children: ReactNode }) {
@@ -37,11 +47,12 @@ export function PortalRouteLayout({ children }: { children: ReactNode }) {
   const role: PortalRole =
     segment === "department-chair" || segment === "dean" ? segment : "student";
 
-  if (role === "dean") {
+  const profile = previewProfiles[role];
+  if (profile) {
     return (
-      <DeanAccountProvider user={previewUsers.dean}>
-        <DeanPortal>{children}</DeanPortal>
-      </DeanAccountProvider>
+      <AccountProvider key={role} user={previewUsers[role]} initialDetails={profile}>
+        <AccountPortal role={role}>{children}</AccountPortal>
+      </AccountProvider>
     );
   }
 
