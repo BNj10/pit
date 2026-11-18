@@ -3027,6 +3027,638 @@
   }
 }
 
+/* Curriculum management (Department Chair): curricula list and lifecycle dialogs. */
+.portal-scroll-viewport:has(.curriculum-management-page) > div {
+  /* Keep the wide table inside its own scroll region. */
+  display: block !important;
+}
+
+.curriculum-management-page {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--space-5);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.curriculum-page-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+}
+
+.curriculum-page-heading h2 {
+  font-size: 26px;
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.025em;
+  line-height: 1.3;
+}
+
+.curriculum-page-heading p {
+  margin-top: 2px;
+  color: var(--muted-foreground);
+  font-size: 12px;
+}
+
+.curriculum-management-page [data-slot="button"],
+.curriculum-dialog-footer button {
+  min-height: 36px;
+  gap: var(--space-2);
+  border-radius: var(--radius-control);
+  padding-inline: 14px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.curriculum-management-page [data-slot="button"] svg,
+.curriculum-dialog-footer button svg {
+  width: 14px;
+  height: 14px;
+}
+
+.curriculum-management-page [data-slot="button"][data-variant="default"]:hover:not(:disabled),
+.curriculum-dialog-footer button[data-variant="default"]:hover:not(:disabled) {
+  background: var(--primary-hover);
+}
+
+.curriculum-panel {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--card);
+}
+
+.curriculum-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 16px;
+}
+
+.curriculum-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.curriculum-filter {
+  display: inline-flex;
+  min-height: 32px;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-control);
+  padding-inline: 10px;
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+}
+
+.curriculum-filter:hover {
+  background: var(--surface-hover);
+  color: var(--foreground);
+}
+
+/* Same weight as unselected filters so selecting one never shifts the others. */
+.curriculum-filter[aria-pressed="true"] {
+  border-color: var(--border);
+  background: var(--background);
+  color: var(--primary);
+}
+
+.curriculum-filter:focus-visible,
+.curriculum-search > button:focus-visible,
+.curriculum-name:focus-visible,
+.curriculum-panel [data-slot="table-container"]:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.curriculum-filter-count {
+  color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
+}
+
+.curriculum-filter[aria-pressed="true"] .curriculum-filter-count {
+  color: var(--primary);
+}
+
+.curriculum-search {
+  position: relative;
+  width: min(100%, 280px);
+  flex-shrink: 0;
+}
+
+.curriculum-search > svg {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  z-index: 1;
+  width: 15px;
+  height: 15px;
+  transform: translateY(-50%);
+  color: var(--muted-foreground);
+  pointer-events: none;
+}
+
+.curriculum-search [data-slot="input"] {
+  height: 36px;
+  border-radius: var(--radius-control);
+  padding-inline: 34px;
+  font-size: 12px;
+  box-shadow: none;
+}
+
+.curriculum-search input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
+
+.curriculum-search > button {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  display: flex;
+  width: 32px;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-control);
+  color: var(--muted-foreground);
+}
+
+.curriculum-search > button:hover {
+  background: var(--secondary-hover);
+  color: var(--foreground);
+}
+
+.curriculum-search > button > svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Fixed layout keeps columns in place when filters change the visible rows. */
+.curriculum-table {
+  min-width: 880px;
+  table-layout: fixed;
+  font-size: 12px;
+}
+
+.curriculum-table th {
+  height: 52px;
+  padding-inline: 16px;
+  color: var(--text-secondary);
+  font-size: 9px;
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.075em;
+  line-height: 1.5;
+  text-transform: uppercase;
+  white-space: normal;
+}
+
+/* The name column takes the remaining width. */
+.curriculum-table th:nth-child(2) {
+  width: 110px;
+}
+
+.curriculum-table th:nth-child(3) {
+  width: 130px;
+}
+
+.curriculum-table th:nth-child(4) {
+  width: 150px;
+}
+
+/* Two 144px action buttons, their gap, and the cell padding. */
+.curriculum-table th:nth-child(5) {
+  width: 328px;
+}
+
+.curriculum-table td {
+  padding: 16px;
+}
+
+.curriculum-table tbody tr {
+  border-color: var(--border);
+}
+
+.curriculum-table tbody tr:hover {
+  background: var(--surface-hover);
+}
+
+.curriculum-identity {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.curriculum-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 2px;
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: var(--weight-semibold);
+  white-space: normal;
+}
+
+.curriculum-name:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.curriculum-name svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.curriculum-code,
+.curriculum-units {
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+
+.curriculum-academic-year {
+  font-variant-numeric: tabular-nums;
+}
+
+.curriculum-status {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: var(--weight-semibold);
+}
+
+.curriculum-status[data-status="Draft"] {
+  border-color: var(--warning-border);
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+
+.curriculum-status[data-status="Active"] {
+  border-color: var(--success-border);
+  background: var(--success-soft);
+  color: var(--success);
+}
+
+.curriculum-status[data-status="Archived"] {
+  border-color: var(--border);
+  background: var(--muted);
+  color: var(--text-secondary);
+}
+
+.curriculum-actions-cell {
+  text-align: right;
+}
+
+.curriculum-actions {
+  display: inline-grid;
+  grid-template-columns: repeat(2, 144px);
+  justify-content: end;
+  gap: 8px;
+}
+
+/* A single action sits in the right-hand column, as in the design. */
+.curriculum-actions > :only-child {
+  grid-column: 2;
+}
+
+.curriculum-management-page .curriculum-actions [data-slot="button"] {
+  width: 100%;
+}
+
+.curriculum-management-page .curriculum-actions [data-slot="button"]:hover:not(:disabled) {
+  background: var(--primary-soft);
+}
+
+.curriculum-management-page .curriculum-actions .curriculum-delete-action {
+  color: var(--destructive);
+}
+
+.curriculum-management-page .curriculum-actions .curriculum-delete-action:hover:not(:disabled) {
+  border-color: var(--destructive-border);
+  background: var(--destructive-soft);
+  color: var(--destructive);
+}
+
+/* Empty and no-match states for the curricula and subjects tables. */
+.curriculum-empty {
+  display: flex;
+  min-height: 300px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+  white-space: normal;
+}
+
+.curriculum-empty-icon {
+  display: inline-flex;
+  width: 56px;
+  height: 56px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+  border-radius: 999px;
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.curriculum-empty-icon svg {
+  width: 26px;
+  height: 26px;
+  stroke-width: 1.75;
+}
+
+.curriculum-empty h3 {
+  margin-bottom: 6px;
+  color: var(--foreground);
+  font-size: 16px;
+  font-weight: var(--weight-semibold);
+  line-height: 1.4;
+}
+
+.curriculum-empty p {
+  max-width: 360px;
+  margin-bottom: 22px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+/* The empty row is not a record, so it keeps the panel background on hover. */
+.curriculum-table tbody tr:has(.curriculum-empty):hover,
+.subject-table tbody tr:has(.curriculum-empty):hover {
+  background: transparent;
+}
+
+.curriculum-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-top: 1px solid var(--border);
+  padding: 14px 16px;
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.curriculum-status-guide h3 {
+  margin-bottom: 4px;
+  font-size: 13px;
+  font-weight: var(--weight-semibold);
+}
+
+.curriculum-status-guide p {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.curriculum-dialog {
+  width: min(440px, calc(100vw - 32px));
+  max-width: calc(100vw - 32px);
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-dialog);
+  padding: 0;
+  background: var(--background);
+  box-shadow: var(--shadow-dialog);
+}
+
+.curriculum-confirm-dialog {
+  width: min(400px, calc(100vw - 32px));
+}
+
+.curriculum-dialog-header {
+  gap: 6px;
+  padding: var(--space-5) 48px 0 var(--space-5);
+}
+
+.curriculum-dialog-header [data-slot="dialog-title"] {
+  font-size: 20px;
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.02em;
+}
+
+.curriculum-dialog-header [data-slot="dialog-description"] {
+  font-size: 12px;
+}
+
+.curriculum-dialog-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: var(--space-5);
+}
+
+.curriculum-summary-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 12px 14px;
+}
+
+.curriculum-summary-label {
+  margin-bottom: 4px;
+  color: var(--muted-foreground);
+  font-size: 9px;
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.curriculum-summary-title {
+  font-size: 13px;
+  font-weight: var(--weight-semibold);
+}
+
+.curriculum-summary-detail {
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+
+.curriculum-summary-title + .curriculum-summary-detail {
+  margin-top: 4px;
+}
+
+.curriculum-field {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.curriculum-field > label {
+  font-size: 12px;
+  font-weight: var(--weight-medium);
+}
+
+.curriculum-field > label span {
+  color: var(--destructive);
+}
+
+.curriculum-field [data-slot="input"] {
+  height: 38px;
+  font-size: 12px;
+}
+
+.curriculum-field [data-slot="input"]:read-only {
+  background: var(--muted);
+  color: var(--text-secondary);
+}
+
+.curriculum-field [data-slot="textarea"] {
+  min-height: 64px;
+  font-size: 12px;
+}
+
+/* Sit helper and error text close to their input (4px with the field gap). */
+.curriculum-field .field-help,
+.curriculum-field .field-error {
+  margin-top: -2px;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.curriculum-field-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: var(--space-4);
+}
+
+.curriculum-dialog-note {
+  color: var(--text-secondary);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.curriculum-impact {
+  border: 1px solid;
+  border-radius: var(--radius-card);
+  padding: 12px 14px;
+  font-size: 11px;
+}
+
+.curriculum-impact-title {
+  margin-bottom: 4px;
+  font-size: 13px;
+  font-weight: var(--weight-semibold);
+}
+
+.curriculum-impact[data-tone="preserve"] {
+  border-color: var(--success-border);
+  background: var(--success-soft);
+  color: var(--primary);
+}
+
+.curriculum-impact[data-tone="destroy"] {
+  border-color: var(--destructive-border);
+  background: var(--destructive-soft);
+  color: var(--destructive);
+}
+
+.curriculum-dialog-footer {
+  flex-direction: row;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin: 0;
+  border-top: 1px solid var(--border);
+  padding: var(--space-4) var(--space-5);
+  background: var(--background);
+}
+
+.curriculum-dialog .curriculum-delete-confirm {
+  background: var(--destructive);
+  color: var(--destructive-foreground);
+}
+
+.curriculum-dialog .curriculum-delete-confirm:hover:not(:disabled) {
+  background: var(--destructive);
+  filter: brightness(0.92);
+}
+
+@media (max-width: 767px) {
+  .curriculum-page-heading {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-4);
+  }
+
+  .curriculum-page-heading h2 {
+    font-size: 23px;
+  }
+
+  .curriculum-management-page [data-slot="button"],
+  .curriculum-dialog-footer button {
+    min-height: 44px;
+  }
+
+  .curriculum-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .curriculum-filter {
+    min-height: 44px;
+  }
+
+  .curriculum-search {
+    width: 100%;
+  }
+
+  .curriculum-search [data-slot="input"],
+  .curriculum-field [data-slot="input"] {
+    height: 44px;
+    font-size: 16px;
+  }
+
+  .curriculum-field [data-slot="textarea"] {
+    font-size: 16px;
+  }
+
+  .curriculum-search > button {
+    width: 40px;
+    height: 40px;
+  }
+
+  .curriculum-table-empty {
+    min-width: 0;
+  }
+
+  .curriculum-table-empty thead {
+    display: none;
+  }
+
+  .curriculum-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .curriculum-field-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .curriculum-dialog-footer {
+    flex-direction: column-reverse;
+  }
+}
+
 /* Instructor Evaluation: subject list from design node aZqQL. */
 .portal-page-content:has(> .instructor-evaluation-content) {
   padding: var(--space-6);
