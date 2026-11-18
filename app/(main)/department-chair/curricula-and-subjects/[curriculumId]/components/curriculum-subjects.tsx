@@ -294,7 +294,6 @@ export function CurriculumSubjects({ curriculumId }: { curriculumId: string }) {
             ? `Showing ${termSubjects.length} ${termSubjects.length === 1 ? "subject" : "subjects"} in ${termNoun}`
             : `Showing ${visible.length} of ${termSubjects.length} subjects in ${termNoun}`}
         </p>
-        <p>LEC / LAB = lecture / laboratory units</p>
       </footer>
     </>
   );
