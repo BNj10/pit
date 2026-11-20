@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -16,6 +16,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 import { getActivePortalItem, isPortalPathActive, portalRoleConfig } from "@/role-config";
+import { PortalBreadcrumbContext, type PortalBreadcrumbOverride } from "./portal-breadcrumb";
 import { PortalSidebar } from "./portal-sidebar";
 import { PortalHeader } from "./portal-header";
 import type { PortalLayoutProps } from "@/types/sidebar-types";
@@ -26,6 +27,7 @@ export function PortalLayout({
   ...sidebarProps
 }: PortalLayoutProps) {
   const pathname = usePathname();
+  const [breadcrumbOverride, setBreadcrumbOverride] = useState<PortalBreadcrumbOverride | null>(null);
   const config = sidebarProps.config ?? portalRoleConfig[sidebarProps.role];
   const activeItem = getActivePortalItem(pathname, config.navigation);
   const currentItem = isPortalPathActive(pathname, config.account.href)
@@ -48,6 +50,11 @@ export function PortalLayout({
         href: `/${segments.slice(0, index + 1).join("/")}`,
       });
     }
+  }
+
+  // A page may name its own crumb; ignore a label left over from another path.
+  if (breadcrumbOverride?.pathname === pathname) {
+    breadcrumbs[breadcrumbs.length - 1].label = breadcrumbOverride.label;
   }
 
   const title = breadcrumbs[breadcrumbs.length - 1].label;
@@ -99,7 +106,9 @@ export function PortalLayout({
             }}
           >
             <div className="portal-page-content page-container">
-              {children}
+              <PortalBreadcrumbContext.Provider value={setBreadcrumbOverride}>
+                {children}
+              </PortalBreadcrumbContext.Provider>
             </div>
           </ScrollArea>
         </SidebarInset>

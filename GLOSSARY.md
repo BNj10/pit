@@ -35,6 +35,28 @@ An academic unit made up of departments.
 **Department**:
 An academic unit within a college. Each department is run by one Department Chair.
 
+**Degree program**:
+A course of study a student completes for a degree, such as Bachelor of Science in Computer Science, owned by one department. Each Department Chair manages one assigned degree program.
+_Avoid_: Course (when meaning the whole program)
+
+## Curricula
+
+**Curriculum**:
+The set of subjects a degree program requires, identified by its curriculum year (one curriculum per year in a program) and a code such as BSCS-2026. Its year implemented is the year it takes effect, with no set end; it may be several years after its curriculum year. A program may have several active curricula at once for different student cohorts.
+
+**Subject**:
+A course of study listed in one curriculum for one year level and term (1st semester, 2nd semester, or Summer), identified by a code unique within that curriculum. It records lecture, laboratory, and total units separately; no rule derives one from the others. Subjects can be added, edited, or deleted only while their curriculum is a draft.
+_Avoid_: Course (when meaning one subject)
+
+**Prerequisite**:
+A subject that must come before another, always from an earlier term in the same curriculum. A subject that another subject requires cannot be deleted or moved to that subject's term or later.
+
+**Corequisite**:
+A subject taken together with another in the same term of the same curriculum. The relation is mutual.
+
+**Curriculum status**:
+Draft, Active, or Archived. Only a draft can be edited. A Department Chair activates a draft directly, with no approval step; deactivating returns an active curriculum to draft. Archiving a draft makes it and its subjects read-only until restored to draft. A draft or archived curriculum can be permanently deleted with its subjects; an active one cannot.
+
 ## Calendar
 
 **Academic term**:
