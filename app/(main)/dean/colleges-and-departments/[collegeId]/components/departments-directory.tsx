@@ -36,18 +36,18 @@ function DepartmentsDirectoryContent({ college, departments, onCreateDepartment,
         <DirectorySelect label="Department order" value={order} onChange={(value) => { setOrder(value); setPage(1); }} className="w-full lg:w-[148px] lg:shrink-0" options={[{ value: "default", label: "Default order" }, { value: "az", label: "Name A–Z" }, { value: "za", label: "Name Z–A" }]} />
       </div>
       <section aria-label="Departments" className="overflow-hidden rounded-lg border border-border">
-        <h3 className="flex h-12 items-center bg-primary-soft px-6 text-[11px] font-semibold tracking-wide text-primary">DEPARTMENTS</h3>
+        <h3 className="flex h-10 items-center bg-primary-soft px-6 text-[11px] font-semibold tracking-wide text-primary">DEPARTMENTS</h3>
         <ul>
           {filtered.slice((currentPage - 1) * 5, currentPage * 5).map((department) => (
-            <li key={department.id} className="flex min-h-[110px] flex-wrap items-center gap-[18px] border-t border-border px-4 py-5 md:px-6">
-              <span className="flex size-[46px] shrink-0 items-center justify-center overflow-hidden rounded-lg bg-primary-soft text-primary">
-                {department.logoUrl ? <Image src={department.logoUrl} alt="" width={46} height={46} unoptimized className="size-full object-contain" /> : <DirectoryIcon name={department.icon} className="size-[22px]" />}
+            <li key={department.id} className="flex min-h-16 flex-wrap items-center gap-3 border-t border-border px-4 py-3 md:px-6">
+              <span className="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-primary-soft text-primary">
+                {department.logoUrl ? <Image src={department.logoUrl} alt="" width={36} height={36} unoptimized className="size-full object-contain" /> : <DirectoryIcon name={department.icon} className="size-[18px]" />}
               </span>
-              <h4 className="min-w-0 flex-1 basis-40 text-base font-semibold">{department.name}</h4>
-              <div className="flex w-full gap-2 lg:w-[328px]">
-                <Button type="button" variant="outline" onClick={() => onViewFaculty(department.id)} aria-label={`View faculty in ${department.name}`} className="h-10 flex-1 gap-2 rounded-md text-[13px]"><Users aria-hidden="true" className="text-muted-foreground" />Faculty</Button>
-                <Button type="button" variant="outline" onClick={() => onViewStudents(department.id)} aria-label={`View students in ${department.name}`} className="h-10 flex-1 gap-2 rounded-md text-[13px]"><GraduationCap aria-hidden="true" className="text-muted-foreground" />Students</Button>
-                <Button type="button" variant="outline" onClick={() => onEditDepartment(department.id)} aria-label={`Edit ${department.name}`} className="h-10 flex-1 gap-2 rounded-md text-[13px]"><Pencil aria-hidden="true" className="text-muted-foreground" />Edit</Button>
+              <h4 className="min-w-0 flex-1 basis-40 text-sm font-semibold">{department.name}</h4>
+              <div className="flex w-full gap-2 lg:w-[264px]">
+                <Button type="button" variant="outline" onClick={() => onViewFaculty(department.id)} aria-label={`View faculty in ${department.name}`} className="h-10 flex-1 gap-1.5 rounded-md text-xs lg:h-8"><Users aria-hidden="true" className="size-3.5 text-muted-foreground" />Faculty</Button>
+                <Button type="button" variant="outline" onClick={() => onViewStudents(department.id)} aria-label={`View students in ${department.name}`} className="h-10 flex-1 gap-1.5 rounded-md text-xs lg:h-8"><GraduationCap aria-hidden="true" className="size-3.5 text-muted-foreground" />Students</Button>
+                <Button type="button" variant="outline" onClick={() => onEditDepartment(department.id)} aria-label={`Edit ${department.name}`} className="h-10 flex-1 gap-1.5 rounded-md text-xs lg:h-8"><Pencil aria-hidden="true" className="size-3.5 text-muted-foreground" />Edit</Button>
               </div>
             </li>
           ))}
