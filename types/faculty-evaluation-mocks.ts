@@ -67,8 +67,16 @@ function historicalInstructorResults(
 // These are not institutional records, an authenticated faculty assignment,
 // or an approved evaluation policy. Replace through the same data contract.
 export const facultyEvaluationPreview: FacultyEvaluationData = {
-  // No window has been created yet; the dean starts from the empty state.
-  window: null,
+  // Preview window for the term the sample submissions and reports use, so the
+  // chair and dean rosters can be evaluated. Set to null to preview the dean's
+  // "no window yet" empty state. After closesAt passes, the window shows as Closed.
+  window: {
+    academicYear: "2026–2027",
+    semester: "first",
+    opensAt: "2026-08-01T08:00",
+    closesAt: "2027-01-31T17:00",
+    manuallyClosed: false,
+  },
   academicYears: ["2025–2026", "2026–2027"],
   currentAcademicYear: "2025–2026",
   departments: [
@@ -263,3 +271,6 @@ export const facultyEvaluationPreview: FacultyEvaluationData = {
     },
   ],
 };
+
+/** Preview fixture: the signed-in chair's department until sessions are implemented. */
+export const departmentChairEvaluationPreviewDepartment = "Electrical Engineering";

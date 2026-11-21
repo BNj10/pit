@@ -26,6 +26,7 @@ export const portalRoleConfig = {
       { label: "Student Records", href: "/department-chair/student-records", icon: "students" },
       { label: "Sections", href: "/department-chair/sections", icon: "sections" },
       { label: "Enrollment Management", href: "/department-chair/enrollment-management", icon: "enrollment-management" },
+      { label: "Instructor Evaluation", href: "/department-chair/instructor-evaluation", icon: "evaluation" },
     ],
     account: { label: "Department Chair Account", href: "/department-chair/account" },
     support: { label: "Department Chair guide", href: "/department-chair/guide" },
@@ -38,6 +39,7 @@ export const portalRoleConfig = {
     navigation: [
       { label: "Dashboard", href: "/dean", icon: "dashboard", exact: true },
       { label: "Colleges & Departments", href: "/dean/colleges-and-departments", icon: "colleges" },
+      { label: "Student Records", href: "/dean/student-records", icon: "students" },
       { label: "Faculty Evaluation", href: "/dean/faculty-evaluation", icon: "faculty-evaluation" },
     ],
     account: { label: "Account", href: "/dean/account" },
@@ -45,6 +47,12 @@ export const portalRoleConfig = {
     logoutLabel: "Logout",
   },
 } as const satisfies Record<PortalRole, PortalRoleConfig>;
+
+export type StudentRecordsRole = "department-chair" | "dean";
+
+export function getStudentRecordsHref(role: StudentRecordsRole) {
+  return `/${role}/student-records` as const;
+}
 
 function normalizePath(path: string) {
   return path.replace(/\/+$/, "") || "/";

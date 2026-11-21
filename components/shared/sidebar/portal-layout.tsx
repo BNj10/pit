@@ -35,9 +35,12 @@ export function PortalLayout({
     : isPortalPathActive(pathname, config.support.href)
       ? config.support
       : activeItem;
+  const currentLabel = currentItem === activeItem
+    ? activeItem?.breadcrumbLabel ?? activeItem?.label
+    : currentItem?.label;
   const breadcrumbs = [
     { label: config.label, href: config.navigation[0]?.href ?? `/${sidebarProps.role}` },
-    { label: currentItem?.label ?? config.label, href: currentItem?.href ?? pathname },
+    { label: currentLabel ?? config.label, href: currentItem?.href ?? pathname },
   ];
 
   if (currentItem) {
