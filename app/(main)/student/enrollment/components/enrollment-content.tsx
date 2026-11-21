@@ -14,7 +14,10 @@ import {
   Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { findEnrollmentScheduleConflict, formatEnrollmentSchedule, getEnrollmentSubmissionIssue, getEnrollmentTotalUnits } from "@/lib/enrollment";
+import {
+  describeEnrollmentSlots, findEnrollmentScheduleConflict, formatEnrollmentSchedule, formatEnrollmentSlots,
+  getEnrollmentSubmissionIssue, getEnrollmentTotalUnits, isEnrollmentOfferingAvailable,
+} from "@/lib/enrollment";
 import type { EnrollmentData, EnrollmentDialogIssue, EnrollmentOffering } from "@/types/enrollment-types";
 import { EnrollmentSubmitted } from "./enrollment-submitted";
 import { EnrollmentValidationDialog } from "./enrollment-validation-dialog";
@@ -38,7 +41,7 @@ const SEARCH_FIELD_ITEM_CLASS = "py-2 pr-8 pl-2.5 text-xs data-[state=checked]:f
 type SearchField = (typeof SEARCH_FIELDS)[number]["value"];
 
 export function EnrollmentContent({
-  term, unitLimit, offerings, initialEnrollmentIds, initialSelectedIds, requirementIssues,
+  term, unitLimit, offerings, initialEnrollmentIds, initialSelectedIds, requirementIssues, fullOnSubmitIds,
 }: EnrollmentData) {
   const [search, setSearch] = useState("");
   const [searchField, setSearchField] = useState<SearchField>("all");
@@ -51,7 +54,7 @@ export function EnrollmentContent({
   const enrolledSubjectCodes = new Set(enrollment.map((offering) => offering.code));
   const [selectedIds, setSelectedIds] = useState<readonly string[]>(() => initialSelectedIds.filter((id) => {
     const offering = offerings.find((item) => item.id === id);
-    return offering && !enrolledSubjectCodes.has(offering.code);
+    return offering && !enrolledSubjectCodes.has(offering.code) && isEnrollmentOfferingAvailable(offering);
   }));
   const [message, setMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -98,7 +101,7 @@ export function EnrollmentContent({
   }
 
   function toggleOffering(offering: EnrollmentOffering) {
-    if (enrolledSubjectCodes.has(offering.code)) return;
+    if (enrolledSubjectCodes.has(offering.code) || !isEnrollmentOfferingAvailable(offering)) return;
     const id = offering.id;
     setSelectedIds((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
     setMessage("");
@@ -118,7 +121,7 @@ export function EnrollmentContent({
       setPage(Math.floor(Math.max(0, offerings.findIndex((offering) => offering.id === id)) / OFFERINGS_PER_PAGE) + 1);
       validationFocusRef.current = () => (document.getElementById(`enrollment-offering-${id}`) ?? searchRef.current)?.focus();
     } else {
-      const id = validationIssue.requirements[0]?.offeringId;
+      const id = validationIssue.type === "requirements" ? validationIssue.requirements[0]?.offeringId : validationIssue.offerings[0]?.id;
       validationFocusRef.current = () => (document.getElementById(`enrollment-remove-${id}`) ?? summaryTitleRef.current)?.focus();
     }
     setValidationIssue(null);
@@ -154,7 +157,7 @@ export function EnrollmentContent({
 
   function submitEnrollment(event: MouseEvent<HTMLButtonElement>) {
     if (enrollment.length === 0) return;
-    const issue = getEnrollmentSubmissionIssue(enrollment, unitLimit, requirementIssues);
+    const issue = getEnrollmentSubmissionIssue(enrollment, unitLimit, requirementIssues, fullOnSubmitIds);
     if (issue) {
       if (issue.type === "unit-limit") {
         setMessage(`Your load is ${issue.totalUnits} units, above the ${issue.unitLimit}-unit limit. Remove subjects from your summary before submitting.`);
@@ -230,18 +233,19 @@ export function EnrollmentContent({
           </div>
           <Table
             id="enrollment-offerings-table"
-            className="min-w-[742px] table-fixed"
+            className="min-w-206.5 table-fixed"
             aria-labelledby="enrollment-offerings-title"
             containerProps={{ ref: offeringsRef, role: "region", "aria-label": "Available offerings; scroll horizontally to view all columns", tabIndex: 0, className: "table-scroll focus-visible:-outline-offset-2" }}
           >
             <colgroup>
-              <col /><col className="w-[84px]" /><col className="w-[140px]" />
+              <col /><col className="w-[84px]" /><col className="w-21" /><col className="w-[140px]" />
               <col className="w-[84px]" /><col className="w-16" /><col className="w-[60px]" />
             </colgroup>
             <TableHeader className="bg-muted">
               <TableRow className="h-14 hover:bg-transparent [&_th]:h-14 [&_th]:px-1.5 [&_th]:text-xs [&_th]:leading-[1.4] [&_th]:font-semibold [&_th]:text-muted-foreground">
                 <TableHead scope="col" className="pl-5!">Code / Subject title</TableHead>
                 <TableHead scope="col">Section</TableHead>
+                <TableHead scope="col">Slots</TableHead>
                 <TableHead scope="col">Schedule</TableHead><TableHead scope="col">Room(s)</TableHead>
                 <TableHead scope="col">Lec/Lab</TableHead><TableHead scope="col" className="pr-5!">Units</TableHead>
               </TableRow>
@@ -249,13 +253,16 @@ export function EnrollmentContent({
             <TableBody>
               {visibleOfferings.map((offering) => {
                 const alreadyAdded = enrolledSubjectCodes.has(offering.code);
-                const selected = !alreadyAdded && selectedIds.includes(offering.id);
+                const unavailable = !alreadyAdded && !isEnrollmentOfferingAvailable(offering);
+                const disabled = alreadyAdded || unavailable;
+                const selected = !disabled && selectedIds.includes(offering.id);
+                const status = alreadyAdded ? "Already added" : !unavailable ? "Select" : offering.slots.status === "reserved" ? "Reserved" : "Full";
                 return (
                   <TableRow
                     key={offering.id}
                     data-selected={selected || undefined}
-                    data-disabled={alreadyAdded || undefined}
-                    aria-disabled={alreadyAdded || undefined}
+                    data-disabled={disabled || undefined}
+                    aria-disabled={disabled || undefined}
                     className="h-[104px] cursor-pointer [&_td]:px-1.5 [&_td]:py-4 [&_td]:text-xs [&_td]:leading-[1.55] data-selected:bg-primary data-selected:text-primary-foreground data-selected:hover:bg-primary hover:bg-surface-hover data-disabled:cursor-not-allowed data-disabled:bg-border/50 data-disabled:text-muted-foreground data-disabled:hover:bg-border/50 data-disabled:[&_td]:opacity-60"
                     onClick={(event) => {
                       if (!(event.target instanceof Element) || !event.target.closest("button")) toggleOffering(offering);
@@ -265,8 +272,8 @@ export function EnrollmentContent({
                       <button
                         id={`enrollment-offering-${offering.id}`}
                         type="button"
-                        disabled={alreadyAdded}
-                        aria-label={`${alreadyAdded ? "Already added" : "Select"} ${offering.code}, ${offering.title}, ${offering.section}`}
+                        disabled={disabled}
+                        aria-label={`${status} ${offering.code}, ${offering.title}, ${offering.section}`}
                         aria-pressed={selected}
                         onClick={() => toggleOffering(offering)}
                         className="flex min-h-11 w-full cursor-pointer flex-col gap-2 rounded-sm text-left leading-[1.55] font-normal whitespace-normal outline-offset-4 focus-visible:outline-2 focus-visible:outline-current disabled:cursor-not-allowed disabled:text-muted-foreground/60"
@@ -276,6 +283,10 @@ export function EnrollmentContent({
                       </button>
                     </TableHead>
                     <TableCell>{offering.section}</TableCell>
+                    <TableCell className="whitespace-pre-line">
+                      <span aria-hidden="true">{formatEnrollmentSlots(offering.slots)}</span>
+                      <span className="sr-only">{describeEnrollmentSlots(offering.slots)}</span>
+                    </TableCell>
                     <TableCell className="whitespace-pre-line">{formatEnrollmentSchedule(offering.meetings)}</TableCell>
                     <TableCell className="whitespace-pre-line">{offering.rooms}</TableCell>
                     <TableCell>{offering.lectureUnits.toFixed(1)}/{offering.labUnits.toFixed(1)}</TableCell>
@@ -284,7 +295,7 @@ export function EnrollmentContent({
                 );
               })}
               {filteredOfferings.length === 0 && (
-                <TableRow className="hover:bg-transparent"><TableCell colSpan={6} className="px-5 py-10 text-center text-sm text-muted-foreground">No subjects match your search.</TableCell></TableRow>
+                <TableRow className="hover:bg-transparent"><TableCell colSpan={7} className="px-5 py-10 text-center text-sm text-muted-foreground">No subjects match your search.</TableCell></TableRow>
               )}
             </TableBody>
           </Table>

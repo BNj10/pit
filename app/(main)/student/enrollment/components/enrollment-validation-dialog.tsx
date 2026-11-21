@@ -15,15 +15,32 @@ interface EnrollmentValidationDialogProps {
   onReturnFocus: () => void;
 }
 
+function getDialogText(issue: EnrollmentDialogIssue) {
+  switch (issue.type) {
+    case "requirements":
+      return {
+        title: "Subject requirements not met",
+        description: "Some selected subjects have unmet requirements. Review the prerequisites and corequisites before submitting again.",
+      };
+    case "slots-full":
+      return {
+        title: "No slots left",
+        description: "These subjects filled before you submitted. Remove them from your summary or choose another section, then submit again.",
+      };
+    case "schedule-conflict":
+      return {
+        title: "These schedules overlap",
+        description: `${issue.selected.code} · ${issue.selected.section} overlaps a subject in your enrollment summary. Choose a different section before trying again.`,
+      };
+  }
+}
+
 export function EnrollmentValidationDialog({
   issue, offerings, onClose, onReview, onReturnFocus,
 }: EnrollmentValidationDialogProps) {
   if (!issue) return null;
 
-  const title = issue.type === "requirements" ? "Subject requirements not met" : "These schedules overlap";
-  const description = issue.type === "requirements"
-    ? "Some selected subjects have unmet requirements. Review the prerequisites and corequisites before submitting again."
-    : `${issue.selected.code} · ${issue.selected.section} overlaps a subject in your enrollment summary. Choose a different section before trying again.`;
+  const { title, description } = getDialogText(issue);
 
   return (
     <Dialog open onOpenChange={(open) => { if (!open) onClose(); }}>
@@ -53,6 +70,17 @@ export function EnrollmentValidationDialog({
           </ul>
         )}
 
+        {issue.type === "slots-full" && (
+          <ul className="overflow-hidden rounded-lg border border-border" aria-label="Subjects with no slots left">
+            {issue.offerings.map((offering) => (
+              <li key={offering.id} className="space-y-1 border-t border-border px-4 py-3 first:border-t-0 first:bg-destructive-soft/40">
+                <p className="text-xs leading-[1.45] font-semibold text-destructive">No slots left</p>
+                <p className="text-xs leading-[1.45] font-semibold">{offering.code} · {offering.section} · {offering.title}</p>
+              </li>
+            ))}
+          </ul>
+        )}
+
         {issue.type === "schedule-conflict" && (
           <div className="overflow-hidden rounded-lg border border-border">
             {[
@@ -73,7 +101,7 @@ export function EnrollmentValidationDialog({
         <div className="flex flex-wrap justify-end gap-2.5">
           <DialogClose asChild><Button type="button" variant="outline" className="h-10 rounded-md px-4 text-xs font-semibold">{issue.type === "schedule-conflict" ? "Cancel" : "Close"}</Button></DialogClose>
           <Button type="button" className="h-10 rounded-md px-4 text-xs font-semibold" onClick={onReview}>
-            {issue.type === "requirements" ? "Review subjects" : "Review sections"}
+            {issue.type === "schedule-conflict" ? "Review sections" : "Review subjects"}
           </Button>
         </div>
         <DialogClose asChild>

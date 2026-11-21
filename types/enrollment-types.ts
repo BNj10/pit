@@ -5,6 +5,18 @@ export interface EnrollmentMeeting {
   end: number;
 }
 
+/**
+ * Server-resolved for the signed-in student; one count per section (lecture and lab together).
+ * available = capacity − students holding a slot (Pending review, Returned, Approved, Enrolled).
+ * A slot this student already holds, e.g. while Returned, counts as available to them.
+ * "reserved" when the student is outside the offering department and the Department Chair's
+ * cross-department access is not open yet; opensAt null means own department only.
+ */
+export type EnrollmentSlots =
+  | { status: "open"; available: number; capacity: number }
+  /** opensAt: ISO 8601 with a +08:00 offset. */
+  | { status: "reserved"; opensAt: string | null };
+
 export interface EnrollmentOffering {
   id: string;
   code: string;
@@ -15,6 +27,7 @@ export interface EnrollmentOffering {
   lectureUnits: number;
   labUnits: number;
   meetings: readonly EnrollmentMeeting[];
+  slots: EnrollmentSlots;
 }
 
 // Requirement failures must come from confirmed curriculum/academic-record data.
@@ -27,6 +40,7 @@ export interface EnrollmentRequirementIssue {
 
 export type EnrollmentValidationIssue =
   | { type: "requirements"; requirements: readonly EnrollmentRequirementIssue[] }
+  | { type: "slots-full"; offerings: readonly EnrollmentOffering[] }
   | { type: "unit-limit"; totalUnits: number; unitLimit: number }
   | {
     type: "schedule-conflict";
@@ -45,4 +59,9 @@ export interface EnrollmentData {
   initialEnrollmentIds: readonly string[];
   initialSelectedIds: readonly string[];
   requirementIssues?: readonly EnrollmentRequirementIssue[];
+  /**
+   * Preview only: offerings the submit action will report as filled by other students.
+   * Replace with the submit action's response when enrollment is connected.
+   */
+  fullOnSubmitIds?: readonly string[];
 }
