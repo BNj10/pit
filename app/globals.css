@@ -393,6 +393,10 @@
     --page-padding: 1.25rem;
   }
 
+  .portal-shell[data-route="/student/enrollment"] .page-container {
+    --page-padding: 1.5rem;
+  }
+
   .stack {
     display: flex;
     flex-direction: column;
@@ -3544,6 +3548,114 @@
   .instructor-evaluation-question { grid-template-columns: 1fr; padding-block: 8px; }
   .instructor-evaluation-rating-choice { flex-direction: column; min-width: 0; padding-block: 4px; }
   .instructor-evaluation-rating-choice > span { display: inline; font-size: 11px; }
+}
+
+/* Application header from enrollment design MJh0x. */
+.portal-shell[data-route="/student/enrollment"] > .portal-header {
+  background: var(--background);
+}
+
+@media (min-width: 1024px) {
+  .portal-shell[data-route="/student/enrollment"] .portal-notifications {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--border);
+    color: var(--foreground);
+  }
+
+  .portal-shell[data-route="/student/enrollment"] .portal-notifications svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* Enrollment: not-yet-open preview from design node JeuFm. */
+/* Fill the Radix content wrapper so the card uses the available portal height. */
+.portal-scroll-viewport:has(.enrollment-not-open) > div {
+  height: 100%;
+}
+
+.portal-page-content:has(> .enrollment-not-open) {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  padding: var(--space-6);
+}
+
+.enrollment-not-open {
+  display: flex;
+  min-width: 0;
+  min-height: 440px;
+  flex: 1 0 auto;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 48px 32px 160px;
+  background: var(--background);
+  text-align: center;
+}
+
+.enrollment-not-open-message {
+  display: flex;
+  width: 100%;
+  max-width: 520px;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+.enrollment-not-open-icon {
+  display: flex;
+  width: 80px;
+  height: 80px;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.enrollment-not-open-icon svg {
+  width: 36px;
+  height: 36px;
+}
+
+.enrollment-not-open-message h2 {
+  width: 100%;
+  font-size: 26px;
+  font-weight: var(--weight-semibold);
+}
+
+.enrollment-not-open-notice {
+  display: flex;
+  max-width: 100%;
+  align-items: center;
+  gap: var(--space-2);
+  border-radius: var(--radius-control);
+  padding: 10px 16px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+}
+
+.enrollment-not-open-notice svg {
+  width: var(--icon-sm);
+  height: var(--icon-sm);
+  flex-shrink: 0;
+}
+
+@media (max-width: 767px) {
+  .portal-page-content:has(> .enrollment-not-open) {
+    padding: var(--space-4);
+  }
+
+  .enrollment-not-open {
+    min-height: 360px;
+    padding: 32px 16px 96px;
+  }
 }
 
 /* Academic Records: namespaced, unlayered rules preserve the design over UI utilities. */

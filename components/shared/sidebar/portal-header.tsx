@@ -10,7 +10,7 @@ export function PortalHeader({ children }: { children: ReactNode }) {
   const { openMobile, setOpenMobile, mobileTriggerRef } = useSidebar();
 
   return (
-    <header className="flex h-16 shrink-0 items-center gap-3 border-b border-border bg-card px-4 md:h-[72px] md:px-6 lg:gap-4 lg:px-8">
+    <header className="portal-header flex h-16 shrink-0 items-center gap-3 border-b border-border bg-card px-4 md:h-[72px] md:px-6 lg:gap-4 lg:px-8">
       <div className="flex min-w-0 flex-1 items-center gap-3 lg:hidden">
         <button
           ref={mobileTriggerRef}
@@ -41,7 +41,7 @@ export function PortalHeader({ children }: { children: ReactNode }) {
       <button
         type="button"
         aria-label="Notifications"
-        className="flex size-11 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
+        className="portal-notifications flex size-11 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
       >
         <Bell aria-hidden="true" className="size-5" />
       </button>
