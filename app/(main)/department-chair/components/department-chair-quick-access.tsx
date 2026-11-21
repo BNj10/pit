@@ -1,4 +1,4 @@
-import { BookOpen, CalendarClock, CalendarDays, FileUp } from "lucide-react";
+import { BookOpen } from "lucide-react";
 
 import { DashboardQuickActionCard } from "@/components/shared/dashboard/dashboard-quick-action-card";
 import { portalRoleConfig } from "@/role-config";
@@ -9,24 +9,6 @@ const curriculaHref = portalRoleConfig["department-chair"].navigation.find(
 
 // These links target the corresponding workspaces; this component owns no destination screens.
 const quickActions = [
-  {
-    title: "Enrollment schedule",
-    description: "Configure term windows and publish enrollment dates",
-    href: "/department-chair/enrollment-schedule",
-    icon: CalendarClock,
-  },
-  {
-    title: "Academic years & terms",
-    description: "Manage academic years, semesters, and term settings",
-    href: "/department-chair/academic-years-and-terms",
-    icon: CalendarDays,
-  },
-  {
-    title: "Grade uploads",
-    description: "Upload, validate, and review grade submissions",
-    href: "/department-chair/grade-uploads",
-    icon: FileUp,
-  },
   {
     title: "Curricula & subjects",
     description: "Open curricula and subject assignments",
