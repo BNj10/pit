@@ -6,10 +6,12 @@ import { Archive } from "lucide-react";
 
 import { useEvaluation } from "@/components/shared/faculty-evaluation/evaluation-provider";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
+  SelectSeparator,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -74,22 +76,23 @@ export function EvaluationManagement() {
                 Show archived ({archivedCount})
               </Button>
             )}
-            <Select value={activeYear} onValueChange={setYearFilter}>
-              <SelectTrigger
-                aria-label="Filter results by academic year"
-                className="faculty-evaluation-year-filter"
-              >
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All academic years</SelectItem>
-                {years.map((year) => (
-                  <SelectItem key={year} value={year}>
-                    {year}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="faculty-evaluation-year-field">
+              <Label htmlFor="faculty-evaluation-year-filter">Academic year</Label>
+              <Select value={activeYear} onValueChange={setYearFilter}>
+                <SelectTrigger id="faculty-evaluation-year-filter" className="faculty-evaluation-year-filter">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent position="popper" align="end" sideOffset={6} className="faculty-evaluation-year-menu">
+                  <SelectItem value="all" className="faculty-evaluation-year-option">All academic years</SelectItem>
+                  {years.length > 0 && <SelectSeparator className="faculty-evaluation-year-separator" />}
+                  {years.map((year) => (
+                    <SelectItem key={year} value={year} className="faculty-evaluation-year-option">
+                      <span className="faculty-evaluation-year-prefix">AY</span> {year}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
         <Table
