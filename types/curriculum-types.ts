@@ -38,7 +38,7 @@ export interface Subject extends CurriculumTerm {
   title: string;
   lectureUnits: number;
   laboratoryUnits: number;
-  /** Stored separately from lecture and laboratory units; no unit policy is encoded. */
+  /** Always lectureUnits + laboratoryUnits: the subject's total weekly contact hours at 1 unit = 1 hour. */
   units: number;
   /** Subjects in earlier terms of the same curriculum. */
   prerequisiteIds: readonly string[];
@@ -72,7 +72,6 @@ export interface SubjectFormValues extends CurriculumTerm {
   title: string;
   lectureUnits: string;
   laboratoryUnits: string;
-  units: string;
   prerequisiteIds: readonly string[];
   corequisiteIds: readonly string[];
 }
@@ -86,7 +85,7 @@ export interface SubjectDependent {
 }
 
 export type SubjectFormErrors = Partial<
-  Record<"code" | "title" | "term" | "lectureUnits" | "laboratoryUnits" | "units" | "prerequisiteIds" | "corequisiteIds", string>
+  Record<"code" | "title" | "term" | "lectureUnits" | "laboratoryUnits" | "prerequisiteIds" | "corequisiteIds", string>
 >;
 
 export interface CurriculaContextValue {

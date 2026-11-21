@@ -5780,3 +5780,2587 @@
     min-height: 44px;
   }
 }
+
+/* DEPARTMENT CHAIR SECTIONS */
+.portal-page-content:has(> .sections-page) {
+  padding: 0;
+  /* Size from the viewport, not the wide schedule tables, so tables scroll locally. */
+  contain: inline-size;
+}
+
+.sections-page {
+  display: flex;
+  min-width: 0;
+  min-height: 100%;
+  flex-direction: column;
+  gap: 14px;
+  padding: 24px;
+  background: var(--background);
+  color: var(--foreground);
+  font-size: var(--text-xs);
+}
+
+.sections-heading h2 {
+  margin-bottom: 5px;
+  font-size: 24px;
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.sections-heading p,
+.sections-toolbar p {
+  color: var(--muted-foreground);
+  font-size: 12px;
+}
+
+.sections-panel {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--card);
+}
+
+.sections-toolbar {
+  display: flex;
+  min-height: 66px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+}
+
+.sections-toolbar h3 {
+  margin-bottom: 3px;
+  font-size: 15px;
+  font-weight: var(--weight-bold);
+}
+
+.sections-toolbar p {
+  font-size: 11px;
+}
+
+.sections-filters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sections-year-trigger {
+  min-width: 128px;
+  height: 34px;
+  gap: 12px;
+  border-color: var(--border);
+  border-radius: var(--radius-control);
+  padding-inline: 10px;
+  background: var(--card);
+  color: var(--foreground);
+  font-size: 12px;
+  font-weight: var(--weight-semibold);
+  box-shadow: none;
+}
+
+.sections-year-trigger:hover:not(:disabled),
+.sections-year-trigger[data-state="open"] {
+  background: var(--muted);
+}
+
+.sections-year-menu {
+  --popover: var(--card);
+  min-width: 160px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 0;
+  box-shadow: 0 12px 32px -12px rgb(15 23 42 / 0.18);
+  --tw-ring-shadow: 0 0 #0000;
+}
+
+.sections-year-menu > [data-radix-select-viewport] {
+  padding: 6px;
+}
+
+.sections-year-option {
+  min-height: 34px;
+  border-radius: 6px;
+  padding: 0 32px 0 10px;
+  font-size: 12px;
+  font-weight: var(--weight-medium);
+}
+
+.sections-year-option * {
+  color: inherit;
+}
+
+.sections-year-option > span:first-child {
+  right: 10px;
+  color: var(--primary);
+}
+
+.sections-year-option[data-highlighted],
+.sections-year-option[data-state="checked"] {
+  background: var(--accent);
+  color: var(--primary);
+}
+
+.sections-catalog {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-top: 1px solid var(--border);
+  padding: 12px;
+  background: var(--background);
+}
+
+.sections-catalog > *,
+.sections-semester-subjects > *,
+.subject-sections-panel {
+  min-width: 0;
+}
+
+.sections-semester {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--card);
+}
+
+.sections-semester[data-expanded="true"] {
+  border-color: var(--success-border);
+  background: #eef6f4;
+}
+
+.sections-semester-heading button,
+.subject-sections-heading button {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  text-align: left;
+}
+
+.sections-semester-heading button {
+  min-height: 52px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: var(--weight-bold);
+}
+
+.sections-semester-heading button:focus-visible,
+.subject-sections-heading button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+  border-radius: var(--radius-card);
+}
+
+.sections-semester-title,
+.sections-semester-summary,
+.subject-sections-title,
+.subject-sections-count {
+  display: flex;
+  align-items: center;
+}
+
+.sections-semester-title {
+  gap: 10px;
+}
+
+.sections-semester-badge {
+  display: inline-flex;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 7px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: var(--weight-bold);
+}
+
+.sections-semester[data-expanded="true"] .sections-semester-badge {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.sections-semester-summary,
+.subject-sections-count {
+  flex-shrink: 0;
+  gap: 8px;
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-weight: var(--weight-semibold);
+}
+
+.sections-semester[data-expanded="true"] .sections-semester-summary {
+  color: var(--primary);
+}
+
+.sections-semester-summary svg,
+.subject-sections-count svg {
+  width: 15px;
+  height: 15px;
+  color: var(--muted-foreground);
+}
+
+.sections-semester-subjects {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 12px 12px;
+}
+
+.subject-sections {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--card);
+}
+
+.subject-sections-heading button {
+  min-height: 56px;
+  padding: 10px 14px;
+}
+
+.subject-sections-heading button:hover {
+  background: var(--surface-hover);
+}
+
+.subject-sections-title {
+  min-width: 0;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  font-size: 13px;
+  font-weight: var(--weight-bold);
+}
+
+.subject-sections-code {
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.subject-sections-count[data-empty="true"] {
+  color: var(--destructive);
+}
+
+.subject-sections-table {
+  min-width: 880px;
+  font-size: 12px;
+}
+
+.subject-sections-table thead tr {
+  border-top: 1px solid var(--border);
+  background: var(--muted);
+}
+
+.subject-sections-table th[scope="col"] {
+  height: 32px;
+  padding-inline: 14px;
+  color: var(--muted-foreground);
+  font-size: 9px;
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.subject-sections-table th[scope="col"]:nth-child(1) { width: 12%; }
+.subject-sections-table th[scope="col"]:nth-child(2) { width: 7%; }
+.subject-sections-table th[scope="col"]:nth-child(4) { width: 10%; }
+.subject-sections-table th[scope="col"]:nth-child(5) { width: 20%; }
+.subject-sections-table th[scope="col"]:nth-child(6) { width: 9%; }
+.subject-sections-table th[scope="col"]:nth-child(7) { width: 190px; }
+
+.subject-sections-table .subject-sections-faculty[data-unassigned="true"] {
+  color: var(--muted-foreground);
+  font-style: italic;
+}
+
+.subject-sections-table tbody tr {
+  border-color: var(--border);
+}
+
+.subject-sections-table tbody tr:nth-child(even) {
+  background: #f8fcfb;
+}
+
+.subject-sections-table tbody tr:hover {
+  background: var(--surface-hover);
+}
+
+.subject-sections-table tbody th,
+.subject-sections-table tbody td {
+  height: 46px;
+  padding: 6px 14px;
+  font-weight: var(--weight-medium);
+}
+
+.subject-sections-table .subject-sections-section {
+  color: var(--primary);
+  font-weight: var(--weight-bold);
+}
+
+.subject-sections-table abbr {
+  text-decoration: none;
+}
+
+.subject-sections-table .subject-sections-actions {
+  text-align: right;
+}
+
+.subject-sections-actions > div {
+  display: inline-flex;
+  gap: 8px;
+}
+
+.subject-sections-edit,
+.subject-sections-delete,
+.subject-sections-footer [data-slot="button"] {
+  height: 30px;
+  gap: 6px;
+  border-radius: var(--radius-control);
+  padding-inline: 12px;
+  font-size: 11px;
+  font-weight: var(--weight-semibold);
+  box-shadow: none;
+}
+
+.subject-sections-edit {
+  border-color: var(--success-border);
+  color: var(--primary);
+}
+
+.subject-sections-edit:hover:not(:disabled) {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.subject-sections-delete {
+  border-color: var(--destructive-border);
+  color: var(--destructive);
+}
+
+.subject-sections-delete:hover:not(:disabled) {
+  border-color: var(--destructive);
+  background: var(--destructive-soft);
+  color: var(--destructive);
+}
+
+.subject-sections-edit svg,
+.subject-sections-delete svg,
+.subject-sections-footer svg {
+  width: 13px;
+  height: 13px;
+}
+
+.subject-sections-footer svg {
+  color: var(--primary);
+}
+
+.subject-sections-empty {
+  border-top: 1px solid var(--border);
+  padding: 16px 14px 4px;
+  color: var(--muted-foreground);
+  font-size: 12px;
+}
+
+.subject-sections-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 14px 12px;
+}
+
+.sections-empty {
+  display: flex;
+  min-height: 240px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.sections-empty > svg {
+  width: 26px;
+  height: 26px;
+  color: var(--muted-foreground);
+}
+
+.sections-empty h4 {
+  font-size: 15px;
+  font-weight: var(--weight-semibold);
+}
+
+.sections-empty p {
+  color: var(--muted-foreground);
+}
+
+/* Section entry and delete dialogs: 440px cards sized by their content. */
+.section-entry-dialog,
+.section-delete-dialog {
+  width: min(440px, calc(100% - 2rem));
+  max-width: none;
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  gap: 0;
+  border-radius: var(--radius-card);
+  padding: 24px;
+  background: var(--card);
+  color: var(--foreground);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--foreground) 9%, transparent);
+  --tw-ring-shadow: 0 0 #0000;
+}
+
+.section-entry-dialog form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.section-entry-dialog-header,
+.section-delete-dialog-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.section-entry-dialog-header > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.section-entry-dialog [data-slot="dialog-title"],
+.section-delete-dialog [data-slot="alert-dialog-title"] {
+  font-size: 20px;
+  font-weight: var(--weight-bold);
+  line-height: 1.25;
+}
+
+.section-entry-dialog [data-slot="dialog-description"] {
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: var(--weight-semibold);
+}
+
+.section-entry-dialog-header button,
+.section-delete-dialog-header button {
+  margin: -4px -6px 0 0;
+  color: var(--muted-foreground);
+}
+
+.section-entry-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.section-entry-time-fields {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.section-entry-field {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.section-entry-field [data-slot="label"],
+.section-entry-class-type legend {
+  color: var(--muted-foreground);
+  font-size: 10px;
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.section-entry-field [data-slot="input"] {
+  height: 34px;
+  border-color: var(--border);
+  border-radius: var(--radius-control);
+  background: var(--card);
+  font-size: 12px;
+  box-shadow: none;
+}
+
+.section-entry-class-type legend {
+  margin-bottom: 5px;
+}
+
+.section-entry-segments {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 3px;
+  border-radius: var(--radius-control);
+  padding: 3px;
+  background: var(--muted);
+}
+
+.section-entry-segments label {
+  position: relative;
+  display: flex;
+  min-height: 28px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 4px;
+  color: var(--muted-foreground);
+  font-size: 12px;
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+}
+
+.section-entry-segments label[data-checked="true"] {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-weight: var(--weight-bold);
+}
+
+.section-entry-segments label[data-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.section-entry-segments label:has(input:focus-visible) {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.section-entry-segments input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.section-entry-segments svg {
+  width: 13px;
+  height: 13px;
+}
+
+.section-entry-schedule {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  border-radius: var(--radius-control);
+  padding: 10px;
+  background: var(--muted);
+}
+
+.section-entry-schedule-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: var(--weight-bold);
+}
+
+.section-entry-schedule-header span {
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: var(--weight-semibold);
+}
+
+.section-entry-days {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.section-entry-days button {
+  height: 28px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--card);
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-weight: var(--weight-bold);
+}
+
+.section-entry-days button:hover {
+  border-color: var(--primary);
+}
+
+.section-entry-days button[aria-pressed="true"] {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.section-entry-days button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.section-entry-validation {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border: 1px solid var(--success-border);
+  border-radius: var(--radius-control);
+  padding: 10px 12px;
+  background: #f3fbf8;
+  font-size: 11px;
+}
+
+.section-entry-validation p {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: var(--weight-bold);
+}
+
+.section-entry-validation p svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  color: var(--success);
+}
+
+.section-entry-validation span,
+.section-entry-validation ul {
+  padding-left: 22px;
+  color: var(--muted-foreground);
+}
+
+.section-entry-validation ul {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  list-style: disc;
+}
+
+.section-entry-validation[data-state="incomplete"] {
+  border-color: var(--border);
+  background: var(--muted);
+}
+
+.section-entry-validation[data-state="incomplete"] p,
+.section-entry-validation[data-state="incomplete"] p svg {
+  color: var(--muted-foreground);
+}
+
+.section-entry-validation[data-state="conflict"] {
+  border-color: var(--destructive-border);
+  background: var(--destructive-soft);
+}
+
+.section-entry-validation[data-state="conflict"] p,
+.section-entry-validation[data-state="conflict"] p svg {
+  color: var(--destructive);
+}
+
+.section-entry-validation[data-state="conflict"] ul {
+  color: var(--foreground);
+}
+
+/* Hours below what the units require; saving is still allowed. */
+.section-entry-validation[data-state="short"] {
+  border-color: var(--warning-border);
+  background: var(--warning-soft);
+}
+
+.section-entry-validation[data-state="short"] p,
+.section-entry-validation[data-state="short"] p svg {
+  color: var(--warning);
+}
+
+.section-entry-dialog-actions,
+.section-delete-dialog-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.section-entry-dialog-actions > button,
+.section-delete-dialog-actions > button {
+  height: 38px;
+  gap: 6px;
+  border-radius: var(--radius-control);
+  font-size: 12px;
+  font-weight: var(--weight-semibold);
+}
+
+.section-entry-dialog-actions > button:first-child {
+  width: 96px;
+  color: var(--muted-foreground);
+}
+
+.section-entry-dialog-actions > button:last-child {
+  flex: 1;
+  font-weight: var(--weight-bold);
+}
+
+.section-entry-dialog-actions > button:last-child:disabled {
+  opacity: 1;
+  background: #e4e8e6;
+  color: #727c77;
+}
+
+.section-entry-dialog-actions svg,
+.section-delete-dialog-actions svg {
+  width: 13px;
+  height: 13px;
+}
+
+.section-delete-dialog {
+  gap: 20px;
+}
+
+.section-delete-dialog [data-slot="alert-dialog-description"] {
+  color: var(--muted-foreground);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.section-delete-dialog-actions {
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+.section-delete-dialog-actions > button {
+  padding-inline: 16px;
+}
+
+.section-delete-dialog .section-delete-confirm {
+  background: var(--destructive);
+  color: var(--destructive-foreground);
+}
+
+.section-delete-dialog .section-delete-confirm:hover {
+  background: color-mix(in srgb, var(--destructive) 88%, black);
+}
+
+@media (max-width: 767px) {
+  .sections-page {
+    padding: 16px;
+  }
+
+  .sections-filters,
+  .sections-year-trigger {
+    width: 100%;
+  }
+
+  .sections-year-trigger {
+    min-height: 44px;
+  }
+
+  .section-entry-dialog,
+  .section-delete-dialog {
+    padding: 20px;
+  }
+
+  .section-entry-time-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .section-entry-time-fields .section-entry-field:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .section-entry-days button,
+  .subject-sections-edit,
+  .subject-sections-delete,
+  .subject-sections-footer [data-slot="button"] {
+    min-height: 40px;
+  }
+}
+
+/* Department Chair Sections: offering terms and subject picker */
+.sections-semester-header,
+.subject-sections-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-right: 10px;
+}
+
+.sections-semester-header > h4,
+.subject-sections-header > h5 {
+  min-width: 0;
+  flex: 1;
+}
+
+.sections-remove-button {
+  flex-shrink: 0;
+  color: var(--muted-foreground);
+}
+
+.sections-remove-button:hover:not(:disabled) {
+  background: var(--destructive-soft);
+  color: var(--destructive);
+}
+
+.sections-remove-button svg {
+  width: 15px;
+  height: 15px;
+}
+
+.sections-term-empty {
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-card);
+  padding: 16px;
+  background: var(--card);
+  color: var(--muted-foreground);
+  text-align: center;
+}
+
+.sections-term-footer,
+.sections-add-term {
+  display: flex;
+}
+
+.sections-term-footer {
+  justify-content: flex-start;
+}
+
+.sections-term-footer > button,
+.sections-add-term > button {
+  height: 34px;
+  gap: 6px;
+  border-radius: var(--radius-control);
+  padding-inline: 12px;
+  background: var(--card);
+  font-size: 12px;
+  font-weight: var(--weight-semibold);
+  box-shadow: none;
+}
+
+.sections-term-footer svg,
+.sections-add-term svg {
+  width: 14px;
+  height: 14px;
+  color: var(--primary);
+}
+
+.sections-add-term > button {
+  border-style: dashed;
+  border-color: var(--border-strong);
+}
+
+.sections-add-term > button:hover:not(:disabled),
+.sections-add-term > button[data-state="open"] {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.sections-add-term-menu {
+  min-width: 200px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 6px;
+  background: var(--card);
+  box-shadow: 0 12px 32px -12px rgb(15 23 42 / 0.18);
+  --tw-ring-shadow: 0 0 #0000;
+}
+
+.sections-add-term-menu [role="menuitem"] {
+  min-height: 36px;
+  gap: 10px;
+  border-radius: 6px;
+  padding-inline: 8px;
+  font-size: 12px;
+  font-weight: var(--weight-semibold);
+}
+
+.sections-add-term-menu [role="menuitem"][data-highlighted] {
+  background: var(--accent);
+  color: var(--primary);
+}
+
+.sections-add-term-menu .sections-semester-badge {
+  width: 24px;
+  height: 24px;
+  font-size: 11px;
+}
+
+.offered-subjects-options {
+  display: flex;
+  max-height: min(360px, 50dvh);
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+}
+
+.offered-subjects-options legend {
+  margin-bottom: 8px;
+  color: var(--muted-foreground);
+  font-size: 10px;
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.offered-subjects-options label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+.offered-subjects-options label:hover,
+.offered-subjects-options label[data-checked="true"] {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.offered-subjects-options [data-slot="checkbox"] {
+  margin-top: 1px;
+}
+
+.offered-subjects-copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 12px;
+}
+
+.offered-subjects-copy strong {
+  color: var(--primary);
+  font-weight: 800;
+}
+
+.offered-subjects-copy > span:last-child {
+  color: var(--muted-foreground);
+  font-size: 11px;
+}
+
+.offered-subjects-empty {
+  border-radius: var(--radius-control);
+  padding: 14px;
+  background: var(--muted);
+  color: var(--muted-foreground);
+  font-size: 12px;
+}
+
+/*
+ * Curriculum picker and subject groups. Only the subject list scrolls: the dialog keeps its
+ * header, curriculum picker, and actions in view and shrinks the list to fit short screens.
+ */
+.section-entry-dialog.offered-subjects-dialog {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.offered-subjects-dialog form {
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+.offered-subjects-curriculum {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.offered-subjects-curriculum > label {
+  font-size: 12px;
+  font-weight: var(--weight-medium);
+}
+
+.offered-subjects-curriculum > p {
+  color: var(--muted-foreground);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.offered-subjects-curriculum-trigger {
+  width: 100%;
+  height: 34px;
+  border-color: var(--border);
+  border-radius: var(--radius-control);
+  padding-inline: 10px;
+  background: var(--card);
+  color: var(--foreground);
+  font-size: 12px;
+  box-shadow: none;
+}
+
+.offered-subjects-groups {
+  display: flex;
+  min-height: 0;
+  max-height: min(420px, 60dvh);
+  flex: 0 1 auto;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.offered-subjects-dialog .section-entry-dialog-header,
+.offered-subjects-curriculum,
+.offered-subjects-dialog .offered-subjects-empty,
+.offered-subjects-dialog .section-entry-dialog-actions {
+  flex-shrink: 0;
+}
+
+.offered-subjects-groups .offered-subjects-options {
+  max-height: none;
+  overflow: visible;
+}
+
+@media (max-width: 767px) {
+  .offered-subjects-curriculum-trigger {
+    height: 40px;
+  }
+}
+
+@media (max-width: 767px) {
+  .sections-remove-button {
+    width: 40px;
+    height: 40px;
+  }
+
+  .sections-term-footer > button,
+  .sections-add-term > button {
+    min-height: 40px;
+  }
+}
+
+/* Department Chair Sections: faculty member selector */
+.section-entry-faculty-trigger {
+  width: 100%;
+  height: 34px;
+  border-color: var(--border);
+  border-radius: var(--radius-control);
+  padding-inline: 10px;
+  background: var(--card);
+  color: var(--foreground);
+  font-size: 12px;
+  box-shadow: none;
+}
+
+.section-entry-faculty-trigger[data-state="open"] {
+  border-color: var(--primary);
+}
+
+.section-entry-faculty-menu {
+  --popover: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 0;
+  box-shadow: 0 12px 32px -12px rgb(15 23 42 / 0.18);
+  --tw-ring-shadow: 0 0 #0000;
+}
+
+.section-entry-faculty-menu > [data-radix-select-viewport] {
+  padding: 6px;
+}
+
+.section-entry-faculty-option {
+  min-height: 34px;
+  border-radius: 6px;
+  padding: 0 32px 0 10px;
+  font-size: 12px;
+  font-weight: var(--weight-medium);
+}
+
+.section-entry-faculty-option * {
+  color: inherit;
+}
+
+.section-entry-faculty-option > span:first-child {
+  right: 10px;
+  color: var(--primary);
+}
+
+.section-entry-faculty-option[data-highlighted],
+.section-entry-faculty-option[data-state="checked"] {
+  background: var(--accent);
+  color: var(--primary);
+}
+
+/* Department Chair Sections: year level publication */
+.sections-publication {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  border-top: 1px solid var(--border);
+  padding: 12px 16px;
+  background: var(--muted);
+}
+
+.sections-publication[data-status="published"] {
+  background: #f3fbf8;
+}
+
+.sections-publication[data-status="unsaved"] {
+  background: var(--warning-soft);
+}
+
+.sections-publication-copy {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 320px;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sections-publication-copy > p:first-child {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted-foreground);
+  font-size: 12px;
+}
+
+.sections-publication-badge {
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--card);
+  font-size: 11px;
+  font-weight: var(--weight-semibold);
+}
+
+.sections-publication[data-status="published"] .sections-publication-badge {
+  border: 1px solid var(--success-border);
+  background: var(--success-soft);
+  color: var(--success);
+}
+
+.sections-publication[data-status="unsaved"] .sections-publication-badge {
+  border: 1px solid var(--warning-border);
+  background: var(--brand-gold-soft);
+  color: var(--warning);
+}
+
+.sections-publication-blockers {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  color: var(--destructive);
+  font-size: 12px;
+  font-weight: var(--weight-medium);
+}
+
+.sections-publication-blockers svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.sections-publication-actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 8px;
+}
+
+.sections-publication-actions > button {
+  height: 34px;
+  gap: 6px;
+  border-radius: var(--radius-control);
+  padding-inline: 14px;
+  font-size: 12px;
+  font-weight: var(--weight-semibold);
+  box-shadow: none;
+}
+
+.sections-publication-actions > button[data-variant="outline"] {
+  background: var(--card);
+}
+
+.sections-publication-actions svg {
+  width: 14px;
+  height: 14px;
+}
+
+.section-confirm-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border: 1px solid var(--warning-border);
+  border-radius: var(--radius-control);
+  padding: 10px 12px 10px 28px;
+  background: var(--warning-soft);
+  color: var(--warning);
+  font-size: 12px;
+  list-style: disc;
+}
+
+@media (max-width: 767px) {
+  .sections-publication-actions {
+    width: 100%;
+  }
+
+  .sections-publication-actions > button {
+    min-height: 40px;
+    flex: 1;
+  }
+}
+
+/* Department Chair Sections: units and other departments' access */
+.subject-sections-units {
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-weight: var(--weight-medium);
+}
+
+/* Curriculum an offering comes from; archived curricula are flagged but stay editable. */
+.subject-sections-curriculum {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 1px 8px;
+  background: var(--muted);
+  color: var(--muted-foreground);
+  font-size: 10px;
+  font-weight: var(--weight-medium);
+  white-space: nowrap;
+}
+
+.subject-sections-curriculum[data-status="Archived"] {
+  border-color: var(--warning-border);
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+
+.subject-sections-header > .subject-sections-access {
+  height: 28px;
+  flex-shrink: 0;
+  gap: 6px;
+  border-color: var(--warning-border);
+  border-radius: var(--radius-pill);
+  padding-inline: 10px;
+  background: var(--warning-soft);
+  color: var(--warning);
+  font-size: 11px;
+  font-weight: var(--weight-semibold);
+  box-shadow: none;
+}
+
+.subject-sections-header > .subject-sections-access[data-open="true"] {
+  border-color: var(--success-border);
+  background: var(--success-soft);
+  color: var(--success);
+}
+
+.subject-sections-header > .subject-sections-access:hover:not(:disabled) {
+  border-color: currentColor;
+}
+
+.subject-sections-access svg {
+  width: 13px;
+  height: 13px;
+}
+
+.access-dialog-intro {
+  color: var(--muted-foreground);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.access-dialog-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.access-dialog-options label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+.access-dialog-options label:hover,
+.access-dialog-options label[data-checked="true"] {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.access-dialog-options input {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  accent-color: var(--primary);
+}
+
+.access-dialog-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 12px;
+}
+
+.access-dialog-copy > span:first-child {
+  font-weight: var(--weight-semibold);
+}
+
+.access-dialog-copy > span:last-child {
+  color: var(--muted-foreground);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.access-dialog-date-label {
+  color: var(--muted-foreground);
+  font-size: 10px;
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.access-dialog-error {
+  color: var(--destructive);
+  font-size: 11px;
+}
+
+@media (max-width: 767px) {
+  .subject-sections-header {
+    flex-wrap: wrap;
+    padding-bottom: 8px;
+  }
+
+  .subject-sections-header > h5 {
+    flex-basis: 100%;
+  }
+
+  .subject-sections-header > .subject-sections-access {
+    min-height: 36px;
+    margin-left: 14px;
+  }
+
+  .subject-sections-header > .sections-remove-button {
+    margin-left: auto;
+  }
+}
+
+/* Department Chair: Curricula and Subjects. Namespaced .curriculum-* and .subject-* selectors. */
+/* Curriculum management (Department Chair): curricula list and lifecycle dialogs. */
+.portal-scroll-viewport:has(.curriculum-management-page) > div {
+  /* Keep the wide table inside its own scroll region. */
+  display: block !important;
+}
+
+.curriculum-management-page {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--space-5);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.curriculum-page-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+}
+
+.curriculum-page-heading h2 {
+  font-size: 26px;
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.025em;
+  line-height: 1.3;
+}
+
+.curriculum-page-heading p {
+  margin-top: 2px;
+  color: var(--muted-foreground);
+  font-size: 12px;
+}
+
+.curriculum-management-page [data-slot="button"],
+.curriculum-dialog-footer button {
+  min-height: 36px;
+  gap: var(--space-2);
+  border-radius: var(--radius-control);
+  padding-inline: 14px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.curriculum-management-page [data-slot="button"] svg,
+.curriculum-dialog-footer button svg {
+  width: 14px;
+  height: 14px;
+}
+
+.curriculum-management-page [data-slot="button"][data-variant="default"]:hover:not(:disabled),
+.curriculum-dialog-footer button[data-variant="default"]:hover:not(:disabled) {
+  background: var(--primary-hover);
+}
+
+.curriculum-panel {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--card);
+}
+
+.curriculum-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 16px;
+}
+
+.curriculum-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.curriculum-filter {
+  display: inline-flex;
+  min-height: 32px;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-control);
+  padding-inline: 10px;
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+}
+
+.curriculum-filter:hover {
+  background: var(--surface-hover);
+  color: var(--foreground);
+}
+
+/* Same weight as unselected filters so selecting one never shifts the others. */
+.curriculum-filter[aria-pressed="true"] {
+  border-color: var(--border);
+  background: var(--background);
+  color: var(--primary);
+}
+
+.curriculum-filter:focus-visible,
+.curriculum-search > button:focus-visible,
+.curriculum-name:focus-visible,
+.curriculum-panel [data-slot="table-container"]:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.curriculum-filter-count {
+  color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
+}
+
+.curriculum-filter[aria-pressed="true"] .curriculum-filter-count {
+  color: var(--primary);
+}
+
+.curriculum-search {
+  position: relative;
+  width: min(100%, 280px);
+  flex-shrink: 0;
+}
+
+.curriculum-search > svg {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  z-index: 1;
+  width: 15px;
+  height: 15px;
+  transform: translateY(-50%);
+  color: var(--muted-foreground);
+  pointer-events: none;
+}
+
+.curriculum-search [data-slot="input"] {
+  height: 36px;
+  border-radius: var(--radius-control);
+  padding-inline: 34px;
+  font-size: 12px;
+  box-shadow: none;
+}
+
+.curriculum-search input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
+
+.curriculum-search > button {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  display: flex;
+  width: 32px;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-control);
+  color: var(--muted-foreground);
+}
+
+.curriculum-search > button:hover {
+  background: var(--secondary-hover);
+  color: var(--foreground);
+}
+
+.curriculum-search > button > svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Fixed layout keeps columns in place when filters change the visible rows. */
+.curriculum-table {
+  min-width: 880px;
+  table-layout: fixed;
+  font-size: 12px;
+}
+
+.curriculum-table th {
+  height: 52px;
+  padding-inline: 16px;
+  color: var(--text-secondary);
+  font-size: 9px;
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.075em;
+  line-height: 1.5;
+  text-transform: uppercase;
+  white-space: normal;
+}
+
+/* The name column takes the remaining width. */
+.curriculum-table th:nth-child(2) {
+  width: 110px;
+}
+
+.curriculum-table th:nth-child(3) {
+  width: 130px;
+}
+
+.curriculum-table th:nth-child(4) {
+  width: 150px;
+}
+
+/* Two 144px action buttons, their gap, and the cell padding. */
+.curriculum-table th:nth-child(5) {
+  width: 328px;
+}
+
+.curriculum-table td {
+  padding: 16px;
+}
+
+.curriculum-table tbody tr {
+  border-color: var(--border);
+}
+
+.curriculum-table tbody tr:hover {
+  background: var(--surface-hover);
+}
+
+.curriculum-identity {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.curriculum-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 2px;
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: var(--weight-semibold);
+  white-space: normal;
+}
+
+.curriculum-name:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.curriculum-name svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.curriculum-code,
+.curriculum-units {
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+
+.curriculum-academic-year {
+  font-variant-numeric: tabular-nums;
+}
+
+.curriculum-status {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: var(--weight-semibold);
+}
+
+.curriculum-status[data-status="Draft"] {
+  border-color: var(--warning-border);
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+
+.curriculum-status[data-status="Active"] {
+  border-color: var(--success-border);
+  background: var(--success-soft);
+  color: var(--success);
+}
+
+.curriculum-status[data-status="Archived"] {
+  border-color: var(--border);
+  background: var(--muted);
+  color: var(--text-secondary);
+}
+
+.curriculum-actions-cell {
+  text-align: right;
+}
+
+.curriculum-actions {
+  display: inline-grid;
+  grid-template-columns: repeat(2, 144px);
+  justify-content: end;
+  gap: 8px;
+}
+
+/* A single action sits in the right-hand column, as in the design. */
+.curriculum-actions > :only-child {
+  grid-column: 2;
+}
+
+.curriculum-management-page .curriculum-actions [data-slot="button"] {
+  width: 100%;
+}
+
+.curriculum-management-page .curriculum-actions [data-slot="button"]:hover:not(:disabled) {
+  background: var(--primary-soft);
+}
+
+.curriculum-management-page .curriculum-actions .curriculum-delete-action {
+  color: var(--destructive);
+}
+
+.curriculum-management-page .curriculum-actions .curriculum-delete-action:hover:not(:disabled) {
+  border-color: var(--destructive-border);
+  background: var(--destructive-soft);
+  color: var(--destructive);
+}
+
+/* Empty and no-match states for the curricula and subjects tables. */
+.curriculum-empty {
+  display: flex;
+  min-height: 300px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+  white-space: normal;
+}
+
+.curriculum-empty-icon {
+  display: inline-flex;
+  width: 56px;
+  height: 56px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+  border-radius: 999px;
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.curriculum-empty-icon svg {
+  width: 26px;
+  height: 26px;
+  stroke-width: 1.75;
+}
+
+.curriculum-empty h3 {
+  margin-bottom: 6px;
+  color: var(--foreground);
+  font-size: 16px;
+  font-weight: var(--weight-semibold);
+  line-height: 1.4;
+}
+
+.curriculum-empty p {
+  max-width: 360px;
+  margin-bottom: 22px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+/* The empty row is not a record, so it keeps the panel background on hover. */
+.curriculum-table tbody tr:has(.curriculum-empty):hover,
+.subject-table tbody tr:has(.curriculum-empty):hover {
+  background: transparent;
+}
+
+.curriculum-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-top: 1px solid var(--border);
+  padding: 14px 16px;
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.curriculum-status-guide h3 {
+  margin-bottom: 4px;
+  font-size: 13px;
+  font-weight: var(--weight-semibold);
+}
+
+.curriculum-status-guide p {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.curriculum-dialog {
+  width: min(440px, calc(100vw - 32px));
+  max-width: calc(100vw - 32px);
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-dialog);
+  padding: 0;
+  background: var(--background);
+  box-shadow: var(--shadow-dialog);
+}
+
+.curriculum-confirm-dialog {
+  width: min(400px, calc(100vw - 32px));
+}
+
+.curriculum-dialog-header {
+  gap: 6px;
+  padding: var(--space-5) 48px 0 var(--space-5);
+}
+
+.curriculum-dialog-header [data-slot="dialog-title"] {
+  font-size: 20px;
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.02em;
+}
+
+.curriculum-dialog-header [data-slot="dialog-description"] {
+  font-size: 12px;
+}
+
+.curriculum-dialog-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: var(--space-5);
+}
+
+.curriculum-summary-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 12px 14px;
+}
+
+.curriculum-summary-label {
+  margin-bottom: 4px;
+  color: var(--muted-foreground);
+  font-size: 9px;
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.curriculum-summary-title {
+  font-size: 13px;
+  font-weight: var(--weight-semibold);
+}
+
+.curriculum-summary-detail {
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+
+.curriculum-summary-title + .curriculum-summary-detail {
+  margin-top: 4px;
+}
+
+.curriculum-field {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.curriculum-field > label {
+  font-size: 12px;
+  font-weight: var(--weight-medium);
+}
+
+.curriculum-field > label span {
+  color: var(--destructive);
+}
+
+.curriculum-field [data-slot="input"] {
+  height: 38px;
+  font-size: 12px;
+}
+
+.curriculum-field [data-slot="input"]:read-only {
+  background: var(--muted);
+  color: var(--text-secondary);
+}
+
+.curriculum-field [data-slot="textarea"] {
+  min-height: 64px;
+  font-size: 12px;
+}
+
+/* Sit helper and error text close to their input (4px with the field gap). */
+.curriculum-field .field-help,
+.curriculum-field .field-error {
+  margin-top: -2px;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.curriculum-field-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: var(--space-4);
+}
+
+.curriculum-dialog-note {
+  color: var(--text-secondary);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.curriculum-impact {
+  border: 1px solid;
+  border-radius: var(--radius-card);
+  padding: 12px 14px;
+  font-size: 11px;
+}
+
+.curriculum-impact-title {
+  margin-bottom: 4px;
+  font-size: 13px;
+  font-weight: var(--weight-semibold);
+}
+
+.curriculum-impact[data-tone="preserve"] {
+  border-color: var(--success-border);
+  background: var(--success-soft);
+  color: var(--primary);
+}
+
+.curriculum-impact[data-tone="destroy"] {
+  border-color: var(--destructive-border);
+  background: var(--destructive-soft);
+  color: var(--destructive);
+}
+
+.curriculum-dialog-footer {
+  flex-direction: row;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin: 0;
+  border-top: 1px solid var(--border);
+  padding: var(--space-4) var(--space-5);
+  background: var(--background);
+}
+
+.curriculum-dialog .curriculum-delete-confirm {
+  background: var(--destructive);
+  color: var(--destructive-foreground);
+}
+
+.curriculum-dialog .curriculum-delete-confirm:hover:not(:disabled) {
+  background: var(--destructive);
+  filter: brightness(0.92);
+}
+
+@media (max-width: 767px) {
+  .curriculum-page-heading {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-4);
+  }
+
+  .curriculum-page-heading h2 {
+    font-size: 23px;
+  }
+
+  .curriculum-management-page [data-slot="button"],
+  .curriculum-dialog-footer button {
+    min-height: 44px;
+  }
+
+  .curriculum-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .curriculum-filter {
+    min-height: 44px;
+  }
+
+  .curriculum-search {
+    width: 100%;
+  }
+
+  .curriculum-search [data-slot="input"],
+  .curriculum-field [data-slot="input"] {
+    height: 44px;
+    font-size: 16px;
+  }
+
+  .curriculum-field [data-slot="textarea"] {
+    font-size: 16px;
+  }
+
+  .curriculum-search > button {
+    width: 40px;
+    height: 40px;
+  }
+
+  .curriculum-table-empty {
+    min-width: 0;
+  }
+
+  .curriculum-table-empty thead {
+    display: none;
+  }
+
+  .curriculum-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .curriculum-field-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .curriculum-dialog-footer {
+    flex-direction: column-reverse;
+  }
+}
+
+/* Curriculum subjects (Department Chair): subjects by year level and term, and subject dialogs. */
+.portal-scroll-viewport:has(.curriculum-subjects-page) > div {
+  /* Keep the wide table inside its own scroll region. */
+  display: block !important;
+}
+
+.curriculum-subjects-page {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--space-5);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.curriculum-subjects-page [data-slot="button"] {
+  min-height: 36px;
+  gap: var(--space-2);
+  border-radius: var(--radius-control);
+  padding-inline: 14px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.curriculum-subjects-page [data-slot="button"] svg {
+  width: 14px;
+  height: 14px;
+}
+
+.curriculum-subjects-page [data-slot="button"][data-variant="default"]:hover:not(:disabled) {
+  background: var(--primary-hover);
+}
+
+.subject-page-actions {
+  display: flex;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.subject-readonly-note {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: var(--radius-control);
+  padding: 10px 14px;
+  background: var(--muted);
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.subject-readonly-note svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+.subject-panel [data-slot="tabs"] {
+  gap: 0;
+}
+
+.subject-year-tabs[data-slot="tabs-list"] {
+  width: 100%;
+  height: auto;
+  justify-content: flex-start;
+  gap: 4px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--border);
+  padding: 0 16px;
+}
+
+.subject-year-tabs .subject-year-tab {
+  flex: 0 0 auto;
+  height: 48px;
+  border: 0;
+  border-radius: 0;
+  padding-inline: 12px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: var(--weight-medium);
+}
+
+.subject-year-tabs .subject-year-tab::after {
+  bottom: 0;
+}
+
+.subject-year-tabs .subject-year-tab[data-state="active"] {
+  color: var(--primary);
+}
+
+.subject-year-tabs .subject-year-tab[data-state="active"]::after {
+  background: var(--primary);
+  opacity: 1;
+}
+
+.subject-year-tabs .subject-year-tab:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+  box-shadow: none;
+}
+
+.subject-term-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: 18px 16px 0;
+}
+
+.subject-term-heading h3 {
+  color: var(--primary);
+  font-size: 16px;
+  font-weight: var(--weight-bold);
+}
+
+.subject-term-summary {
+  flex-shrink: 0;
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: var(--weight-medium);
+  font-variant-numeric: tabular-nums;
+}
+
+.subject-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 16px 16px;
+}
+
+.curriculum-subjects-page .subject-select,
+.subject-dialog .subject-select {
+  width: 100%;
+  height: 38px;
+  font-size: 12px;
+}
+
+.subject-semester-select {
+  width: 180px;
+  flex-shrink: 0;
+}
+
+.curriculum-subjects-page .subject-semester-select .subject-select {
+  height: 36px;
+}
+
+/* Fixed layout keeps columns in place when the term or search changes the rows. */
+.subject-table {
+  min-width: 980px;
+  table-layout: fixed;
+  font-size: 12px;
+}
+
+.subject-table-readonly {
+  min-width: 780px;
+}
+
+.subject-table th {
+  height: 44px;
+  padding-inline: 12px;
+  color: var(--text-secondary);
+  font-size: 9px;
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.075em;
+  text-transform: uppercase;
+}
+
+.subject-table th abbr {
+  text-decoration: none;
+}
+
+.subject-table th:nth-child(1) {
+  width: 100px;
+}
+
+.subject-table th:nth-child(3),
+.subject-table th:nth-child(4),
+.subject-table th:nth-child(5) {
+  width: 64px;
+}
+
+.subject-table th:nth-child(6) {
+  width: 150px;
+}
+
+.subject-table th:nth-child(7) {
+  width: 130px;
+}
+
+.subject-table th:nth-child(8) {
+  width: 210px;
+}
+
+.subject-table td {
+  height: 52px;
+  padding: 8px 12px;
+}
+
+.subject-table tbody tr {
+  border-color: var(--border);
+}
+
+.subject-table tbody tr:hover {
+  background: var(--surface-hover);
+}
+
+.subject-code {
+  border-radius: 2px;
+  font-weight: var(--weight-semibold);
+}
+
+.subject-code:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.subject-title,
+.subject-requisites {
+  white-space: normal;
+}
+
+.subject-requisites {
+  color: var(--text-secondary);
+}
+
+.subject-table .subject-number {
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.subject-actions-cell {
+  text-align: right;
+}
+
+.subject-actions {
+  display: inline-flex;
+  gap: 8px;
+}
+
+.curriculum-subjects-page .subject-actions [data-slot="button"] {
+  min-height: 32px;
+  min-width: 84px;
+}
+
+.curriculum-subjects-page .subject-actions [data-slot="button"]:hover:not(:disabled) {
+  background: var(--primary-soft);
+}
+
+.curriculum-subjects-page .subject-actions .curriculum-delete-action {
+  border-color: var(--destructive-border);
+  color: var(--destructive);
+}
+
+.curriculum-subjects-page .subject-actions .curriculum-delete-action:hover:not(:disabled) {
+  background: var(--destructive-soft);
+  color: var(--destructive);
+}
+
+.subject-not-found {
+  display: flex;
+  min-height: 320px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 32px 16px;
+  text-align: center;
+}
+
+.subject-not-found > svg {
+  width: 32px;
+  height: 32px;
+  color: var(--muted-foreground);
+}
+
+.subject-not-found h2 {
+  font-size: 20px;
+  font-weight: var(--weight-bold);
+}
+
+.subject-not-found p {
+  color: var(--text-secondary);
+}
+
+.subject-dialog {
+  width: min(500px, calc(100vw - 32px));
+}
+
+.subject-dialog-header {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: var(--space-4);
+}
+
+.subject-field-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: var(--space-4);
+}
+
+.subject-identity-row {
+  grid-template-columns: 130px minmax(0, 1fr);
+}
+
+.subject-units-row {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+/* Derived total: styled like a read-only input so it lines up with the unit fields. */
+.subject-units-total {
+  display: flex;
+  height: 38px;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--muted);
+  color: var(--text-secondary);
+  font-size: 12px;
+  padding: 0 12px;
+  white-space: nowrap;
+}
+
+.subject-row-help,
+.subject-row-error {
+  margin-top: 4px;
+}
+
+.subject-row-help {
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.subject-row-error .field-error {
+  font-size: 11px;
+}
+
+.subject-divider {
+  border: 0;
+  border-top: 1px solid var(--border);
+}
+
+.subject-dialog .subject-requisite-trigger {
+  width: 100%;
+  min-height: 38px;
+  justify-content: space-between;
+  gap: 8px;
+  border-radius: var(--radius-control);
+  padding-inline: 12px;
+  font-size: 12px;
+  font-weight: var(--weight-regular, 400);
+  box-shadow: none;
+}
+
+.subject-requisite-trigger span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.subject-requisite-trigger svg {
+  width: 14px;
+  height: 14px;
+  color: var(--muted-foreground);
+}
+
+.subject-requisite-trigger[data-state="open"] {
+  border-color: var(--primary);
+}
+
+.subject-requisite-menu {
+  z-index: 60;
+  width: 320px;
+  max-width: calc(100vw - 32px);
+  max-height: min(360px, var(--radix-popover-content-available-height));
+  overflow-y: auto;
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--popover);
+  color: var(--popover-foreground);
+  font-family: var(--font-ui);
+  box-shadow: var(--shadow-dropdown);
+}
+
+.subject-requisite-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 6px 4px;
+  border-bottom: 1px solid var(--border);
+  padding: 8px 4px;
+  color: var(--muted-foreground);
+}
+
+.subject-requisite-search > svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+.subject-requisite-search input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--foreground);
+  font-size: 12px;
+}
+
+.subject-requisite-search:focus-within {
+  border-color: var(--primary);
+}
+
+.subject-requisite-group {
+  padding: 10px 8px 4px;
+  color: var(--muted-foreground);
+  font-size: 9px;
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.subject-requisite-option {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 18px auto minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  border-radius: var(--radius-control);
+  padding: 8px;
+  text-align: left;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.subject-requisite-option[data-active="true"] {
+  background: var(--surface-hover);
+}
+
+.subject-requisite-option[data-ineligible] {
+  color: var(--destructive);
+}
+
+.subject-requisite-check {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-strong, var(--border));
+  border-radius: 4px;
+  color: var(--primary-foreground);
+}
+
+.subject-requisite-option[aria-selected="true"] .subject-requisite-check {
+  border-color: var(--primary);
+  background: var(--primary);
+}
+
+.subject-requisite-check svg {
+  width: 12px;
+  height: 12px;
+}
+
+.subject-requisite-code {
+  font-weight: var(--weight-semibold);
+  white-space: nowrap;
+}
+
+.subject-requisite-title {
+  overflow: hidden;
+  color: var(--text-secondary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.subject-requisite-empty {
+  padding: 16px 10px;
+  color: var(--muted-foreground);
+  text-align: center;
+  font-size: 12px;
+}
+
+.subject-summary-card {
+  border: 1px solid var(--success-border);
+  border-radius: var(--radius-card);
+  padding: 12px 14px;
+  background: var(--primary-soft);
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+
+.subject-summary-title {
+  margin-bottom: 4px;
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: var(--weight-semibold);
+}
+
+.curriculum-impact[data-tone="caution"] {
+  border-color: var(--destructive-border);
+  background: color-mix(in srgb, var(--destructive-soft) 45%, var(--background));
+  color: var(--text-secondary);
+}
+
+.curriculum-impact[data-tone="caution"] .curriculum-impact-title {
+  color: var(--destructive);
+}
+
+.subject-dependent-list {
+  margin: 4px 0 6px;
+  padding-left: 18px;
+  list-style: disc;
+}
+
+@media (max-width: 767px) {
+  .subject-page-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .curriculum-subjects-page [data-slot="button"] {
+    min-height: 44px;
+  }
+
+  .subject-year-tabs .subject-year-tab {
+    min-height: 44px;
+  }
+
+  .subject-term-heading {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .subject-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .subject-semester-select {
+    width: 100%;
+  }
+
+  .curriculum-subjects-page .subject-select,
+  .subject-dialog .subject-select,
+  .subject-dialog .subject-requisite-trigger {
+    min-height: 44px;
+    font-size: 16px;
+  }
+
+  .subject-requisite-search input {
+    min-height: 28px;
+    font-size: 16px;
+  }
+
+  .subject-requisite-option {
+    min-height: 44px;
+  }
+
+  .subject-table-empty {
+    min-width: 0;
+  }
+
+  .subject-table-empty thead {
+    display: none;
+  }
+
+  .subject-field-row,
+  .subject-identity-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .subject-units-row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  /* Labels may wrap at this width; reserve two lines so the inputs align. */
+  .subject-units-row .curriculum-field > label {
+    display: flex;
+    min-height: 36px;
+    align-items: flex-end;
+  }
+}
