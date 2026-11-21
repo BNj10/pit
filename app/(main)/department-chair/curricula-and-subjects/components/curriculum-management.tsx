@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
+  activeSubjectCodeConflicts,
   canArchiveCurriculum,
   canDeleteCurriculum,
   canEditCurriculum,
@@ -126,6 +127,17 @@ export function CurriculumManagement({
   function transition(curriculum: Curriculum, action: CurriculumTransition) {
     const { from, to } = curriculumTransitions[action];
     if (curriculum.status !== from) return;
+    if (action === "activate") {
+      const conflicts = activeSubjectCodeConflicts(curriculum.id, curricula, subjects);
+      if (conflicts.length > 0) {
+        const codes = conflicts.map((conflict) => conflict.code).join(", ");
+        const owners = [...new Set(conflicts.map((conflict) => conflict.curriculum.name))].join(" and ");
+        toast.error(
+          `${curriculum.name} can't be activated: ${codes} ${conflicts.length === 1 ? "is" : "are"} already used by ${owners}. Give revised subjects new codes.`,
+        );
+        return;
+      }
+    }
     actions.updateCurriculum(curriculum.id, { status: to });
     focusAfterRender(nameId(curriculum.id));
     toast.success(`${curriculum.name} ${transitionLabels[action].toast}`);

@@ -17,7 +17,6 @@ export const semesters = [
 export const subjectCodeMaxLength = 20;
 export const subjectTitleMaxLength = 150;
 const componentUnitMax = 9;
-const totalUnitMax = 18;
 
 export function isSemester(value: unknown): value is Semester {
   return semesters.some((semester) => semester.value === value);
@@ -92,7 +91,6 @@ export function subjectFormValues(subject: Subject | undefined, term: Curriculum
     semester: subject?.semester ?? term.semester,
     lectureUnits: subject ? String(subject.lectureUnits) : "",
     laboratoryUnits: subject ? String(subject.laboratoryUnits) : "",
-    units: subject ? String(subject.units) : "",
     prerequisiteIds: subject?.prerequisiteIds ?? [],
     corequisiteIds: subject?.corequisiteIds ?? [],
   };
@@ -129,7 +127,6 @@ export function validateSubject(
     Number.isInteger(term.yearLevel) && term.yearLevel >= 1 && term.yearLevel <= yearLevels && isSemester(term.semester);
   const lectureUnits = parseWholeNumber(values.lectureUnits, componentUnitMax);
   const laboratoryUnits = parseWholeNumber(values.laboratoryUnits, componentUnitMax);
-  const units = parseWholeNumber(values.units, totalUnitMax);
 
   if (!code) {
     errors.code = "Enter a subject code.";
@@ -150,7 +147,6 @@ export function validateSubject(
   if (lectureUnits === 0 && laboratoryUnits === 0) {
     errors.lectureUnits = "Lecture and laboratory units cannot both be 0.";
   }
-  if (units === null) errors.units = `Enter a whole number from 0 to ${totalUnitMax}.`;
 
   if (!validTerm) {
     errors.term = "Choose a year level and semester.";
@@ -191,8 +187,7 @@ export function validateSubject(
     Object.keys(errors).length > 0 ||
     !validTerm ||
     lectureUnits === null ||
-    laboratoryUnits === null ||
-    units === null
+    laboratoryUnits === null
   ) {
     return { errors, details: null };
   }
@@ -206,7 +201,8 @@ export function validateSubject(
       semester: term.semester,
       lectureUnits,
       laboratoryUnits,
-      units,
+      // Total units are lecture + laboratory units; each unit is one weekly contact hour.
+      units: lectureUnits + laboratoryUnits,
       prerequisiteIds: [...values.prerequisiteIds],
       corequisiteIds: [...values.corequisiteIds],
     },

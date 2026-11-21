@@ -17,6 +17,7 @@ import type { SubjectSectionsProps } from "@/types/sections-exports";
 
 export function SubjectSections({
   subject,
+  curriculum,
   faculty,
   offering,
   now,
@@ -32,9 +33,10 @@ export function SubjectSections({
   const panelId = subjectSectionsId(offering.id);
   const access = crossDepartmentAccessState(offering.crossDepartmentAccess, now);
   const AccessIcon = access.isOpen ? LockOpen : Lock;
+  const archived = curriculum.status === "Archived";
 
   return (
-    <section className="subject-sections" data-expanded={expanded} aria-label={`${subject.code} ${subject.title}`}>
+    <section className="subject-sections" data-expanded={expanded} aria-label={`${subject.code} ${subject.title}, ${curriculum.name}${archived ? " (archived)" : ""}`}>
       <div className="subject-sections-header">
         <h5 className="subject-sections-heading">
           <button id={`${panelId}-toggle`} type="button" aria-expanded={expanded} aria-controls={panelId} onClick={onToggle}>
@@ -42,6 +44,9 @@ export function SubjectSections({
               <span className="subject-sections-code">{subject.code}</span>
               <span>{subject.title}</span>
               <span className="subject-sections-units">{describeSubjectUnits(subject)}</span>
+              <span className="subject-sections-curriculum" data-status={curriculum.status} title={curriculum.name}>
+                {archived ? `Archived curriculum · ${curriculum.year}` : curriculum.name}
+              </span>
             </span>
             <span className="subject-sections-count" data-empty={entries.length === 0}>
               {entries.length === 0 ? "No schedule yet" : countLabel(entries.length, "schedule")}

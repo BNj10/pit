@@ -12,21 +12,26 @@ import {
   academicYearLabel,
   compareSectionEntries,
   countLabel,
+  formatHours,
+  offerableCurricula,
   offeringTermLabel,
   offeringTerms,
+  scheduleShortfalls,
+  sectionYearLevelLabel,
+  sectionYearLevels,
   subjectSectionsId,
   subjectUnits,
   yearOfferingSignature,
 } from "@/lib/sections";
 import type {
   CrossDepartmentAccess,
-  CurriculumSubject,
   CurriculumYearLevel,
   OfferingTerm,
   OfferingTermGroup,
   SectionEntry,
   SectionsData,
   SectionsManagerProps,
+  Subject,
   SubjectOffering,
   YearPublicationStatus,
 } from "@/types/sections-exports";
@@ -37,20 +42,13 @@ import { SectionEntryDialog } from "./section-entry-dialog";
 import { SubjectSections } from "./subject-sections";
 import { YearPublicationBar } from "./year-publication-bar";
 
-const yearLevels = [
-  { value: 1, label: "First Year" },
-  { value: 2, label: "Second Year" },
-  { value: 3, label: "Third Year" },
-  { value: 4, label: "Fourth Year" },
-] as const satisfies readonly { value: CurriculumYearLevel; label: string }[];
-
 type DialogState =
-  | { kind: "add-entry"; subject: CurriculumSubject; offering: SubjectOffering }
-  | { kind: "edit-entry" | "delete-entry"; subject: CurriculumSubject; offering: SubjectOffering; entry: SectionEntry }
+  | { kind: "add-entry"; subject: Subject; offering: SubjectOffering }
+  | { kind: "edit-entry" | "delete-entry"; subject: Subject; offering: SubjectOffering; entry: SectionEntry }
   | { kind: "add-subjects"; term: OfferingTerm }
-  | { kind: "remove-subject"; subject: CurriculumSubject; offering: SubjectOffering }
+  | { kind: "remove-subject"; subject: Subject; offering: SubjectOffering }
   | { kind: "remove-term"; term: OfferingTerm }
-  | { kind: "access"; subject: CurriculumSubject; offering: SubjectOffering }
+  | { kind: "access"; subject: Subject; offering: SubjectOffering }
   | { kind: "publish" }
   | null;
 
@@ -65,7 +63,7 @@ const publicationKey = (academicYear: string, yearLevel: CurriculumYearLevel) =>
 /** Publication state per academic year and year level, keyed by publicationKey. */
 function initialPublication(data: SectionsData): Record<string, YearPublication> {
   const academicYears = [...new Set(data.academicTerms.map((term) => term.academicYear))];
-  return Object.fromEntries(academicYears.flatMap((academicYear) => yearLevels.map(({ value: yearLevel }) => {
+  return Object.fromEntries(academicYears.flatMap((academicYear) => sectionYearLevels.map(({ value: yearLevel }) => {
     const signature = yearOfferingSignature(data, academicYear, yearLevel);
     const published = data.publishedYearLevels.some((item) => item.academicYear === academicYear && item.yearLevel === yearLevel);
     return [publicationKey(academicYear, yearLevel), { saved: signature, published: published ? signature : null }];
@@ -123,8 +121,11 @@ export function SectionsManager({ data }: SectionsManagerProps) {
     };
   }, []);
 
-  const subjectsByCode = new Map(data.subjects.map((subject) => [subject.code, subject]));
-  const yearLabel = yearLevels.find((level) => level.value === yearLevel)?.label ?? "Year";
+  const subjectsById = new Map(data.subjects.map((subject) => [subject.id, subject]));
+  const curriculaById = new Map(data.curricula.map((curriculum) => [curriculum.id, curriculum]));
+  const activeCurricula = offerableCurricula(data.curricula);
+  const subjectCode = (offering: SubjectOffering) => subjectsById.get(offering.subjectId)?.code ?? "Subject";
+  const yearLabel = sectionYearLevelLabel(yearLevel);
   const academicYears = [...new Set(data.academicTerms.map((term) => term.academicYear))];
   const inSelection = (group: OfferingTermGroup) => group.academicYear === academicYear && group.yearLevel === yearLevel;
   const yearTerms = termGroups.filter(inSelection).sort((a, b) => termOrder(a.term) - termOrder(b.term));
@@ -133,7 +134,6 @@ export function SectionsManager({ data }: SectionsManagerProps) {
   const missingTerms = offeringTerms.filter((term) =>
     deanTerms.some((item) => item.term === term.value) && !yearTerms.some((group) => group.term === term.value),
   );
-  const yearSubjects = data.subjects.filter((subject) => subject.yearLevel === yearLevel);
   const yearOfferings = offerings.filter(inSelection);
   const yearEntries = entries.filter((entry) => yearOfferings.some((offering) => offering.id === entry.offeringId));
   const signature = yearOfferingSignature({ termGroups, offerings, entries }, academicYear, yearLevel);
@@ -142,13 +142,23 @@ export function SectionsManager({ data }: SectionsManagerProps) {
     ? "published"
     : signature === yearPublication.saved ? "draft" : "unsaved";
   const unscheduled = yearOfferings.filter((offering) => !entries.some((entry) => entry.offeringId === offering.id));
+  const shortfalls = scheduleShortfalls(yearOfferings, entries, data.subjects);
+  const shortfallLabels = shortfalls.map(({ subject, section, classType, scheduled, required }) =>
+    `${subject.code} ${section} ${classTypeLabels[classType].short.toLocaleLowerCase()}: ${formatHours(scheduled)} of ${formatHours(required)} ${required === 1 ? "hr" : "hrs"}`,
+  );
   const publishBlockers = yearOfferings.length === 0
     ? [`Add at least one subject to ${yearLabel} before publishing.`]
-    : unscheduled.length > 0
-      ? [`Schedule at least one section for ${unscheduled
-        .map((offering) => `${offering.subjectCode} (${offeringTermLabel(offering.term)})`)
-        .join(", ")} before publishing.`]
-      : [];
+    : [
+      ...(unscheduled.length > 0
+        ? [`Schedule at least one section for ${unscheduled
+          .map((offering) => `${subjectCode(offering)} (${offeringTermLabel(offering.term)})`)
+          .join(", ")} before publishing.`]
+        : []),
+      ...(shortfalls.length > 0
+        ? [`Schedule the weekly hours each subject's units require (1 unit = 1 hr): ${shortfallLabels.slice(0, 3).join("; ")}${
+          shortfalls.length > 3 ? `; and ${shortfalls.length - 3} more` : ""}.`]
+        : []),
+    ];
 
   const termOfferings = (term: OfferingTerm) =>
     offerings.filter((offering) => inSelection(offering) && offering.term === term);
@@ -182,13 +192,13 @@ export function SectionsManager({ data }: SectionsManagerProps) {
     focusLater("sections-add-term");
   }
 
-  function addSubjects(term: OfferingTerm, codes: readonly string[]) {
-    const added = codes.map((subjectCode): SubjectOffering => ({
+  function addSubjects(term: OfferingTerm, subjectIds: readonly string[]) {
+    const added = subjectIds.map((subjectId): SubjectOffering => ({
       id: globalThis.crypto.randomUUID(),
       academicYear,
       yearLevel,
       term,
-      subjectCode,
+      subjectId,
       // New offerings start reserved; the chair chooses when other departments can enroll.
       crossDepartmentAccess: { mode: "reserved" },
     }));
@@ -202,7 +212,7 @@ export function SectionsManager({ data }: SectionsManagerProps) {
     setOfferings((current) => current.filter((item) => item.id !== offering.id));
     setEntries((current) => current.filter((entry) => entry.offeringId !== offering.id));
     setDialog(null);
-    toast.success(`${offering.subjectCode} removed from ${offeringTermLabel(offering.term)}.`);
+    toast.success(`${subjectCode(offering)} removed from ${offeringTermLabel(offering.term)}.`);
     focusLater(`${termDomId(offering)}-toggle`);
   }
 
@@ -225,7 +235,7 @@ export function SectionsManager({ data }: SectionsManagerProps) {
   function saveAccess(offering: SubjectOffering, access: CrossDepartmentAccess) {
     setOfferings((current) => current.map((item) => item.id === offering.id ? { ...item, crossDepartmentAccess: access } : item));
     setDialog(null);
-    toast.success(`${offering.subjectCode} access for other departments updated.`);
+    toast.success(`${subjectCode(offering)} access for other departments updated.`);
   }
 
   function saveDraft() {
@@ -295,18 +305,20 @@ export function SectionsManager({ data }: SectionsManagerProps) {
           />
         );
       }
-      case "add-subjects": {
-        const offered = new Set(termOfferings(dialog.term).map((offering) => offering.subjectCode));
+      case "add-subjects":
         return (
           <AddOfferedSubjectsDialog
+            term={dialog.term}
+            yearLevel={yearLevel}
             termLabel={offeringTermLabel(dialog.term)}
             yearLabel={yearLabel}
-            subjects={yearSubjects.filter((subject) => !offered.has(subject.code))}
+            curricula={activeCurricula}
+            subjects={data.subjects}
+            offeredSubjectIds={new Set(termOfferings(dialog.term).map((offering) => offering.subjectId))}
             onClose={() => setDialog(null)}
-            onAdd={(codes) => addSubjects(dialog.term, codes)}
+            onAdd={(subjectIds) => addSubjects(dialog.term, subjectIds)}
           />
         );
-      }
       case "remove-subject": {
         const scheduled = offeringEntries(dialog.offering.id).length;
         return (
@@ -356,7 +368,7 @@ export function SectionsManager({ data }: SectionsManagerProps) {
         <div className="sections-toolbar">
           <div>
             <h3 id="sections-catalog-title">Approved subjects by semester</h3>
-            <p>{data.program}</p>
+            <p>{data.program.shortName}</p>
           </div>
           <div className="sections-filters">
             <Select
@@ -379,7 +391,7 @@ export function SectionsManager({ data }: SectionsManagerProps) {
             <Select
               value={String(yearLevel)}
               onValueChange={(value) => {
-                const level = yearLevels.find((item) => String(item.value) === value);
+                const level = sectionYearLevels.find((item) => String(item.value) === value);
                 if (level) setYearLevel(level.value);
               }}
             >
@@ -387,7 +399,7 @@ export function SectionsManager({ data }: SectionsManagerProps) {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent position="popper" align="end" sideOffset={8} className="sections-year-menu">
-                {yearLevels.map((level) => (
+                {sectionYearLevels.map((level) => (
                   <SelectItem key={level.value} value={String(level.value)} className="sections-year-option">
                     {level.label}
                   </SelectItem>
@@ -425,8 +437,9 @@ export function SectionsManager({ data }: SectionsManagerProps) {
             const domId = termDomId(group);
             const open = openTerms.has(key);
             const termSubjects = termOfferings(group.term).flatMap((offering) => {
-              const subject = subjectsByCode.get(offering.subjectCode);
-              return subject ? [{ offering, subject }] : [];
+              const subject = subjectsById.get(offering.subjectId);
+              const curriculum = subject && curriculaById.get(subject.curriculumId);
+              return subject && curriculum ? [{ offering, subject, curriculum }] : [];
             });
             const units = termSubjects.reduce((sum, { subject }) => sum + subjectUnits(subject), 0);
             return (
@@ -468,10 +481,11 @@ export function SectionsManager({ data }: SectionsManagerProps) {
                     {termSubjects.length === 0 && (
                       <p className="sections-term-empty">No subjects are offered in {term.label.toLocaleLowerCase()} yet.</p>
                     )}
-                    {termSubjects.map(({ offering, subject }) => (
+                    {termSubjects.map(({ offering, subject, curriculum }) => (
                       <SubjectSections
                         key={offering.id}
                         subject={subject}
+                        curriculum={curriculum}
                         faculty={data.faculty}
                         offering={offering}
                         now={now}

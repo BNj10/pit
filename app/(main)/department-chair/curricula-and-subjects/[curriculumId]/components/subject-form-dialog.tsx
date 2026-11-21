@@ -72,7 +72,6 @@ const fieldOrder = [
   ["term", "subject-year-level"],
   ["lectureUnits", "subject-lectureUnits"],
   ["laboratoryUnits", "subject-laboratoryUnits"],
-  ["units", "subject-units"],
   ["prerequisiteIds", "subject-prerequisites"],
   ["corequisiteIds", "subject-corequisites"],
 ] as const satisfies readonly (readonly [keyof SubjectFormErrors, string])[];
@@ -94,8 +93,7 @@ function SubjectForm({
   const editing = subject !== undefined;
   const [values, setValues] = useState<SubjectFormValues>(() => subjectFormValues(subject, defaultTerm));
   const [errors, setErrors] = useState<SubjectFormErrors>({});
-  // Total units follow lecture + laboratory units until set to something else.
-  const [unitsTouched, setUnitsTouched] = useState(() => editing && values.units !== unitTotal(values));
+  const totalUnits = unitTotal(values);
   const others = curriculumSubjects.filter((item) => item.id !== subject?.id);
   const term: CurriculumTerm = { yearLevel: values.yearLevel, semester: values.semester };
   const prerequisites = prerequisiteOptions(others, term);
@@ -103,15 +101,8 @@ function SubjectForm({
   const ineligible = (ids: readonly string[], eligible: readonly Subject[]) =>
     others.filter((item) => ids.includes(item.id) && !eligible.includes(item));
 
-  function update(
-    change: Partial<SubjectFormValues>,
-    cleared: (keyof SubjectFormErrors)[],
-    keepUnits = unitsTouched,
-  ) {
-    setValues((current) => {
-      const next = { ...current, ...change };
-      return keepUnits ? next : { ...next, units: unitTotal(next) };
-    });
+  function update(change: Partial<SubjectFormValues>, cleared: (keyof SubjectFormErrors)[]) {
+    setValues((current) => ({ ...current, ...change }));
     setErrors((current) => {
       const next = { ...current };
       for (const field of cleared) delete next[field];
@@ -143,7 +134,7 @@ function SubjectForm({
     ) : null;
   }
 
-  const unitField = (field: "lectureUnits" | "laboratoryUnits" | "units", label: string) => (
+  const unitField = (field: "lectureUnits" | "laboratoryUnits", label: string) => (
     <div className="curriculum-field">
       <label htmlFor={`subject-${field}`}>{label} <span aria-hidden="true">*</span></label>
       <Input
@@ -156,15 +147,8 @@ function SubjectForm({
         required
         aria-invalid={Boolean(errors[field])}
         aria-describedby={describedBy(field, "subject-units-help")}
-        onChange={(event) => {
-          if (field === "units") {
-            setUnitsTouched(true);
-            update({ units: event.target.value }, ["units"], true);
-          } else {
-            // Clearing lectureUnits also clears the "both cannot be 0" message.
-            update({ [field]: event.target.value }, [field, "lectureUnits", "units"]);
-          }
-        }}
+        // Clearing lectureUnits also clears the "both cannot be 0" message.
+        onChange={(event) => update({ [field]: event.target.value }, [field, "lectureUnits"])}
       />
       {fieldError(field)}
     </div>
@@ -265,10 +249,15 @@ function SubjectForm({
           <div className="subject-field-row subject-units-row">
             {unitField("lectureUnits", "Lecture units")}
             {unitField("laboratoryUnits", "Laboratory units")}
-            {unitField("units", "Total units")}
+            <div className="curriculum-field">
+              <label htmlFor="subject-units">Total units</label>
+              <output id="subject-units" className="subject-units-total" htmlFor="subject-lectureUnits subject-laboratoryUnits">
+                {totalUnits ? `${totalUnits} (${totalUnits} ${totalUnits === "1" ? "hr" : "hrs"}/week)` : "—"}
+              </output>
+            </div>
           </div>
           <p className="field-help subject-row-help" id="subject-units-help">
-            Total units default to lecture + laboratory units.
+            Total units are lecture + laboratory units. Each unit is one weekly contact hour.
           </p>
         </div>
 

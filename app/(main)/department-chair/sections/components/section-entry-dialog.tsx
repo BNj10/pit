@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { Check, CircleAlert, CircleCheck, FlaskConical, Info, Presentation, X } from "lucide-react";
+import { Check, CircleAlert, CircleCheck, FlaskConical, Info, Presentation, TriangleAlert, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
@@ -10,13 +10,14 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   classTypeLabels,
+  contactHoursPerUnit,
   draftFromEntry,
   entryFromDraft,
   formatHours,
   formatSectionSchedule,
-  hourLimitFor,
   meetingDayNames,
   meetingDays,
+  requiredHours,
   validateSectionEntry,
 } from "@/lib/sections";
 import type {
@@ -31,6 +32,9 @@ const classTypeIcons = { lecture: Presentation, laboratory: FlaskConical } as co
 // Radix Select reserves the empty string, so "unassigned" stands in for no faculty member.
 const unassignedValue = "unassigned";
 
+const hoursLabel = (hours: number) => `${formatHours(hours)} ${hours === 1 ? "hr" : "hrs"}`;
+const unitsLabel = (units: number) => `${formatHours(units)} ${units === 1 ? "unit" : "units"}`;
+
 function ValidationSummary({ validation, draft, subjectCode, faculty }: {
   validation: SectionEntryValidation;
   draft: SectionEntryDraft;
@@ -38,7 +42,9 @@ function ValidationSummary({ validation, draft, subjectCode, faculty }: {
   faculty: readonly FacultyMember[];
 }) {
   const typeLabel = classTypeLabels[draft.classType].label.toLocaleLowerCase();
-  const overLimit = validation.totalHours !== null && validation.totalHours > validation.hourLimit;
+  const section = draft.section.trim();
+  const required = validation.requiredHours;
+  const overLimit = validation.totalHours !== null && Math.round(validation.totalHours * 60) > Math.round(required * 60);
   const problems = [
     ...validation.conflicts.map(({ kind, entry }) => {
       const meeting = `${entry.subjectCode} ${classTypeLabels[entry.classType].short} (${formatSectionSchedule(entry)})`;
@@ -48,7 +54,7 @@ function ValidationSummary({ validation, draft, subjectCode, faculty }: {
       return `${name} already teaches ${entry.section} ${meeting}.`;
     }),
     ...(overLimit
-      ? [`${draft.section.trim()} ${typeLabel} would total ${formatHours(validation.totalHours ?? 0)} hrs/week; ${subjectCode} allows ${formatHours(validation.hourLimit)}.`]
+      ? [`${section} ${typeLabel} would total ${hoursLabel(validation.totalHours ?? 0)}/week, but ${subjectCode} has ${unitsLabel(required / contactHoursPerUnit)} of ${typeLabel} (1 unit = 1 hr/week).`]
       : []),
   ];
 
@@ -64,8 +70,21 @@ function ValidationSummary({ validation, draft, subjectCode, faculty }: {
   if (problems.length > 0) {
     return (
       <div className="section-entry-validation" data-state="conflict" role="status">
-        <p><CircleAlert aria-hidden="true" />{validation.conflicts.length > 0 ? "Schedule conflict detected" : "Weekly hours exceeded"}</p>
+        <p><CircleAlert aria-hidden="true" />{validation.conflicts.length > 0 ? "Schedule conflict detected" : "Weekly hours exceed the units"}</p>
         <ul>{problems.map((problem) => <li key={problem}>{problem}</li>)}</ul>
+      </div>
+    );
+  }
+
+  if (validation.hoursShort !== null) {
+    return (
+      <div className="section-entry-validation" data-state="short" role="status">
+        <p><TriangleAlert aria-hidden="true" />Weekly hours below the units</p>
+        <span>
+          {section} {typeLabel} totals {formatHours(validation.totalHours ?? 0)} of {hoursLabel(required)}/week. Add{" "}
+          {hoursLabel(validation.hoursShort)} more in this or another entry to follow {subjectCode}&rsquo;s{" "}
+          {unitsLabel(required / contactHoursPerUnit)} of {typeLabel}. You can save now; publishing waits until it is complete.
+        </span>
       </div>
     );
   }
@@ -79,7 +98,7 @@ function ValidationSummary({ validation, draft, subjectCode, faculty }: {
 
 export function SectionEntryDialog({ subject, offering, entry, entries, faculty, onClose, onSave }: SectionEntryDialogProps) {
   const [draft, setDraft] = useState(() => draftFromEntry(entry));
-  const validation = validateSectionEntry(draft, subject, entries, entry?.id);
+  const validation = validateSectionEntry(draft, subject, offering, entries, entry?.id);
   const editing = entry !== undefined;
 
   function update(patch: Partial<SectionEntryDraft>) {
@@ -89,7 +108,7 @@ export function SectionEntryDialog({ subject, offering, entry, entries, faculty,
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!validation.canSave) return;
-    onSave(entryFromDraft(draft, offering, entry?.id ?? globalThis.crypto.randomUUID()));
+    onSave(entryFromDraft(draft, offering, subject, entry?.id ?? globalThis.crypto.randomUUID()));
   }
 
   return (
@@ -161,13 +180,13 @@ export function SectionEntryDialog({ subject, offering, entry, entries, faculty,
             <div className="section-entry-segments">
               {(["lecture", "laboratory"] as const satisfies readonly SectionClassType[]).map((classType) => {
                 const Icon = classTypeIcons[classType];
-                const unavailable = hourLimitFor(subject, classType) === 0;
+                const unavailable = requiredHours(subject, classType) === 0;
                 return (
                   <label
                     key={classType}
                     data-checked={draft.classType === classType}
                     data-disabled={unavailable}
-                    title={unavailable ? `${subject.code} has no ${classTypeLabels[classType].label.toLocaleLowerCase()} hours.` : undefined}
+                    title={unavailable ? `${subject.code} has no ${classTypeLabels[classType].label.toLocaleLowerCase()} units.` : undefined}
                   >
                     <input
                       type="radio"
@@ -190,6 +209,8 @@ export function SectionEntryDialog({ subject, offering, entry, entries, faculty,
               <p id="section-entry-schedule-title">Schedule</p>
               <span aria-live="polite">
                 {validation.entryHours === null ? "— hrs/week" : `${formatHours(validation.entryHours)} hrs/week`}
+                {validation.totalHours !== null && validation.requiredHours > 0 &&
+                  ` · ${formatHours(validation.totalHours)} of ${formatHours(validation.requiredHours)} required`}
               </span>
             </div>
             <div className="section-entry-days" role="group" aria-label="Meeting days">

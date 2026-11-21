@@ -27,6 +27,7 @@ function subject(
 }
 
 const c2026 = "curriculum-bscs-2026";
+const c2023 = "curriculum-bscs-2023";
 const c2019 = "curriculum-bscs-2019";
 const c2015 = "curriculum-bscs-2015";
 
@@ -49,6 +50,14 @@ export const curriculumManagementPreview = {
       implementedYear: 2026,
       status: "Draft",
       description: null,
+    },
+    {
+      id: c2023,
+      name: "2023 BSCS Curriculum",
+      year: 2023,
+      implementedYear: 2023,
+      status: "Active",
+      description: "Revised curriculum; its subjects use new codes even where the content is unchanged.",
     },
     {
       id: c2019,
@@ -96,9 +105,38 @@ export const curriculumManagementPreview = {
     subject(c2019, "s19-cc105", "CC 105", "Information Management", [2, "second"], [2, 1, 3], ["s19-cc104"]),
     subject(c2019, "s19-cs202", "CS 202", "Algorithms and Complexity", [2, "second"], [3, 0, 3], ["s19-cc104", "s19-cs102"]),
     subject(c2019, "s19-pe4", "PE 4", "Team Sports", [2, "second"], [2, 0, 2], ["s19-pe3"]),
+    subject(c2019, "s19-cs301", "CS 301", "Software Engineering", [3, "first"], [2, 1, 3], ["s19-cc105"]),
+    subject(c2019, "s19-cs302", "CS 302", "Operating Systems", [3, "first"], [2, 1, 3], ["s19-cc104"]),
+    subject(c2019, "s19-cs303", "CS 303", "Web Systems and Technologies", [3, "first"], [2, 1, 3], ["s19-cc105"]),
+    subject(c2019, "s19-cs304", "CS 304", "Automata Theory and Formal Languages", [3, "second"], [3, 0, 3], ["s19-cs202"]),
+    subject(c2019, "s19-cs305", "CS 305", "Information Assurance and Security", [3, "second"], [2, 1, 3]),
+    subject(c2019, "s19-cs306", "CS 306", "Computer Networks", [3, "second"], [2, 1, 3], ["s19-cs302"]),
+    subject(c2019, "s19-cs307", "CS 307", "Human-Computer Interaction", [3, "second"], [3, 0, 3]),
+    subject(c2019, "s19-cs401", "CS 401", "CS Thesis 1", [4, "first"], [3, 0, 3], ["s19-cs301"]),
+    subject(c2019, "s19-cs402", "CS 402", "CS Thesis 2", [4, "second"], [3, 0, 3], ["s19-cs401"]),
+
+    // The 2023 revision gives every subject a new code, even where the 2019 content is unchanged.
+    subject(c2023, "s23-cs1101", "CS 1101", "Introduction to Computing", [1, "first"], [2, 1, 3]),
+    subject(c2023, "s23-cs1102", "CS 1102", "Computer Programming 1", [1, "first"], [2, 1, 3]),
+    subject(c2023, "s23-gec1101", "GEC 1101", "Understanding the Self", [1, "first"], [3, 0, 3]),
+    subject(c2023, "s23-cs1201", "CS 1201", "Computer Programming 2", [1, "second"], [2, 1, 3], ["s23-cs1102"]),
+    subject(c2023, "s23-cs1202", "CS 1202", "Discrete Structures", [1, "second"], [3, 0, 3]),
+    subject(c2023, "s23-cs2101", "CS 2101", "Data Structures and Algorithms", [2, "first"], [2, 1, 3], ["s23-cs1201"]),
+    subject(c2023, "s23-cs2102", "CS 2102", "Object-Oriented Programming", [2, "first"], [2, 1, 3], ["s23-cs1201"]),
+    subject(c2023, "s23-cs2201", "CS 2201", "Information Management", [2, "second"], [2, 1, 3], ["s23-cs2101"]),
+    subject(c2023, "s23-cs2202", "CS 2202", "Algorithms and Complexity", [2, "second"], [3, 0, 3], ["s23-cs2101", "s23-cs1202"]),
+    subject(c2023, "s23-cs3101", "CS 3101", "Software Engineering", [3, "first"], [2, 1, 3], ["s23-cs2201"]),
+    subject(c2023, "s23-cs3102", "CS 3102", "Operating Systems", [3, "first"], [2, 1, 3], ["s23-cs2101"]),
+    subject(c2023, "s23-cs3103", "CS 3103", "Web Systems and Technologies", [3, "first"], [2, 1, 3], ["s23-cs2201"]),
+    subject(c2023, "s23-cs3201", "CS 3201", "Automata Theory and Formal Languages", [3, "second"], [3, 0, 3], ["s23-cs2202"]),
+    subject(c2023, "s23-cs3202", "CS 3202", "Information Assurance and Security", [3, "second"], [2, 1, 3]),
+    subject(c2023, "s23-cs3203", "CS 3203", "Computer Networks", [3, "second"], [2, 1, 3], ["s23-cs3102"]),
+    subject(c2023, "s23-cs3204", "CS 3204", "Human-Computer Interaction", [3, "second"], [3, 0, 3]),
+    subject(c2023, "s23-cs3301", "CS 3301", "Practicum", [3, "summer"], [0, 3, 3], ["s23-cs3101"]),
 
     subject(c2015, "s15-cs111", "CS 111", "Introduction to Computing", [1, "first"], [2, 1, 3]),
     subject(c2015, "s15-cs112", "CS 112", "Fundamentals of Programming", [1, "first"], [2, 1, 3]),
     subject(c2015, "s15-cs121", "CS 121", "Intermediate Programming", [1, "second"], [2, 1, 3], ["s15-cs112"]),
+    subject(c2015, "s15-cs411", "CS 411", "Software Engineering Project", [4, "first"], [3, 0, 3]),
   ],
 } satisfies CurriculumManagementData;

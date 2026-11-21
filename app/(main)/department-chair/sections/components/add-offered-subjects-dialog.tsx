@@ -6,25 +6,48 @@ import { Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
-import { countLabel, describeSubjectUnits } from "@/lib/sections";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { termLabel } from "@/lib/curriculum-subjects";
+import { countLabel, describeSubjectUnits, offerableSubjectGroups } from "@/lib/sections";
 import type { AddOfferedSubjectsDialogProps } from "@/types/sections-exports";
 
-export function AddOfferedSubjectsDialog({ termLabel, yearLabel, subjects, onClose, onAdd }: AddOfferedSubjectsDialogProps) {
+export function AddOfferedSubjectsDialog({
+  term,
+  yearLevel,
+  termLabel: offeringTermName,
+  yearLabel,
+  curricula,
+  subjects,
+  offeredSubjectIds,
+  onClose,
+  onAdd,
+}: AddOfferedSubjectsDialogProps) {
+  // Curricula arrive latest implemented first, so the latest active one is the default.
+  const [curriculumId, setCurriculumId] = useState(() => curricula[0]?.id ?? "");
   const [selected, setSelected] = useState<ReadonlySet<string>>(() => new Set());
+  const curriculum = curricula.find((item) => item.id === curriculumId);
+  const groups = curriculum ? offerableSubjectGroups(subjects, curriculum.id, term, yearLevel, offeredSubjectIds) : [];
 
-  function toggle(code: string, checked: boolean) {
+  function chooseCurriculum(id: string) {
+    if (!curricula.some((item) => item.id === id)) return;
+    setCurriculumId(id);
+    // Selections belong to one curriculum's subjects.
+    setSelected(new Set());
+  }
+
+  function toggle(id: string, checked: boolean) {
     setSelected((current) => {
       const next = new Set(current);
-      if (checked) next.add(code);
-      else next.delete(code);
+      if (checked) next.add(id);
+      else next.delete(id);
       return next;
     });
   }
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const codes = subjects.map((subject) => subject.code).filter((code) => selected.has(code));
-    if (codes.length > 0) onAdd(codes);
+    const ids = groups.flatMap((group) => group.subjects.map((subject) => subject.id)).filter((id) => selected.has(id));
+    if (ids.length > 0) onAdd(ids);
   }
 
   return (
@@ -34,7 +57,7 @@ export function AddOfferedSubjectsDialog({ termLabel, yearLabel, subjects, onClo
           <header className="section-entry-dialog-header">
             <div>
               <DialogTitle>Add subjects</DialogTitle>
-              <DialogDescription>{yearLabel} · {termLabel}</DialogDescription>
+              <DialogDescription>{yearLabel} · {offeringTermName}</DialogDescription>
             </div>
             <DialogClose asChild>
               <Button type="button" variant="ghost" size="icon-sm" aria-label="Close">
@@ -43,32 +66,66 @@ export function AddOfferedSubjectsDialog({ termLabel, yearLabel, subjects, onClo
             </DialogClose>
           </header>
 
-          {subjects.length === 0 ? (
+          {!curriculum ? (
             <p className="offered-subjects-empty" role="status">
-              Every approved {yearLabel.toLocaleLowerCase()} subject is already offered in {termLabel.toLocaleLowerCase()}.
+              No curriculum is active for this program. Activate one in Curricula and Subjects before adding subjects.
             </p>
           ) : (
-            <fieldset className="offered-subjects-options">
-              <legend>Approved subjects</legend>
-              {subjects.map((subject) => {
-                const id = `offered-subject-${subject.code.replace(/\s+/g, "-")}`;
-                return (
-                  <label key={subject.code} htmlFor={id} data-checked={selected.has(subject.code)}>
-                    <Checkbox
-                      id={id}
-                      checked={selected.has(subject.code)}
-                      onCheckedChange={(checked) => toggle(subject.code, checked === true)}
-                    />
-                    <span className="offered-subjects-copy">
-                      <span><strong>{subject.code}</strong> {subject.title}</span>
-                      <span>
-                        {describeSubjectUnits(subject)} · Curriculum: {subject.semester === 1 ? "1st" : "2nd"} semester
-                      </span>
-                    </span>
-                  </label>
-                );
-              })}
-            </fieldset>
+            <>
+              <div className="offered-subjects-curriculum">
+                <label id="offered-subjects-curriculum-label" htmlFor="offered-subjects-curriculum">Curriculum</label>
+                <Select value={curriculum.id} onValueChange={chooseCurriculum}>
+                  <SelectTrigger
+                    id="offered-subjects-curriculum"
+                    className="offered-subjects-curriculum-trigger"
+                    aria-labelledby="offered-subjects-curriculum-label"
+                  >
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent position="popper" sideOffset={4} className="section-entry-faculty-menu">
+                    {curricula.map((item) => (
+                      <SelectItem key={item.id} value={item.id} className="section-entry-faculty-option">
+                        {item.name} · Implemented {item.implementedYear}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {curricula.length > 1 && (
+                  <p>Showing the latest active curriculum first. Subjects from other active curricula can be offered in the same term.</p>
+                )}
+              </div>
+
+              {groups.length === 0 ? (
+                <p className="offered-subjects-empty" role="status">
+                  Every {curriculum.name} subject for {yearLabel.toLocaleLowerCase()} is already offered in{" "}
+                  {offeringTermName.toLocaleLowerCase()}.
+                </p>
+              ) : (
+                <div className="offered-subjects-groups">
+                  {groups.map((group) => (
+                    <fieldset key={group.id} className="offered-subjects-options">
+                      <legend>{group.label}</legend>
+                      {group.subjects.map((subject) => {
+                        const id = `offered-subject-${subject.id}`;
+                        return (
+                          <label key={subject.id} htmlFor={id} data-checked={selected.has(subject.id)}>
+                            <Checkbox
+                              id={id}
+                              checked={selected.has(subject.id)}
+                              onCheckedChange={(checked) => toggle(subject.id, checked === true)}
+                            />
+                            <span className="offered-subjects-copy">
+                              <span><strong>{subject.code}</strong> {subject.title}</span>
+                              <span>{describeSubjectUnits(subject)} · Curriculum: {termLabel(subject)}</span>
+                            </span>
+                          </label>
+                        );
+                      })}
+                    </fieldset>
+                  ))}
+                </div>
+              )}
+            </>
           )}
 
           <footer className="section-entry-dialog-actions">

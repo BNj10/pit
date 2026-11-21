@@ -1,3 +1,4 @@
+import { normalizeSubjectCode } from "@/lib/curriculum-subjects";
 import type {
   Curriculum,
   CurriculumDetails,
@@ -6,6 +7,7 @@ import type {
   CurriculumStatus,
   CurriculumTransition,
   DegreeProgram,
+  Subject,
 } from "@/types/curriculum-types";
 
 export const curriculumYearRange = { min: 2000, max: 2100 } as const;
@@ -27,6 +29,30 @@ export function curriculumCode(program: Pick<DegreeProgram, "code">, year: numbe
 export const canEditCurriculum = (curriculum: Curriculum) => curriculum.status === "Draft";
 export const canArchiveCurriculum = (curriculum: Curriculum) => curriculum.status === "Draft";
 export const canDeleteCurriculum = (curriculum: Curriculum) => curriculum.status !== "Active";
+
+/**
+ * Subject codes of one curriculum that another active curriculum of the program already uses.
+ * Codes are unique across active curricula, so a revised curriculum must give its subjects new
+ * codes before it can be activated. The future server boundary must repeat this check atomically.
+ */
+export function activeSubjectCodeConflicts(
+  curriculumId: string,
+  curricula: readonly Curriculum[],
+  subjects: readonly Subject[],
+): { code: string; curriculum: Curriculum }[] {
+  const activeById = new Map(curricula
+    .filter((curriculum) => curriculum.status === "Active" && curriculum.id !== curriculumId)
+    .map((curriculum) => [curriculum.id, curriculum]));
+  const usedBy = new Map<string, Curriculum>();
+  for (const subject of subjects) {
+    const curriculum = activeById.get(subject.curriculumId);
+    if (curriculum) usedBy.set(normalizeSubjectCode(subject.code), curriculum);
+  }
+  return subjects.flatMap((subject) => {
+    const curriculum = subject.curriculumId === curriculumId ? usedBy.get(normalizeSubjectCode(subject.code)) : undefined;
+    return curriculum ? [{ code: subject.code, curriculum }] : [];
+  });
+}
 
 export function curriculumFormValues(curriculum?: Curriculum): CurriculumFormValues {
   return {

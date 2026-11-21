@@ -45,7 +45,7 @@ _Avoid_: Course (when meaning the whole program)
 The set of subjects a degree program requires, identified by its curriculum year (one curriculum per year in a program) and a code such as BSCS-2026. Its year implemented is the year it takes effect, with no set end; it may be several years after its curriculum year. A program may have several active curricula at once for different student cohorts.
 
 **Subject**:
-A course of study listed in one curriculum for one year level and term (1st semester, 2nd semester, or Summer), identified by a code unique within that curriculum. It records lecture, laboratory, and total units separately; no rule derives one from the others. Subjects can be added, edited, or deleted only while their curriculum is a draft.
+A course of study listed in one curriculum for one year level and term (1st semester, 2nd semester, or Summer), identified by a code unique within that curriculum and across the program's active curricula. A revised curriculum gives its subjects new codes, even when a subject is otherwise unchanged. Its total units are its lecture units plus its laboratory units, and each unit is one weekly contact hour; this hour rule is a preview assumption until the institution confirms it. Subjects can be added, edited, or deleted only while their curriculum is a draft.
 _Avoid_: Course (when meaning one subject)
 
 **Prerequisite**:
@@ -55,7 +55,7 @@ A subject that must come before another, always from an earlier term in the same
 A subject taken together with another in the same term of the same curriculum. The relation is mutual.
 
 **Curriculum status**:
-Draft, Active, or Archived. Only a draft can be edited. A Department Chair activates a draft directly, with no approval step; deactivating returns an active curriculum to draft. Archiving a draft makes it and its subjects read-only until restored to draft. A draft or archived curriculum can be permanently deleted with its subjects; an active one cannot.
+Draft, Active, or Archived. Only a draft can be edited. A Department Chair activates a draft directly, with no approval step, but not while any of its subject codes is used by another active curriculum; deactivating returns an active curriculum to draft. Sections can offer subjects only from active curricula; an offering whose curriculum is later archived stays in place. Archiving a draft makes it and its subjects read-only until restored to draft. A draft or archived curriculum can be permanently deleted with its subjects; an active one cannot.
 
 ## Calendar
 
@@ -68,7 +68,7 @@ The window within an academic term when one department accepts enrollment. Each 
 _Avoid_: Enrollment calendar (when meaning one department's window)
 
 **Section**:
-A scheduled class of one subject in an academic term, taught by one faculty member. The Department Chair of the offering department assigns its schedule and a faculty member from that same department.
+A scheduled class of one subject in an academic term, taught by one faculty member. The Department Chair of the offering department assigns its schedule and a faculty member from that same department. Each section's weekly lecture and laboratory hours must equal the subject's lecture and laboratory units. A summer term may also offer the year level's regular-semester subjects and earlier year levels' subjects, so students can retake subjects they failed.
 
 **Subject approval**:
 A Department Chair's approval of the subjects a student chose for an academic term. Only the chair of the student's own department gives it. Approval produces the Certificate of Enrollment.

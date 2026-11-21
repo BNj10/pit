@@ -1,23 +1,11 @@
+import type { Curriculum, DegreeProgram, Subject } from "./curriculum-types";
+
 export type SectionClassType = "lecture" | "laboratory";
 export type MeetingDay = "M" | "T" | "W" | "Th" | "F" | "Sa";
+/** Year levels the sections page can select; curriculum subjects carry the same numbers. */
 export type CurriculumYearLevel = 1 | 2 | 3 | 4;
-/** Semester where the approved curriculum places a subject. */
-export type CurriculumSemester = 1 | 2;
 /** Term of the academic year in which a subject is offered. */
 export type OfferingTerm = "first" | "second" | "summer";
-
-export interface CurriculumSubject {
-  code: string;
-  title: string;
-  /** Credit units; a subject's total units are lectureUnits + laboratoryUnits. */
-  lectureUnits: number;
-  laboratoryUnits: number;
-  yearLevel: CurriculumYearLevel;
-  semester: CurriculumSemester;
-  /** Weekly contact hours the curriculum allows for each class type; 0 means not offered. */
-  lectureHoursPerWeek: number;
-  laboratoryHoursPerWeek: number;
-}
 
 /** A faculty member of the department, who can be assigned to teach section entries. */
 export interface FacultyMember {
@@ -46,10 +34,11 @@ export type CrossDepartmentAccess =
   | { mode: "open" }
   | { mode: "reserved" };
 
-/** An approved subject offered in one academic term for one year level. */
+/** A subject of an active curriculum offered in one academic term for one year level. */
 export interface SubjectOffering extends OfferingTermGroup {
   id: string;
-  subjectCode: string;
+  /** The curriculum subject offered; its curriculum is subject.curriculumId. */
+  subjectId: string;
   crossDepartmentAccess: CrossDepartmentAccess;
 }
 
@@ -72,7 +61,8 @@ export interface SectionEntry {
 }
 
 export interface SectionsData {
-  program: string;
+  /** The Department Chair's assigned degree program. */
+  program: DegreeProgram;
   department: string;
   /** Faculty members of the department, who are the only ones the chair can assign. */
   faculty: readonly FacultyMember[];
@@ -80,13 +70,22 @@ export interface SectionsData {
   academicTerms: readonly AcademicTerm[];
   initialAcademicYear: string;
   initialYearLevel: CurriculumYearLevel;
-  subjects: readonly CurriculumSubject[];
+  /**
+   * Active curricula, which the chair can offer subjects from, plus any other curriculum
+   * an existing offering still references. Drafts never reach the sections page.
+   */
+  curricula: readonly Curriculum[];
+  /** Subjects of those curricula. */
+  subjects: readonly Subject[];
   termGroups: readonly OfferingTermGroup[];
   offerings: readonly SubjectOffering[];
   entries: readonly SectionEntry[];
   /** Year levels whose current offerings are already published for enrollment, per academic year. */
   publishedYearLevels: readonly { academicYear: string; yearLevel: CurriculumYearLevel }[];
 }
+
+/** Offering data loaded for the sections page before curricula are attached. */
+export type SectionsSourceData = Omit<SectionsData, "program" | "curricula" | "subjects">;
 
 /** The editable offering state, kept per browser session in the preview. */
 export interface SectionsWorkspace {
@@ -128,8 +127,29 @@ export interface SectionEntryValidation {
   entryHours: number | null;
   /** Combined weekly hours of this section block's entries of the same class type. */
   totalHours: number | null;
-  hourLimit: number;
+  /** Weekly hours the subject's units require for this class type. */
+  requiredHours: number;
+  /** Hours still missing from this section block, or null when it is complete, over, or incomplete. */
+  hoursShort: number | null;
+  /** Short blocks can be saved; publishing waits until every block meets its units. */
   canSave: boolean;
+}
+
+/** A section block whose scheduled weekly hours are below what its units require. */
+export interface ScheduleShortfall {
+  offering: SubjectOffering;
+  subject: Subject;
+  section: string;
+  classType: SectionClassType;
+  scheduled: number;
+  required: number;
+}
+
+/** A labelled group of subjects in the add subjects dialog. */
+export interface OfferableSubjectGroup {
+  id: string;
+  label: string;
+  subjects: readonly Subject[];
 }
 
 export interface SectionsManagerProps {
@@ -137,7 +157,8 @@ export interface SectionsManagerProps {
 }
 
 export interface SubjectSectionsProps {
-  subject: CurriculumSubject;
+  subject: Subject;
+  curriculum: Pick<Curriculum, "name" | "status" | "year">;
   faculty: readonly FacultyMember[];
   offering: SubjectOffering;
   /** Current time once known on the client; null during server rendering. */
@@ -153,7 +174,7 @@ export interface SubjectSectionsProps {
 }
 
 export interface SectionEntryDialogProps {
-  subject: CurriculumSubject;
+  subject: Subject;
   offering: SubjectOffering;
   /** Undefined when adding a new entry. */
   entry?: SectionEntry;
@@ -165,16 +186,21 @@ export interface SectionEntryDialogProps {
 }
 
 export interface AddOfferedSubjectsDialogProps {
+  term: OfferingTerm;
+  yearLevel: CurriculumYearLevel;
   termLabel: string;
   yearLabel: string;
-  /** Approved subjects for the year level that this term does not offer yet. */
-  subjects: readonly CurriculumSubject[];
+  /** Active curricula, latest implemented first; the first one is selected when the dialog opens. */
+  curricula: readonly Curriculum[];
+  subjects: readonly Subject[];
+  /** Subjects this term already offers for the year level. */
+  offeredSubjectIds: ReadonlySet<string>;
   onClose: () => void;
-  onAdd: (subjectCodes: readonly string[]) => void;
+  onAdd: (subjectIds: readonly string[]) => void;
 }
 
 export interface CrossDepartmentAccessDialogProps {
-  subject: CurriculumSubject;
+  subject: Subject;
   offering: SubjectOffering;
   department: string;
   onClose: () => void;
