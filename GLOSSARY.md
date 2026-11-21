@@ -87,3 +87,7 @@ _Avoid_: Supervisor evaluation
 **Rating**:
 A score given inside a faculty evaluation.
 _Avoid_: using "rating" to mean the whole evaluation
+
+**Archived result**:
+A completed term's evaluation results that a Dean has hidden from the results history. Its ratings and comments are kept, and it can be restored.
+_Avoid_: Deleted results

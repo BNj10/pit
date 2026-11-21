@@ -15,44 +15,50 @@ export function evaluationTermLabel(term: Pick<EvaluationWindow, "academicYear" 
 
 export function evaluationTimestamp(value: string) {
   // The institution's timezone must not depend on the evaluator's device.
-  return new Date(`${value}+08:00`).getTime();
+  // A bare day ("YYYY-MM-DD") means the start of that day in school time.
+  const dateTime = /^\d{4}-\d{2}-\d{2}$/.test(value) ? `${value}T00:00` : value;
+  return new Date(`${dateTime}+08:00`).getTime();
 }
 
 export function validateEvaluationWindow(window: EvaluationWindow) {
-  const opens = evaluationTimestamp(window.opensAt);
-  const closes = evaluationTimestamp(window.closesAt);
-  if (!Number.isFinite(opens) || !Number.isFinite(closes)) {
-    return "Enter a valid opening and closing date.";
-  }
-  return closes > opens ? null : "The closing date must be after the opening date.";
+  return Number.isFinite(evaluationTimestamp(window.opensAt)) ? null : "Choose the day evaluations start.";
 }
 
+/** Windows have no end date: they are Closed only when the dean closes them. */
 export function evaluationWindowStatus(
   window: EvaluationWindow,
   now: number,
 ): EvaluationWindowStatus {
-  if (
-    window.manuallyClosed ||
-    validateEvaluationWindow(window) ||
-    now >= evaluationTimestamp(window.closesAt)
-  )
-    return "Closed";
+  if (window.manuallyClosed || validateEvaluationWindow(window)) return "Closed";
   return now < evaluationTimestamp(window.opensAt) ? "Scheduled" : "Open";
 }
 
-const windowDateFormatter = new Intl.DateTimeFormat("en-GB", {
+const schoolDayParts = new Intl.DateTimeFormat("en-CA", {
+  timeZone: "Asia/Manila",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
+/** Today in school time (Asia/Manila) as "YYYY-MM-DD", the format of a window's start day. */
+export function currentEvaluationDay(now: number) {
+  const parts = Object.fromEntries(
+    schoolDayParts.formatToParts(now).map((part) => [part.type, part.value]),
+  );
+  return `${parts.year}-${parts.month}-${parts.day}`;
+}
+
+const windowDayFormatter = new Intl.DateTimeFormat("en-GB", {
   timeZone: "Asia/Manila",
   day: "2-digit",
   month: "short",
   year: "numeric",
-  hour: "2-digit",
-  minute: "2-digit",
-  hour12: false,
 });
 
-export function formatEvaluationDate(value: string) {
+/** A window's start day, e.g. "21 Nov 2026". */
+export function formatEvaluationDay(value: string) {
   const timestamp = evaluationTimestamp(value);
-  return Number.isFinite(timestamp) ? windowDateFormatter.format(timestamp) : "—";
+  return Number.isFinite(timestamp) ? windowDayFormatter.format(timestamp) : "—";
 }
 
 export function formatEvaluationScore(value: number | null) {
@@ -61,15 +67,15 @@ export function formatEvaluationScore(value: number | null) {
 
 /**
  * Starting values for a new window: the semester after the previous window,
- * or the first semester of the current academic year. Dates are left for the
- * dean to choose.
+ * or the first semester of the current academic year. The start day is left
+ * for the caller to choose.
  */
 export function nextEvaluationWindowDraft(
   academicYears: readonly string[],
   currentAcademicYear: string | undefined,
   previous: EvaluationWindow | null,
 ): EvaluationWindow {
-  const dates = { opensAt: "", closesAt: "", manuallyClosed: false };
+  const dates = { opensAt: "", manuallyClosed: false };
   if (!previous) {
     return { academicYear: currentAcademicYear ?? academicYears.at(-1) ?? "", semester: "first", ...dates };
   }

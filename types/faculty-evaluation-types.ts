@@ -5,9 +5,11 @@ export type EvaluationWindowStatus = "Open" | "Scheduled" | "Closed";
 export interface EvaluationWindow {
   academicYear: string;
   semester: EvaluationSemester;
-  /** Philippine local time, in the datetime-local input format. */
+  /**
+   * The school-time day evaluations start ("YYYY-MM-DD"). Windows have no end
+   * date: they stay open until the dean closes them.
+   */
   opensAt: string;
-  closesAt: string;
   manuallyClosed: boolean;
 }
 
@@ -115,10 +117,15 @@ export interface EvaluationContextValue {
   window: EvaluationWindow | null;
   status: EvaluationWindowStatus | null;
   submissions: readonly EvaluationSubmission[];
-  /** Completed terms, including any window closed during this session. */
+  /** Completed terms, including any window closed during this session and archived terms. */
   results: readonly EvaluationTermResult[];
+  /** Results hidden from the history list; their data is kept and can be restored. */
+  archivedResultIds: readonly string[];
   saveWindow: (window: EvaluationWindow) => string | null;
-  closeWindow: () => void;
+  /** Closes the window; returns an error message while any evaluation entry is missing. */
+  closeWindow: () => string | null;
+  archiveResult: (resultId: string) => void;
+  restoreResult: (resultId: string) => void;
   submitEvaluation: (submission: EvaluationSubmission) => string | null;
 }
 
@@ -131,4 +138,19 @@ export interface InstructorRatingFormProps {
   audience: EvaluationAudience;
   submission?: EvaluationSubmission;
   onSubmitted: () => void;
+}
+
+/** How many of a term's evaluation entries are in, across every faculty member. */
+export interface EvaluationCompletion {
+  facultyCount: number;
+  studentResponses: number;
+  studentEnrolled: number;
+  /** Faculty members whose enrolled students have all responded. */
+  studentsComplete: number;
+  /** Faculty members with a complete Department Chair evaluation. */
+  chairComplete: number;
+  /** Faculty members with a College Dean evaluation. */
+  deanComplete: number;
+  /** Every faculty member has all three: students, Department Chair, and College Dean. */
+  complete: boolean;
 }
