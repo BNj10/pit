@@ -3997,3 +3997,581 @@
     width: 100%;
   }
 }
+
+/* Dean enrollment management: enrollment schedule and academic years & terms. */
+.dean-enrollment-page {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.dean-enrollment-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px 24px;
+}
+
+.dean-enrollment-heading h2 {
+  font-size: 26px;
+  font-weight: var(--weight-bold);
+  line-height: 1.25;
+}
+
+.dean-enrollment-heading p {
+  margin-top: 4px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.dean-enrollment-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.dean-enrollment-tabs a {
+  margin-bottom: -1px;
+  border-bottom: 2px solid transparent;
+  padding: 10px 0;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: var(--weight-medium);
+  text-decoration: none;
+}
+
+.dean-enrollment-tabs a:hover {
+  color: var(--foreground);
+}
+
+.dean-enrollment-tabs a[aria-current="page"] {
+  border-bottom-color: var(--primary);
+  color: var(--primary);
+  font-weight: var(--weight-semibold);
+}
+
+/* Term picker: terms grouped under their academic year. */
+.dean-enrollment-term-picker {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.dean-enrollment-term-picker [data-slot="label"] {
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: var(--weight-medium);
+}
+
+.dean-enrollment-term-picker .dean-enrollment-term-trigger {
+  min-width: 300px;
+  height: 44px;
+  gap: 12px;
+  border-color: var(--border);
+  border-radius: var(--radius-card);
+  padding-inline: 14px;
+  background: var(--background);
+  font-size: 13px;
+}
+
+.dean-enrollment-term-trigger:hover:not(:disabled),
+.dean-enrollment-term-trigger[data-state="open"] {
+  background: var(--surface-hover);
+}
+
+.dean-enrollment-term-trigger > svg {
+  transition: transform 150ms ease;
+}
+
+.dean-enrollment-term-trigger[data-state="open"] > svg {
+  transform: rotate(180deg);
+}
+
+.dean-enrollment-term-value {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.dean-enrollment-term-value strong {
+  color: var(--foreground);
+  font-weight: var(--weight-semibold);
+}
+
+.dean-enrollment-term-value span {
+  color: var(--text-secondary);
+}
+
+.dean-enrollment-term-menu {
+  --popover: var(--background);
+  --popover-foreground: var(--foreground);
+  max-width: calc(100vw - 32px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 6px;
+  box-shadow: 0 12px 32px -12px rgb(15 23 42 / 0.18);
+  --tw-ring-shadow: 0 0 #0000;
+}
+
+.dean-enrollment-term-menu .dean-enrollment-term-group {
+  padding: 8px 10px 6px;
+  color: var(--text-secondary);
+  font-size: 10px;
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.dean-enrollment-term-menu .dean-enrollment-term-option {
+  min-height: 40px;
+  border-radius: var(--radius-control);
+  padding: 0 34px 0 10px;
+  color: var(--foreground);
+  font-size: 13px;
+}
+
+.dean-enrollment-term-menu .dean-enrollment-term-option > span:first-child {
+  right: 10px;
+}
+
+.dean-enrollment-term-menu .dean-enrollment-term-option[data-highlighted],
+.dean-enrollment-term-menu .dean-enrollment-term-option[data-state="checked"] {
+  background: var(--muted);
+  color: var(--foreground);
+}
+
+.dean-enrollment-term-menu .dean-enrollment-term-option[data-state="checked"] {
+  font-weight: var(--weight-semibold);
+}
+
+.dean-enrollment-term-menu .dean-enrollment-term-separator {
+  margin: 6px 0;
+}
+
+/* About one academic year is visible at a time (heading + three terms); the
+   next year's divider peeks in to show there is more. Radix hides the
+   viewport scrollbar by default, so show a thin, draggable one instead of
+   the scroll-arrow buttons. */
+.dean-enrollment-term-menu [data-radix-select-viewport] {
+  height: auto;
+  max-height: 172px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+  overscroll-behavior: contain;
+}
+
+.dean-enrollment-term-menu [data-radix-select-viewport]::-webkit-scrollbar {
+  display: block;
+  width: 8px;
+}
+
+.dean-enrollment-term-menu [data-radix-select-viewport]::-webkit-scrollbar-thumb {
+  border-radius: var(--radius-pill);
+  background: var(--border);
+}
+
+.dean-enrollment-term-menu [data-radix-select-viewport]::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+}
+
+.dean-enrollment-term-menu [data-slot="select-scroll-up-button"],
+.dean-enrollment-term-menu [data-slot="select-scroll-down-button"] {
+  display: none;
+}
+
+.dean-enrollment-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border: 1px solid var(--success-border);
+  border-radius: var(--radius-card);
+  padding: 14px 16px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-size: 12px;
+}
+
+.dean-enrollment-banner > svg {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.dean-enrollment-banner strong {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 13px;
+  font-weight: var(--weight-semibold);
+}
+
+.dean-enrollment-card {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--background);
+}
+
+.dean-enrollment-card-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding: 16px 18px;
+}
+
+.dean-enrollment-card-header h3 {
+  font-size: 16px;
+  font-weight: var(--weight-semibold);
+}
+
+.dean-enrollment-card-header p {
+  margin-top: 2px;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.dean-enrollment-badge {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  padding: 3px 10px;
+  background: var(--muted);
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: var(--weight-semibold);
+  white-space: nowrap;
+}
+
+.dean-enrollment-badge[data-state="published"] {
+  border-color: var(--success-border);
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.dean-enrollment-badge[data-state="unpublished-changes"],
+.dean-enrollment-badge[data-state="paused"] {
+  border-color: var(--warning-border);
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+
+.dean-enrollment-errors {
+  margin: 0 18px 12px;
+  border: 1px solid var(--destructive-border);
+  border-radius: var(--radius-control);
+  padding: 10px 12px;
+  background: var(--destructive-soft);
+  color: var(--destructive);
+  font-size: 12px;
+}
+
+.dean-enrollment-errors p {
+  font-weight: var(--weight-semibold);
+}
+
+.dean-enrollment-errors ul {
+  margin-top: 4px;
+  padding-left: 18px;
+  list-style: disc;
+}
+
+.dean-enrollment-table {
+  min-width: 720px;
+  font-size: 13px;
+}
+
+.dean-enrollment-table thead tr {
+  background: var(--muted);
+}
+
+.dean-enrollment-table th[scope="col"] {
+  height: 38px;
+  padding-inline: 18px;
+  color: var(--muted-foreground);
+  font-size: 10px;
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.dean-enrollment-table th[scope="row"],
+.dean-enrollment-table td {
+  padding: 12px 18px;
+  vertical-align: middle;
+}
+
+.dean-enrollment-table th[scope="row"] {
+  font-weight: var(--weight-semibold);
+}
+
+.dean-enrollment-table .dean-enrollment-actions-head {
+  text-align: right;
+}
+
+.dean-enrollment-datetime {
+  display: flex;
+  gap: 8px;
+}
+
+.dean-enrollment-datetime input {
+  height: 38px;
+  font-size: 13px;
+}
+
+.dean-enrollment-datetime input[type="date"] {
+  min-width: 140px;
+}
+
+.dean-enrollment-datetime input[type="time"] {
+  min-width: 108px;
+}
+
+.dean-enrollment-field-error {
+  margin-top: 6px;
+  color: var(--destructive);
+  font-size: 11px;
+  white-space: normal;
+}
+
+.dean-enrollment-status {
+  font-size: 12px;
+  font-weight: var(--weight-semibold);
+}
+
+.dean-enrollment-status[data-status="open"] { color: var(--success); }
+.dean-enrollment-status[data-status="scheduled"] { color: var(--primary); }
+.dean-enrollment-status[data-status="paused"] { color: var(--warning); }
+.dean-enrollment-status[data-status="closed"] { color: var(--text-secondary); }
+.dean-enrollment-status[data-status="unpublished"] {
+  color: var(--text-secondary);
+  font-weight: var(--weight-medium);
+}
+
+.dean-enrollment-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  border-top: 1px solid var(--border);
+  padding: 12px 18px;
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+
+.dean-enrollment-note svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.dean-enrollment-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.dean-enrollment-actions > div {
+  display: flex;
+  gap: 10px;
+}
+
+.dean-enrollment-pause {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px;
+}
+
+.dean-enrollment-pause h3 {
+  font-size: 14px;
+  font-weight: var(--weight-semibold);
+}
+
+.dean-enrollment-pause p {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.dean-enrollment-empty {
+  display: flex;
+  min-height: 260px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 32px 16px;
+  text-align: center;
+}
+
+.dean-enrollment-empty > svg {
+  width: 26px;
+  height: 26px;
+  color: var(--primary);
+}
+
+.dean-enrollment-empty h3,
+.dean-enrollment-empty h4 {
+  font-size: 18px;
+  font-weight: var(--weight-semibold);
+}
+
+.dean-enrollment-empty p {
+  max-width: 420px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.dean-enrollment-empty-compact {
+  min-height: 0;
+  padding: 24px 16px;
+}
+
+.dean-enrollment-active-terms {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px 24px;
+  margin: 0;
+  padding: 0 18px 18px;
+  list-style: none;
+}
+
+.dean-enrollment-active-terms li {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  border-left: 2px solid var(--border);
+  padding-left: 12px;
+  font-size: 13px;
+}
+
+.dean-enrollment-term-status {
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+
+.dean-enrollment-term-status[data-status="current"] {
+  color: var(--primary);
+  font-weight: var(--weight-semibold);
+}
+
+.dean-enrollment-row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.dean-enrollment-row-action {
+  height: 36px;
+  gap: 6px;
+  padding-inline: 12px;
+  color: var(--primary);
+  font-size: 12px;
+}
+
+.dean-enrollment-active-terms .dean-enrollment-row-action {
+  margin-top: 4px;
+}
+
+.dean-enrollment-footnote {
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+
+.dean-enrollment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dean-enrollment-form-error {
+  border-radius: var(--radius-control);
+  padding: 8px 12px;
+  background: var(--destructive-soft);
+  color: var(--destructive);
+  font-size: 12px;
+}
+
+.dean-enrollment-field {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  border: 0;
+  padding: 0;
+}
+
+.dean-enrollment-field legend {
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: var(--weight-medium);
+}
+
+.dean-enrollment-year-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.dean-enrollment-year-input input {
+  width: 96px;
+}
+
+.dean-enrollment-hint {
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 400;
+}
+
+.dean-enrollment-field-label {
+  font-size: 14px;
+  font-weight: var(--weight-medium);
+}
+
+.dean-enrollment-term-list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dean-enrollment-term-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  border-top: 1px solid var(--border);
+  padding: 10px 0;
+  font-size: 13px;
+}
+
+@media (max-width: 767px) {
+  .dean-enrollment-term-picker,
+  .dean-enrollment-term-picker .dean-enrollment-term-trigger {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .dean-enrollment-actions > div {
+    width: 100%;
+  }
+
+  .dean-enrollment-actions > div > button {
+    flex: 1;
+    min-height: 44px;
+  }
+}
