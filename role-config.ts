@@ -38,6 +38,7 @@ export const portalRoleConfig = {
     navigation: [
       { label: "Dashboard", href: "/dean", icon: "dashboard", exact: true },
       { label: "Colleges & Departments", href: "/dean/colleges-and-departments", icon: "colleges" },
+      { label: "Enrollment Management", href: "/dean/enrollment-management", icon: "enrollment-management" },
       { label: "Faculty Evaluation", href: "/dean/faculty-evaluation", icon: "faculty-evaluation" },
     ],
     account: { label: "Account", href: "/dean/account" },
