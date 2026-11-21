@@ -1,6 +1,6 @@
 import type { College, Department, UpdateDepartmentInput } from "@/types/college-management-types";
 
-export function validateDepartmentLogo(file: File): string | undefined {
+export function validateDirectoryLogo(file: File): string | undefined {
   if (!["image/png", "image/jpeg", "image/webp"].includes(file.type)) return "Choose a PNG, JPG, or WebP image.";
   if (file.size === 0 || file.size > 2 * 1024 * 1024) return "Choose a non-empty image no larger than 2 MB.";
 }
@@ -19,7 +19,7 @@ export function validateDepartmentInput(
     errors.code = "This department code is already in use. Enter a unique code.";
   }
   if (input.identity?.kind === "logo") {
-    const error = validateDepartmentLogo(input.identity.file);
+    const error = validateDirectoryLogo(input.identity.file);
     if (error) errors.logo = error;
   }
   return errors;

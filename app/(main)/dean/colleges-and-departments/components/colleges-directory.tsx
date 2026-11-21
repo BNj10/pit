@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { ArrowRight, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { CollegesDirectoryProps } from "@/types/college-management-types";
@@ -29,7 +30,7 @@ export function CollegesDirectory({ colleges, onAddCollege, onManageDepartments 
       <div className="grid gap-[18px] sm:grid-cols-2 xl:grid-cols-3">
         {visible.map((college) => (
           <article key={college.id} className="flex min-h-[276px] min-w-0 flex-col gap-3.5 rounded-lg border border-border bg-background p-5">
-            <div className="flex items-center justify-between gap-3"><span className="flex size-[42px] items-center justify-center rounded-[7px] bg-primary-soft text-primary"><DirectoryIcon name={college.icon} className="size-[21px]" /></span><span className="text-[11px] font-semibold text-muted-foreground">{college.code}</span></div>
+            <div className="flex items-center justify-between gap-3"><span className="flex size-[42px] items-center justify-center overflow-hidden rounded-[7px] bg-primary-soft text-primary">{college.logoUrl ? <Image src={college.logoUrl} alt="" width={42} height={42} unoptimized className="size-full object-contain" /> : <DirectoryIcon name={college.icon} className="size-[21px]" />}</span><span className="text-[11px] font-semibold text-muted-foreground">{college.code}</span></div>
             <div className="flex-1 space-y-2"><h3 className="text-lg leading-[1.25] font-semibold">{college.name}</h3><p className="text-[11px] leading-relaxed text-muted-foreground">{college.description}</p></div>
             <button type="button" aria-label={`Manage departments in ${college.name}`} onClick={() => onManageDepartments(college.id)} className="flex min-h-11 items-center justify-between gap-2 border-t border-border pt-3.5 text-left text-xs font-semibold text-primary outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring">Manage departments<ArrowRight aria-hidden="true" className="size-4" /></button>
           </article>

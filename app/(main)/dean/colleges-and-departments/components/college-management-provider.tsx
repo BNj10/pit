@@ -2,40 +2,25 @@
 
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { collegeManagementPreview } from "@/types/college-management-exports";
+import { buildCollege } from "@/lib/college-management";
 import { buildDepartment } from "@/lib/department-management";
-import type { College, CreateDepartmentInput, Department, UpdateDepartmentInput } from "@/types/college-management-types";
-
-export type DirectoryDetails = Pick<College, "name" | "code" | "description">;
+import type { College, CreateCollegeInput, CreateDepartmentInput, Department, UpdateDepartmentInput } from "@/types/college-management-types";
 
 const CollegeManagementContext = createContext<{
   colleges: readonly College[];
   departments: readonly Department[];
   editingDepartmentId: string | null;
   setEditingDepartmentId: (departmentId: string | null) => void;
-  addCollege: (details: DirectoryDetails) => void;
+  createCollege: (input: CreateCollegeInput) => Promise<void>;
   createDepartment: (input: CreateDepartmentInput) => Promise<void>;
   updateDepartment: (departmentId: string, input: UpdateDepartmentInput) => Promise<void>;
 } | null>(null);
-
-function validateDetails(details: DirectoryDetails, records: readonly DirectoryDetails[]) {
-  const values = {
-    name: details.name.trim(),
-    code: details.code.trim(),
-    description: details.description.trim(),
-  };
-
-  if (!values.name || !values.code) throw new Error("Name and code are required.");
-  if (records.some((record) => record.code.toLowerCase() === values.code.toLowerCase())) {
-    throw new Error("This code is already in use. Enter a unique code.");
-  }
-
-  return values;
-}
 
 // Preview state belongs to the shared layout so it survives directory navigation.
 // Replace these mutations with authorized server operations when persistence is added.
 export function CollegeManagementProvider({ children }: { children: ReactNode }) {
   const [colleges, setColleges] = useState<College[]>(collegeManagementPreview.colleges);
+  const collegeRecords = useRef<readonly College[]>(collegeManagementPreview.colleges);
   const [departments, setDepartments] = useState<Department[]>(collegeManagementPreview.departments);
   const departmentRecords = useRef<readonly Department[]>(collegeManagementPreview.departments);
   const [editingDepartmentId, setEditingDepartmentId] = useState<string | null>(null);
@@ -47,24 +32,29 @@ export function CollegeManagementProvider({ children }: { children: ReactNode })
   }, []);
 
   useEffect(() => {
-    const activeUrls = new Set(departments.map((department) => department.logoUrl));
+    // College and department logos share one set of object URLs.
+    const activeUrls = new Set([...colleges, ...departments].map((record) => record.logoUrl));
     for (const url of logoUrls.current) {
       if (!activeUrls.has(url)) {
         URL.revokeObjectURL(url);
         logoUrls.current.delete(url);
       }
     }
-  }, [departments]);
+  }, [colleges, departments]);
 
-  function addCollege(details: DirectoryDetails) {
-    const values = validateDetails(details, colleges);
-    setColleges((previous) => [...previous, { ...values, id: crypto.randomUUID(), icon: "building-2" }]);
+  async function createCollege(input: CreateCollegeInput) {
+    // Validate against the latest committed records, including same-tick submissions.
+    const college = buildCollege(input, collegeRecords.current);
+    if (college.logoUrl) logoUrls.current.add(college.logoUrl);
+    const next = [...collegeRecords.current, college];
+    collegeRecords.current = next;
+    setColleges(next);
   }
 
   function saveDepartment(input: UpdateDepartmentInput, departmentId?: string) {
     // Validate against the latest committed records, including same-tick submissions.
     const records = departmentRecords.current;
-    const department = buildDepartment(input, colleges, records, departmentId);
+    const department = buildDepartment(input, collegeRecords.current, records, departmentId);
     if (input.identity?.kind === "logo" && department.logoUrl) {
       logoUrls.current.add(department.logoUrl);
     }
@@ -83,7 +73,7 @@ export function CollegeManagementProvider({ children }: { children: ReactNode })
   }
 
   return (
-    <CollegeManagementContext.Provider value={{ colleges, departments, editingDepartmentId, setEditingDepartmentId, addCollege, createDepartment, updateDepartment }}>
+    <CollegeManagementContext.Provider value={{ colleges, departments, editingDepartmentId, setEditingDepartmentId, createCollege, createDepartment, updateDepartment }}>
       {children}
     </CollegeManagementContext.Provider>
   );

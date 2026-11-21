@@ -9,6 +9,7 @@ export interface College {
   code: string;
   description: string;
   icon: DirectoryIconName;
+  logoUrl?: string;
 }
 
 export interface Department {
@@ -66,21 +67,50 @@ export interface DepartmentFacultyProps {
   faculty: readonly DepartmentFacultyMember[];
 }
 
-export type DepartmentIdentity =
+export type DirectoryIdentity =
   | { kind: "icon"; icon: DirectoryIconName }
   | { kind: "logo"; file: File };
+
+export interface CreateCollegeInput {
+  name: string;
+  code: string;
+  description: string;
+  identity: DirectoryIdentity;
+}
+
+export interface CollegeDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  colleges: readonly College[];
+  onSave: (input: CreateCollegeInput) => Promise<void>;
+}
+
+export interface DirectoryIdentityFieldProps {
+  /** Prefix for element IDs, matching the owning dialog's field IDs. */
+  id: string;
+  subject: "college" | "department";
+  editing?: boolean;
+  icon: DirectoryIconName;
+  logoUrl?: string;
+  logoName?: string;
+  error?: string;
+  disabled?: boolean;
+  onIconSelect: (icon: DirectoryIconName) => void;
+  onLogoSelect: (file: File) => void;
+  onLogoRemove: () => void;
+}
 
 export interface CreateDepartmentInput {
   collegeId: string;
   name: string;
   code: string;
   description: string;
-  identity: DepartmentIdentity;
+  identity: DirectoryIdentity;
 }
 
 export interface UpdateDepartmentInput extends Omit<CreateDepartmentInput, "identity"> {
   // Omit identity to retain an existing logo when editing details.
-  identity?: DepartmentIdentity;
+  identity?: DirectoryIdentity;
 }
 
 export type DepartmentDialogProps = {

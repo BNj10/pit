@@ -4,11 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCollegeManagement } from "./components/college-management-provider";
 import { CollegesDirectory } from "./components/colleges-directory";
-import { DirectoryDetailsDialog } from "./components/directory-details-dialog";
+import { CollegeDialog } from "./components/college-dialog";
 
 export default function CollegesAndDepartmentsPage() {
   const router = useRouter();
-  const { colleges, addCollege } = useCollegeManagement();
+  const { colleges, createCollege } = useCollegeManagement();
   const [addingCollege, setAddingCollege] = useState(false);
 
   return (
@@ -18,7 +18,7 @@ export default function CollegesAndDepartmentsPage() {
         onAddCollege={() => setAddingCollege(true)}
         onManageDepartments={(collegeId) => router.push(`/dean/colleges-and-departments/${encodeURIComponent(collegeId)}`)}
       />
-      {addingCollege && <DirectoryDetailsDialog open onOpenChange={setAddingCollege} kind="college" onSave={addCollege} />}
+      <CollegeDialog open={addingCollege} onOpenChange={setAddingCollege} colleges={colleges} onSave={createCollege} />
     </>
   );
 }
