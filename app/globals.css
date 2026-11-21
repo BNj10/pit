@@ -690,16 +690,6 @@
 }
 
 @media (min-width: 1024px) {
-  .portal-shell[data-route="/student/enrollment"] [data-slot="breadcrumb-list"] {
-    gap: 8px;
-    font-size: var(--text-xs);
-    line-height: 1.4;
-  }
-
-  .portal-shell[data-route="/student/enrollment"] [data-slot="breadcrumb-link"]:not([aria-current="page"]):not(:hover) {
-    color: var(--muted-foreground);
-  }
-
   .portal-shell[data-route="/student/enrollment"] .portal-notifications {
     width: 36px;
     height: 36px;
