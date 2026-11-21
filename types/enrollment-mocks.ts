@@ -21,7 +21,7 @@ export const enrollmentPreview: EnrollmentData = {
     { id: "ge-6a", code: "GE 6A", title: "Materials Science & Engineering", department: "General Education", section: "BSEE IV-A", rooms: "Comp-Lab.", lectureUnits: 2, labUnits: 0, meetings: [{ days: ["M", "W"], start: 780, end: 840 }] },
     { id: "ge-7a", code: "GE 7A", title: "Environmental Science & Engineering", department: "General Education", section: "BSEE IV-A", rooms: "TBA-03", lectureUnits: 2, labUnits: 0, meetings: [{ days: ["W"], start: 600, end: 720 }] },
     { id: "ge-9", code: "GE 9", title: "Enhancement of Engineering Mathematics", department: "General Education", section: "BSEE IV-A", rooms: "TBA-03", lectureUnits: 0, labUnits: 2, meetings: [{ days: ["TH"], start: 540, end: 720 }] },
-    // Search TEST or filter by Dialog tests. Refresh between scenarios to restore the 21-unit load.
+    // Search TEST, or search "Dialog tests" by Department. Refresh between scenarios to restore the 21-unit load.
     {
       id: "test-schedule-conflict", code: "TEST 101", title: "Mock: Schedule conflict with EE 12 (non-credit)",
       department: "Dialog tests", section: "MOCK-A", rooms: "Mock room",

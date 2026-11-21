@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, type MouseEvent } from "react";
-import { BookOpen, CalendarRange, ChevronLeft, ChevronRight, Info, Plus, X } from "lucide-react";
+import { BookOpen, CalendarRange, ChevronLeft, ChevronRight, Info, Plus, Search, X } from "lucide-react";
 
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -10,7 +10,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Pagination, PaginationContent, PaginationItem } from "@/components/ui/pagination";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { findEnrollmentScheduleConflict, formatEnrollmentSchedule, getEnrollmentSubmissionIssue, getEnrollmentTotalUnits } from "@/lib/enrollment";
 import type { EnrollmentData, EnrollmentDialogIssue, EnrollmentOffering } from "@/types/enrollment-types";
@@ -19,11 +21,27 @@ import { EnrollmentValidationDialog } from "./enrollment-validation-dialog";
 
 const OFFERINGS_PER_PAGE = 8;
 
+// The search box matches only the field chosen here.
+const SEARCH_FIELDS = [
+  {
+    value: "all", label: "All fields", placeholder: "Search by code, name, department or section",
+    text: (offering: EnrollmentOffering) => `${offering.code} ${offering.title} ${offering.department} ${offering.section}`,
+  },
+  { value: "code", label: "Code", placeholder: "Search by subject code", text: (offering: EnrollmentOffering) => offering.code },
+  { value: "title", label: "Subject name", placeholder: "Search by subject name", text: (offering: EnrollmentOffering) => offering.title },
+  { value: "department", label: "Department", placeholder: "Search by department", text: (offering: EnrollmentOffering) => offering.department },
+  { value: "section", label: "Section", placeholder: "Search by section", text: (offering: EnrollmentOffering) => offering.section },
+] as const;
+const [ALL_FIELDS, ...SINGLE_FIELDS] = SEARCH_FIELDS;
+const SEARCH_FIELD_ITEM_CLASS = "py-2 pr-8 pl-2.5 text-xs data-[state=checked]:font-semibold";
+
+type SearchField = (typeof SEARCH_FIELDS)[number]["value"];
+
 export function EnrollmentContent({
   term, unitLimit, offerings, initialEnrollmentIds, initialSelectedIds, requirementIssues,
 }: EnrollmentData) {
   const [search, setSearch] = useState("");
-  const [department, setDepartment] = useState("all");
+  const [searchField, setSearchField] = useState<SearchField>("all");
   const [page, setPage] = useState(1);
   const [enrollmentIds, setEnrollmentIds] = useState<readonly string[]>(initialEnrollmentIds);
   const enrollment = enrollmentIds.flatMap((id) => {
@@ -43,11 +61,9 @@ export function EnrollmentContent({
   const offeringsRef = useRef<HTMLDivElement>(null);
   const summaryTitleRef = useRef<HTMLHeadingElement>(null);
   const feedbackRef = useRef<HTMLDivElement>(null);
-  const departments = [...new Set(offerings.map((offering) => offering.department))];
   const query = search.trim().toLocaleLowerCase();
-  const filteredOfferings = offerings.filter((offering) =>
-    (department === "all" || offering.department === department)
-    && `${offering.code} ${offering.title} ${offering.department} ${offering.section}`.toLocaleLowerCase().includes(query));
+  const activeSearchField = SEARCH_FIELDS.find((field) => field.value === searchField) ?? ALL_FIELDS;
+  const filteredOfferings = offerings.filter((offering) => activeSearchField.text(offering).toLocaleLowerCase().includes(query));
   const pageCount = Math.max(1, Math.ceil(filteredOfferings.length / OFFERINGS_PER_PAGE));
   const currentPage = Math.min(page, pageCount);
   const pageStart = (currentPage - 1) * OFFERINGS_PER_PAGE;
@@ -98,7 +114,7 @@ export function EnrollmentContent({
     if (validationIssue.type === "schedule-conflict") {
       const id = validationIssue.selected.id;
       setSearch("");
-      setDepartment("all");
+      setSearchField("all");
       setPage(Math.floor(Math.max(0, offerings.findIndex((offering) => offering.id === id)) / OFFERINGS_PER_PAGE) + 1);
       validationFocusRef.current = () => (document.getElementById(`enrollment-offering-${id}`) ?? searchRef.current)?.focus();
     } else {
@@ -170,26 +186,47 @@ export function EnrollmentContent({
       <div className="grid min-w-0 items-start gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
         <section className="min-w-0 overflow-hidden rounded-lg border border-border bg-background" aria-labelledby="enrollment-offerings-title">
           <h3 id="enrollment-offerings-title" className="sr-only">Available subject offerings</h3>
-          <div className="flex min-h-[76px] flex-wrap items-center gap-3 px-5 py-4">
-            <label htmlFor="enrollment-search" className="sr-only">Search subject code, name, department, or section</label>
-            <Input
-              ref={searchRef}
-              id="enrollment-search"
-              type="search"
-              value={search}
-              onChange={(event) => { setSearch(event.target.value); setPage(1); }}
-              placeholder="Search subject code, and name, department..."
-              className="h-11 w-full rounded-md border-border text-base sm:w-[360px] sm:text-xs md:text-xs"
-            />
-            <Select value={department} onValueChange={(value) => { setDepartment(value); setPage(1); }}>
-              <SelectTrigger aria-label="Filter by department" className="min-w-[60px] rounded-md border-border text-xs leading-[1.4] font-semibold data-[size=default]:h-11 [&_svg]:size-[11px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent position="popper" align="start">
-                <SelectItem value="all">All</SelectItem>
-                {departments.map((item) => <SelectItem key={item} value={item}>{item}</SelectItem>)}
-              </SelectContent>
-            </Select>
+          <div className="flex flex-col gap-1.5 px-5 py-4">
+            <label htmlFor="enrollment-search" className="text-xs font-medium text-muted-foreground">Search subjects</label>
+            <div className="flex h-10 w-full min-w-0 rounded-md border border-border bg-background sm:h-9 sm:max-w-120">
+              <Select value={searchField} onValueChange={(value) => {
+                const field = SEARCH_FIELDS.find((item) => item.value === value);
+                if (!field) return;
+                setSearchField(field.value);
+                setPage(1);
+              }}>
+                <SelectTrigger
+                  aria-label="Search in"
+                  className="shrink-0 gap-1.5 rounded-l-md rounded-r-none border-0 border-r border-border bg-muted px-3 text-xs font-semibold data-[size=default]:h-full sm:w-32 [&>svg]:size-3.5 [&>svg]:text-foreground [&>svg]:transition-transform [&[data-state=open]>svg]:rotate-180"
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent position="popper" align="start" className="min-w-44 rounded-lg p-1">
+                  <SelectGroup>
+                    <SelectLabel className="px-2.5 pt-1.5 pb-1 text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">Search in</SelectLabel>
+                    <SelectItem value={ALL_FIELDS.value} className={SEARCH_FIELD_ITEM_CLASS}>{ALL_FIELDS.label}</SelectItem>
+                  </SelectGroup>
+                  <SelectSeparator className="mx-2" />
+                  <SelectGroup>
+                    {SINGLE_FIELDS.map((field) => (
+                      <SelectItem key={field.value} value={field.value} className={SEARCH_FIELD_ITEM_CLASS}>{field.label}</SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              <div className="relative flex min-w-0 flex-1 items-center">
+                <Search className="pointer-events-none absolute left-3 size-3.5 text-muted-foreground" aria-hidden="true" />
+                <Input
+                  ref={searchRef}
+                  id="enrollment-search"
+                  type="search"
+                  value={search}
+                  onChange={(event) => { setSearch(event.target.value); setPage(1); }}
+                  placeholder={activeSearchField.placeholder}
+                  className="h-full rounded-l-none rounded-r-md border-0 pr-3 pl-8.5 text-base sm:text-xs md:text-xs"
+                />
+              </div>
+            </div>
           </div>
           <Table
             id="enrollment-offerings-table"
