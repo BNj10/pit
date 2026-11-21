@@ -126,7 +126,7 @@ export function SemesterGrades({
                       </TableCell>
                     );
                   })}
-                  <TableCell className="student-grades-status">
+                  <TableCell className="student-grades-status" data-status={result.status ?? undefined}>
                     {result.status ?? "-"}
                   </TableCell>
                 </TableRow>
