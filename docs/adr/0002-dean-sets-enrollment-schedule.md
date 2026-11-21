@@ -1,0 +1,3 @@
+# Deans set one school-wide enrollment schedule per term
+
+Enrollment periods were first defined per department, opened and closed by each Department Chair. We moved them to the Dean: for each academic term the Dean publishes one enrollment schedule for the whole school, with a window per year level followed by open enrollment, and it opens and closes on its own. Department Chairs still review and approve their own students' enrollment. One schedule keeps year-level turns consistent across departments and matches the Dean's existing authority over academic years and terms, which now have no dates: the Dean starts each term instead. Revisit this decision before letting chairs change their department's windows.

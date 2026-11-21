@@ -12,11 +12,11 @@ _Avoid_: Registrar, Supervisor, Faculty (as a role)
 A user who enrolls in subjects, views their own academic records, and evaluates the faculty members who teach them.
 
 **Department Chair**:
-The user who runs enrollment and official records for one department, including posting grades.
+The user who reviews and approves enrollment and keeps official records for one department, including posting grades.
 _Avoid_: Registrar, Supervisor
 
 **Dean**:
-A user who leads all colleges in the university. Deans manage colleges, departments, and academic terms, and oversee all faculty evaluations. A Dean is not assigned to any one college, and there may be more than one Dean.
+A user who leads all colleges in the university. Deans manage colleges, departments, academic years and terms, and the enrollment schedule, and oversee all faculty evaluations. A Dean is not assigned to any one college, and there may be more than one Dean.
 _Avoid_: Supervisor
 
 **Administrator**:
@@ -37,13 +37,23 @@ An academic unit within a college. Each department is run by one Department Chai
 
 ## Calendar
 
+**Academic year**:
+A school year, such as 2025–2026, created by a Dean with all three academic terms. It is Draft until activated, then Active, then Completed; only one academic year is active at a time. It can be marked completed only while Summer is its current term.
+_Avoid_: School calendar
+
 **Academic term**:
-A school year and semester, shared by the whole school and created by a Dean.
-_Avoid_: Department term
+One term of an academic year, shared by the whole school: 1st semester, 2nd semester, or Summer. Terms have no dates; a Dean starts each term, which completes the previous one.
+_Avoid_: Department term, Midyear
+
+**Enrollment schedule**:
+The Dean's school-wide plan for when students may enroll in one academic term: one window per year level, followed by open enrollment. It applies to every department and opens and closes on its own once published. Each window can be published on its own; students whose window isn't published yet see no enrollment, and published students can enroll only while their window is open.
+_Avoid_: Enrollment calendar
 
 **Enrollment period**:
-The window within an academic term when one department accepts enrollment. Each Department Chair opens and closes it for their own department.
-_Avoid_: Enrollment calendar (when meaning one department's window)
+The time within an academic term when students may enroll, made up of the windows in the term's enrollment schedule.
+
+**Open enrollment**:
+The last window of an enrollment schedule, for irregular students and those who missed their year-level window. Eligibility checks still apply.
 
 **Section**:
 A scheduled class of one subject in an academic term, taught by one faculty member. The Department Chair of the offering department assigns its schedule and a faculty member from that same department.
