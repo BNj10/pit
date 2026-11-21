@@ -29,8 +29,13 @@ const previewUsers: Record<PortalRole, PortalUser> = {
 };
 
 function DeanPortal({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
   const { user } = useDeanAccount();
-  return <PortalLayout role="dean" activeTerm="AY 2025–2026" user={user}>{children}</PortalLayout>;
+  // Colleges & Departments keeps its preview state and breadcrumbs in its own layout.
+  const Layout = isPortalPathActive(pathname, "/dean/colleges-and-departments")
+    ? CollegeManagementLayout
+    : PortalLayout;
+  return <Layout role="dean" activeTerm="AY 2025–2026" user={user}>{children}</Layout>;
 }
 
 export function PortalRouteLayout({ children }: { children: ReactNode }) {
@@ -38,9 +43,6 @@ export function PortalRouteLayout({ children }: { children: ReactNode }) {
   const segment = pathname.split("/")[1];
   const role: PortalRole =
     segment === "department-chair" || segment === "dean" ? segment : "student";
-  const Layout = isPortalPathActive(pathname, "/dean/colleges-and-departments")
-    ? CollegeManagementLayout
-    : PortalLayout;
 
   if (role === "dean") {
     return (
@@ -51,12 +53,12 @@ export function PortalRouteLayout({ children }: { children: ReactNode }) {
   }
 
   return (
-    <Layout
+    <PortalLayout
       role={role}
       activeTerm="AY 2025–2026"
       user={previewUsers[role]}
     >
       {children}
-    </Layout>
+    </PortalLayout>
   );
 }
