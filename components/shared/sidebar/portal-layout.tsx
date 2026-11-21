@@ -9,6 +9,7 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
+  BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
@@ -23,6 +24,7 @@ import type { PortalLayoutProps } from "@/types/sidebar-types";
 export function PortalLayout({
   children,
   header,
+  breadcrumbs: customBreadcrumbs,
   ...sidebarProps
 }: PortalLayoutProps) {
   const pathname = usePathname();
@@ -50,7 +52,8 @@ export function PortalLayout({
     }
   }
 
-  const title = breadcrumbs[breadcrumbs.length - 1].label;
+  const resolvedBreadcrumbs = customBreadcrumbs?.length ? customBreadcrumbs : breadcrumbs;
+  const title = resolvedBreadcrumbs[resolvedBreadcrumbs.length - 1].label;
 
   return (
     <TooltipProvider>
@@ -64,21 +67,19 @@ export function PortalLayout({
             {header ?? (
               <>
                 <h1 className="sr-only">{title}</h1>
-                <Breadcrumb className="hidden lg:block">
+                <Breadcrumb className="min-w-0">
                   <BreadcrumbList>
-                    {breadcrumbs.map((item, index) => (
+                    {resolvedBreadcrumbs.map((item, index) => (
                       <Fragment key={`${index}:${item.href}`}>
                         {index > 0 && <BreadcrumbSeparator />}
-                        <BreadcrumbItem>
-                          <BreadcrumbLink asChild>
-                            <Link
-                              href={item.href}
-                              aria-current={index === breadcrumbs.length - 1 ? "page" : undefined}
-                              className={index === breadcrumbs.length - 1 ? "font-semibold text-foreground" : undefined}
-                            >
-                              {item.label}
-                            </Link>
-                          </BreadcrumbLink>
+                        <BreadcrumbItem className="min-w-0">
+                          {index === resolvedBreadcrumbs.length - 1 ? (
+                            <BreadcrumbPage className="font-semibold">{item.label}</BreadcrumbPage>
+                          ) : (
+                            <BreadcrumbLink asChild>
+                              <Link href={item.href}>{item.label}</Link>
+                            </BreadcrumbLink>
+                          )}
                         </BreadcrumbItem>
                       </Fragment>
                     ))}
