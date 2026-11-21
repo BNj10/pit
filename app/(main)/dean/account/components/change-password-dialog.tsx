@@ -93,11 +93,11 @@ function PasswordForm() {
   );
 }
 
-export function ChangePasswordDialog() {
+export function ChangePasswordDialog({ disabled = false }: { disabled?: boolean }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button type="button" variant="outline" className="account-button account-security-button"><KeyRound aria-hidden="true" />Change password</Button>
+        <Button type="button" variant="outline" className="account-button account-security-button" disabled={disabled}><KeyRound aria-hidden="true" />Change password</Button>
       </DialogTrigger>
       <DialogContent className="account-password-dialog">
         <DialogHeader className="account-password-header">

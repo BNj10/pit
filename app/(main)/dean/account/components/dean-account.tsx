@@ -100,8 +100,8 @@ export function DeanAccount({ editing = false }: { editing?: boolean }) {
 
       <section className="account-security" aria-labelledby="account-security-heading">
         <LockKeyhole aria-hidden="true" />
-        <div><h3 id="account-security-heading">Account security</h3><p>Keep your account secure with a strong, unique password.</p></div>
-        <ChangePasswordDialog />
+        <div><h3 id="account-security-heading">Account security</h3><p>{editing ? "Save or cancel your profile changes before changing your password." : "Keep your account secure with a strong, unique password."}</p></div>
+        <ChangePasswordDialog disabled={editing} />
       </section>
 
       {photoOpen && (
