@@ -70,6 +70,20 @@ _Avoid_: Enrollment calendar (when meaning one department's window)
 **Section**:
 A scheduled class of one subject in an academic term, taught by one faculty member. The Department Chair of the offering department assigns its schedule and a faculty member from that same department.
 
+**Enrollment status**:
+Where one student's enrollment in an academic term stands: Not submitted, Pending review, Returned, Approved (after subject approval, awaiting signatures), or Enrolled.
+
+**Not submitted**:
+The enrollment status of a student who has not yet sent their chosen subjects to their Department Chair.
+
+**Pending review**:
+The enrollment status of chosen subjects a student has submitted and their Department Chair has not yet approved or returned.
+_Avoid_: Pending (a grade term), For approval
+
+**Returned**:
+The enrollment status of chosen subjects the Department Chair sent back to the student with a message saying what to change, for the student to revise and resubmit. The chair can return an approved enrollment, withdrawing the approval, until the student is Enrolled.
+_Avoid_: Rejected, Declined
+
 **Subject approval**:
 A Department Chair's approval of the subjects a student chose for an academic term. Only the chair of the student's own department gives it. Approval produces the Certificate of Enrollment.
 
