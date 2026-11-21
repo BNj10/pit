@@ -5251,22 +5251,24 @@
 .student-grades-gpa {
   min-width: 80px;
   margin: 0;
-  border-left: 2px solid var(--primary);
-  padding-left: 10px;
+  border-left: 3px solid var(--primary);
+  padding-left: 12px;
 }
 
 .student-grades-gpa dt {
   color: var(--muted-foreground);
-  font-size: 8px;
-  line-height: 12px;
-  letter-spacing: 0.08em;
+  font-size: 9px;
+  font-weight: var(--weight-bold);
+  line-height: 11px;
+  letter-spacing: 1px;
 }
 
 .student-grades-gpa dd {
   margin: 0;
   color: var(--primary);
-  font-size: 12px;
-  line-height: 16px;
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  line-height: 22px;
 }
 
 .student-grades-table {
@@ -5331,6 +5333,32 @@
 .student-grades-status {
   color: var(--muted-foreground);
   font-variant-numeric: tabular-nums;
+}
+
+/* Grade status colors: Student Grades (chair/dean) and Academic Records (student). */
+.student-grades-status[data-status],
+.academic-records-status[data-status] {
+  font-weight: var(--weight-semibold);
+}
+
+.student-grades-status[data-status="PASSED"],
+.academic-records-status[data-status="PASSED"] {
+  color: var(--success);
+}
+
+.student-grades-status[data-status="FAILED"],
+.academic-records-status[data-status="FAILED"] {
+  color: var(--destructive);
+}
+
+.student-grades-status[data-status="INC"],
+.academic-records-status[data-status="INC"] {
+  color: var(--warning);
+}
+
+.student-grades-status[data-status="DROPPED"],
+.academic-records-status[data-status="DROPPED"] {
+  color: var(--text-secondary);
 }
 
 .student-grades-edit {

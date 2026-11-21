@@ -103,7 +103,7 @@ export function SemesterAcademicRecord({
                       {typeof grade === "number" ? grade.toFixed(2) : (grade ?? "—")}
                     </TableCell>
                   ))}
-                  <TableCell className="academic-records-status">
+                  <TableCell className="academic-records-status" data-status={result.status ?? undefined}>
                     {result.status ?? "—"}
                   </TableCell>
                 </TableRow>
