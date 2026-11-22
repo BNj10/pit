@@ -7,23 +7,17 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-export interface ApprovedSubject {
-  code: string;
-  title: string;
-  section: string;
-  classrooms: readonly string[];
-  instructor: string | null;
-  lectureUnits: number;
-  labUnits: number;
-}
+import type { SubjectsEnrolledData } from "@/types/subjects-enrolled-exports";
+import { SubjectsEnrolledEmptyState } from "./subjects-enrolled-empty-state";
 
 export function ApprovedSubjectsTable({
   subjects,
   term,
-}: {
-  subjects: readonly ApprovedSubject[];
-  term: string;
-}) {
+}: SubjectsEnrolledData) {
+  if (subjects.length === 0) {
+    return <SubjectsEnrolledEmptyState term={term} />;
+  }
+
   const totalUnits = subjects.reduce(
     (total, subject) => total + subject.lectureUnits + subject.labUnits,
     0,
@@ -91,13 +85,6 @@ export function ApprovedSubjectsTable({
               <TableCell className="pr-6! text-center text-[13px] font-semibold">{(subject.lectureUnits + subject.labUnits).toFixed(1)}</TableCell>
             </TableRow>
           ))}
-          {subjects.length === 0 && (
-            <TableRow className="hover:bg-transparent">
-              <TableCell colSpan={6} className="px-6 py-8 text-center text-sm text-muted-foreground">
-                No approved subjects for this term yet.
-              </TableCell>
-            </TableRow>
-          )}
         </TableBody>
       </Table>
       <div className="flex min-h-16 flex-wrap items-center justify-between gap-x-6 gap-y-3 px-6 py-4">
