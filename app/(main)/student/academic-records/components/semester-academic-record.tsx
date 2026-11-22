@@ -1,4 +1,6 @@
+import { getSemesterGpa, getSubjectGradeResult } from "@/lib/student-grades";
 import type { SemesterAcademicRecordData } from "@/types/academic-records-exports";
+import type { StudentGrade } from "@/types/student-grades-types";
 
 import { Card, CardHeader } from "@/components/ui/card";
 import {
@@ -10,14 +12,20 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-// Laid out like the Department Chair's Semester Grades. Grades and status are
-// shown as published; a grade that is not yet published reads PENDING.
+function formatGrade(grade: StudentGrade | null) {
+  if (grade === null) return "PENDING";
+  return typeof grade === "number" ? grade.toFixed(2) : grade;
+}
+
+// Laid out like the Department Chair's Semester Grades, with status and GPA from
+// the same grade helpers. A grade that is not yet published reads PENDING.
 export function SemesterAcademicRecord({
   id,
   term,
-  gpa,
   subjects,
 }: SemesterAcademicRecordData) {
+  const gpa = getSemesterGpa(subjects);
+
   return (
     <section aria-labelledby={`${id}-title`} className="min-w-0">
       <Card className="academic-records-record">
@@ -70,14 +78,14 @@ export function SemesterAcademicRecord({
               </TableRow>
             )}
             {subjects.map((subject) => {
-              const status = subject.status.toUpperCase();
+              const { status } = getSubjectGradeResult(subject.midterm, subject.final);
               return (
                 <TableRow key={subject.code}>
                   <TableHead scope="row">{subject.code}</TableHead>
                   <TableCell className="academic-records-subject-title">{subject.title}</TableCell>
-                  <TableCell className="academic-records-value">{subject.midterm?.toFixed(2) ?? "PENDING"}</TableCell>
-                  <TableCell className="academic-records-value">{subject.final?.toFixed(2) ?? "PENDING"}</TableCell>
-                  <TableCell className="academic-records-status" data-status={status}>{status}</TableCell>
+                  <TableCell className="academic-records-value">{formatGrade(subject.midterm)}</TableCell>
+                  <TableCell className="academic-records-value">{formatGrade(subject.final)}</TableCell>
+                  <TableCell className="academic-records-status" data-status={status ?? undefined}>{status ?? "PENDING"}</TableCell>
                 </TableRow>
               );
             })}
