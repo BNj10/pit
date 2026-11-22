@@ -3556,19 +3556,19 @@
 }
 
 /* Application header from enrollment design MJh0x. */
-.portal-shell[data-route="/student/enrollment"] > .portal-header {
+.portal-shell[data-route="/student/enrollment"] > header {
   background: var(--background);
 }
 
 @media (min-width: 1024px) {
-  .portal-shell[data-route="/student/enrollment"] .portal-notifications {
+  .portal-shell[data-route="/student/enrollment"] > header button[aria-label="Notifications"] {
     width: 36px;
     height: 36px;
     border: 1px solid var(--border);
     color: var(--foreground);
   }
 
-  .portal-shell[data-route="/student/enrollment"] .portal-notifications svg {
+  .portal-shell[data-route="/student/enrollment"] > header button[aria-label="Notifications"] svg {
     width: 18px;
     height: 18px;
   }
