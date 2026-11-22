@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { enrollmentManagementPreview } from "@/types/enrollment-exports";
+import { enrollmentManagementPreview } from "@/types/enrollment-review-exports";
 import { EnrollmentManagement } from "./components/enrollment-management";
 
 export const metadata: Metadata = {

@@ -14,13 +14,13 @@ import {
   enrollmentYearLevels,
   manilaTimestampNow,
   termsWithEnrollments,
-} from "@/lib/enrollment";
+} from "@/lib/enrollment-review";
 import type {
   EnrollmentManagementProps,
   EnrollmentStatus,
   EnrollmentYearLevel,
   StudentEnrollment,
-} from "@/types/enrollment-exports";
+} from "@/types/enrollment-review-exports";
 import { EnrollmentReviewDialog } from "./enrollment-review-dialog";
 import { EnrollmentRoster } from "./enrollment-roster";
 

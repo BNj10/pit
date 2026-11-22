@@ -2,8 +2,8 @@ import { Eye, MessageSquareText } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { enrollmentUnits, formatSubmittedAt, yearLevelLabel } from "@/lib/enrollment";
-import type { EnrollmentRosterProps } from "@/types/enrollment-exports";
+import { enrollmentUnits, formatSubmittedAt, yearLevelLabel } from "@/lib/enrollment-review";
+import type { EnrollmentRosterProps } from "@/types/enrollment-review-exports";
 import { EnrollmentStatusBadge } from "./enrollment-status-badge";
 
 const formatCount = (value: number) => (Number.isInteger(value) ? String(value) : value.toFixed(1));
