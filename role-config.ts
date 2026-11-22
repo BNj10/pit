@@ -39,7 +39,6 @@ export const portalRoleConfig = {
     navigation: [
       { label: "Dashboard", href: "/dean", icon: "dashboard", exact: true },
       { label: "Colleges & Departments", href: "/dean/colleges-and-departments", icon: "colleges" },
-      { label: "Student Records", href: "/dean/student-records", icon: "students" },
       { label: "Faculty Evaluation", href: "/dean/faculty-evaluation", icon: "faculty-evaluation" },
     ],
     account: { label: "Account", href: "/dean/account" },
@@ -48,11 +47,8 @@ export const portalRoleConfig = {
   },
 } as const satisfies Record<PortalRole, PortalRoleConfig>;
 
-export type StudentRecordsRole = "department-chair" | "dean";
-
-export function getStudentRecordsHref(role: StudentRecordsRole) {
-  return `/${role}/student-records` as const;
-}
+// Only the Department Chair keeps student records and grades (ADR 0001).
+export const studentRecordsHref = "/department-chair/student-records";
 
 function normalizePath(path: string) {
   return path.replace(/\/+$/, "") || "/";
