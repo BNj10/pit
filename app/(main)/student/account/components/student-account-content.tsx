@@ -136,10 +136,10 @@ export function StudentAccountContent({ account }: { account: StudentAccount }) 
         <LockKeyhole className="size-[22px] shrink-0 text-primary" aria-hidden="true" />
         <div className="min-w-0 flex-1 basis-48">
           <h3 id="account-security-heading" className="text-base leading-[1.2] font-semibold">Account security</h3>
-          <p className="mt-[5px] text-xs leading-[1.3] text-muted-foreground">Keep your account secure with a strong, unique password.</p>
+          <p className="mt-[5px] text-xs leading-[1.3] text-muted-foreground">{editing ? "Save or cancel your profile changes before changing your password." : "Keep your account secure with a strong, unique password."}</p>
         </div>
         <ChangePasswordDialog>
-          <Button type="button" variant="outline" className="h-10 gap-2 rounded-md border-primary px-4 text-xs font-semibold text-primary hover:text-primary max-sm:h-11"><KeyRound aria-hidden="true" />Change password</Button>
+          <Button type="button" variant="outline" disabled={editing} className="h-10 gap-2 rounded-md border-primary px-4 text-xs font-semibold text-primary hover:text-primary max-sm:h-11"><KeyRound aria-hidden="true" />Change password</Button>
         </ChangePasswordDialog>
       </section>
 
