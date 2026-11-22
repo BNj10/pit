@@ -75,6 +75,26 @@ export interface EvaluationSupervisorResult {
   comments: readonly string[];
 }
 
+export interface SupervisorEvaluationProps {
+  instructor: EvaluationInstructor;
+  audience: SupervisorEvaluationAudience;
+  title: string;
+  /** Where the evaluator returns after submitting or when going back. */
+  listHref: string;
+  listLabel: string;
+}
+
+export type DepartmentChairEvaluationStatusFilter = "all" | "pending" | "evaluated";
+
+export interface DepartmentChairEvaluationProps {
+  /** Preview fixture; production must resolve this from the chair's verified session. */
+  department: string;
+}
+
+export interface DepartmentChairEvaluationResultProps {
+  instructor: EvaluationInstructor;
+}
+
 export interface FacultyEvaluationReport {
   instructorId: string;
   term: string;
@@ -133,24 +153,4 @@ export interface InstructorRatingFormProps {
   audience: EvaluationAudience;
   submission?: EvaluationSubmission;
   onSubmitted: () => void;
-}
-
-export interface SupervisorEvaluationProps {
-  instructor: EvaluationInstructor;
-  audience: SupervisorEvaluationAudience;
-  title: string;
-  /** Where the evaluator returns after submitting or when going back. */
-  listHref: string;
-  listLabel: string;
-}
-
-export type DepartmentChairEvaluationStatusFilter = "all" | "pending" | "evaluated";
-
-export interface DepartmentChairEvaluationProps {
-  /** Preview fixture; production must resolve this from the chair's verified session. */
-  department: string;
-}
-
-export interface DepartmentChairEvaluationResultProps {
-  instructor: EvaluationInstructor;
 }
