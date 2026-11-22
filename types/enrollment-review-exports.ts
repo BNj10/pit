@@ -1,4 +1,4 @@
-export { enrollmentManagementPreview } from "./enrollment-mocks";
+export { enrollmentManagementPreview } from "./enrollment-review-mocks";
 export type {
   EnrollmentClassPart,
   EnrollmentClassType,
@@ -17,4 +17,4 @@ export type {
   EnrollmentTermKind,
   EnrollmentYearLevel,
   StudentEnrollment,
-} from "./enrollment-types";
+} from "./enrollment-review-types";

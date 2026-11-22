@@ -8,7 +8,7 @@ import type {
   EnrollmentTermKind,
   EnrollmentYearLevel,
   StudentEnrollment,
-} from "@/types/enrollment-types";
+} from "@/types/enrollment-review-types";
 
 export const enrollmentStatuses = [
   { value: "pending-review", label: "Pending review" },

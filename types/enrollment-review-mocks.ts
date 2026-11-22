@@ -8,7 +8,7 @@ import type {
   EnrollmentTerm,
   EnrollmentYearLevel,
   StudentEnrollment,
-} from "./enrollment-types";
+} from "./enrollment-review-types";
 
 // Synthetic preview fixtures. Students, subjects, schedules, rooms, and dates are design
 // examples, not institutional records or an approved curriculum.

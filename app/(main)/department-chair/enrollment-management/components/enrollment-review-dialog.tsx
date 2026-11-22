@@ -16,8 +16,8 @@ import {
   studentInitials,
   subjectUnits,
   yearLevelLabel,
-} from "@/lib/enrollment";
-import type { EnrollmentReviewDialogProps } from "@/types/enrollment-exports";
+} from "@/lib/enrollment-review";
+import type { EnrollmentReviewDialogProps } from "@/types/enrollment-review-exports";
 import { EnrollmentStatusBadge } from "./enrollment-status-badge";
 
 const returnMessageLimit = 500;

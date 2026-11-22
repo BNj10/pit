@@ -1,5 +1,5 @@
-import { enrollmentStatusLabel } from "@/lib/enrollment";
-import type { EnrollmentStatusBadgeProps } from "@/types/enrollment-exports";
+import { enrollmentStatusLabel } from "@/lib/enrollment-review";
+import type { EnrollmentStatusBadgeProps } from "@/types/enrollment-review-exports";
 
 export function EnrollmentStatusBadge({ status, variant = "text" }: EnrollmentStatusBadgeProps) {
   return (
