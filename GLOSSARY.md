@@ -16,7 +16,7 @@ The user who runs enrollment and official records for one department, including 
 _Avoid_: Registrar, Supervisor
 
 **Dean**:
-A user who leads all colleges in the university. Deans manage colleges, departments, and academic terms, and oversee all faculty evaluations. A Dean is not assigned to any one college, and there may be more than one Dean.
+A user who leads all colleges in the university. Deans manage colleges, departments, and academic terms, and oversee all faculty evaluations. A Dean is not assigned to any one college, and there may be more than one Dean. Deans cannot view students' records or grades; only the Department Chair keeps them.
 _Avoid_: Supervisor
 
 **Administrator**:
