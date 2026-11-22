@@ -35,10 +35,10 @@ export function AcademicRecordsContent({
       <Card className="academic-records-controls">
         <header className="academic-records-introduction">
           <h2 id="academic-records-title" className="academic-records-page-title">
-            Academic Records &amp; Grades
+            Academic Records
           </h2>
           <p className="academic-records-subtitle">
-            Review grades by academic year and semester.
+            Review published grades
           </p>
         </header>
         <div className="academic-records-actions">
