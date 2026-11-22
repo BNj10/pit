@@ -1,12 +1,8 @@
-import type { SemesterAcademicRecordData } from "@/types/academic-records-exports";
 import { getSemesterGpa, getSubjectGradeResult } from "@/lib/student-grades";
+import type { SemesterAcademicRecordData } from "@/types/academic-records-exports";
+import type { StudentGrade } from "@/types/student-grades-types";
 
-import {
-  Card,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
+import { Card, CardHeader } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -16,27 +12,28 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+function formatGrade(grade: StudentGrade | null) {
+  if (grade === null) return "PENDING";
+  return typeof grade === "number" ? grade.toFixed(2) : grade;
+}
+
+// Laid out like the Department Chair's Semester Grades, with status and GPA from
+// the same grade helpers. A grade that is not yet published reads PENDING.
 export function SemesterAcademicRecord({
   id,
-  title,
   term,
   subjects,
 }: SemesterAcademicRecordData) {
-  const totalUnits = subjects.reduce((total, subject) => total + subject.units, 0);
   const gpa = getSemesterGpa(subjects);
 
   return (
     <section aria-labelledby={`${id}-title`} className="min-w-0">
       <Card className="academic-records-record">
         <CardHeader className="academic-records-semester-header">
-          <div className="academic-records-semester-copy">
-            <h2 id={`${id}-title`} className="academic-records-semester-title">
-              {title}
-            </h2>
-            <CardDescription className="academic-records-semester-dates">
-              {term}
-            </CardDescription>
-          </div>
+          <h2 id={`${id}-title`} className="academic-records-semester-title">
+            Semester Grades
+            <span className="sr-only">, {term}</span>
+          </h2>
           <dl className="academic-records-gpa">
             <dt>
               SEMESTER GPA
@@ -54,71 +51,47 @@ export function SemesterAcademicRecord({
           containerProps={{
             tabIndex: 0,
             role: "region",
-            "aria-label": `${title}: subjects and grades`,
+            "aria-label": `${term}: subjects and grades`,
             className: "academic-records-table-scroll",
           }}
         >
           <colgroup>
             <col className="academic-records-code-column" />
             <col />
-            <col className="academic-records-section-column" />
-            <col className="academic-records-units-column" />
             <col className="academic-records-grade-column" />
             <col className="academic-records-grade-column" />
             <col className="academic-records-status-column" />
           </colgroup>
           <TableHeader>
             <TableRow>
-              <TableHead scope="col">CODE</TableHead>
+              <TableHead scope="col">SUBJECT CODE</TableHead>
               <TableHead scope="col">SUBJECT TITLE</TableHead>
-              <TableHead scope="col">SECTION</TableHead>
-              <TableHead scope="col" className="academic-records-numeric">UNITS</TableHead>
-              <TableHead scope="col" className="academic-records-numeric">MIDTERM</TableHead>
-              <TableHead scope="col" className="academic-records-numeric">FINALS</TableHead>
+              <TableHead scope="col">MIDTERM GRADE</TableHead>
+              <TableHead scope="col">FINALS GRADE</TableHead>
               <TableHead scope="col">STATUS</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {subjects.length === 0 && (
               <TableRow>
-                <TableCell colSpan={7}>No subjects are recorded for this semester.</TableCell>
+                <TableCell colSpan={5}>No subjects are recorded for this semester.</TableCell>
               </TableRow>
             )}
             {subjects.map((subject) => {
-              const result = getSubjectGradeResult(subject.midterm, subject.final);
+              const { status } = getSubjectGradeResult(subject.midterm, subject.final);
               return (
                 <TableRow key={subject.code}>
-                  <TableHead scope="row">
-                    {subject.code}
-                  </TableHead>
-                  <TableCell className="academic-records-subject-title">
-                    {subject.title}
-                  </TableCell>
-                  <TableCell className="academic-records-muted">{subject.section}</TableCell>
-                  <TableCell className="academic-records-numeric academic-records-units">
-                    {subject.units.toFixed(1)}
-                  </TableCell>
-                  {[subject.midterm, subject.final].map((grade, index) => (
-                    <TableCell key={index} className="academic-records-numeric academic-records-muted">
-                      {typeof grade === "number" ? grade.toFixed(2) : (grade ?? "—")}
-                    </TableCell>
-                  ))}
-                  <TableCell className="academic-records-status" data-status={result.status ?? undefined}>
-                    {result.status ?? "—"}
-                  </TableCell>
+                  <TableHead scope="row">{subject.code}</TableHead>
+                  <TableCell className="academic-records-subject-title">{subject.title}</TableCell>
+                  <TableCell className="academic-records-value">{formatGrade(subject.midterm)}</TableCell>
+                  <TableCell className="academic-records-value">{formatGrade(subject.final)}</TableCell>
+                  <TableCell className="academic-records-status" data-status={status ?? undefined}>{status ?? "PENDING"}</TableCell>
                 </TableRow>
               );
             })}
           </TableBody>
         </Table>
-
-        <CardFooter className="academic-records-record-footer">
-          <p className="academic-records-total-units">
-            TOTAL · {totalUnits} UNITS
-          </p>
-        </CardFooter>
       </Card>
     </section>
   );
 }
-
