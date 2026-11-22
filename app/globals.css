@@ -5248,11 +5248,17 @@
   letter-spacing: normal;
 }
 
+/* Same as the student's Academic Records semester GPA: label and value right-aligned beside the bar. */
 .student-grades-gpa {
+  display: flex;
   min-width: 80px;
+  flex-shrink: 0;
+  flex-direction: column;
+  gap: 1px;
   margin: 0;
   border-left: 3px solid var(--primary);
   padding-left: 12px;
+  text-align: right;
 }
 
 .student-grades-gpa dt {
