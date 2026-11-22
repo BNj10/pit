@@ -16,7 +16,7 @@ The user who runs enrollment and official records for one department, including 
 _Avoid_: Registrar, Supervisor
 
 **Dean**:
-A user who leads all colleges in the university. Deans manage colleges, departments, and academic terms, and oversee all faculty evaluations. A Dean is not assigned to any one college, and there may be more than one Dean. Deans cannot view students' records or grades; only the Department Chair keeps them.
+A user who leads all colleges in the university. Deans manage colleges, departments, and academic terms, and oversee all faculty evaluations. A Dean is not assigned to any one college, and there may be more than one Dean.
 _Avoid_: Supervisor
 
 **Administrator**:
@@ -99,7 +99,7 @@ The status a Department Chair gives a student once their Certificate of Enrollme
 A grade the Department Chair has entered but not yet published. Students cannot see it.
 
 **Published grade**:
-A grade the Department Chair of the student's own department has released to the student's academic records. Faculty members submit grades to that chair, and the chair decides the grade; grades from another department reach that chair through the offering department's chair. The chair may publish at any time, down to a single subject's grade. A published grade can still be corrected.
+A grade the Department Chair of the student's own department has released to the student's academic records. Faculty members submit grades to that chair, and the chair decides the grade; grades from another department reach that chair through the offering department's chair. The chair may publish at any time, down to a single subject's grade. A published grade can still be corrected. Deans cannot view students' records or grades; only the Department Chair keeps them.
 _Avoid_: Posted grade, Uploaded grade
 
 **INC**:
