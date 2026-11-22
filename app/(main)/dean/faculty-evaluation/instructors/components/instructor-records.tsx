@@ -9,10 +9,12 @@ import { InstructorEvaluationAction } from "@/components/shared/faculty-evaluati
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { evaluationTermKey, formatEvaluationDate, instructorInitials } from "@/lib/faculty-evaluation";
+import { evaluationTermKey, formatEvaluationDate } from "@/lib/faculty-evaluation";
 import type { EvaluationTermResult } from "@/types/faculty-evaluation-types";
 import { InstructorResultAction } from "../../historical-term-results/components/instructor-result-action";
 import { DepartmentFilter } from "./department-filter";
+// Separate from the import above so it merges cleanly with the dean branch, which edits that line.
+import { instructorInitials } from "@/lib/faculty-evaluation";
 
 export function InstructorRecords({ historicalTerm }: { historicalTerm?: EvaluationTermResult }) {
   const { data, window, status, submissions } = useEvaluation();
