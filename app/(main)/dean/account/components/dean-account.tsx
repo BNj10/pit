@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Camera, Check, LockKeyhole, Mail, MapPin, Pencil, UserRound, X } from "lucide-react";
 import { toast } from "sonner";
 
-import { useDeanAccount } from "@/components/shared/account/dean-account-provider";
+import { useAccount } from "@/components/shared/account/account-provider";
 import { ProfilePhotoDialog } from "@/components/shared/account/profile-photo-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -15,7 +15,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ChangePasswordDialog } from "./change-password-dialog";
 
 export function DeanAccount({ editing = false }: { editing?: boolean }) {
-  const { user, details, saveDetails } = useDeanAccount();
+  const { user, details, saveDetails } = useAccount();
   const router = useRouter();
   const [draft, setDraft] = useState(details);
   const [photoOpen, setPhotoOpen] = useState(false);
