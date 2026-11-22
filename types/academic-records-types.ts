@@ -1,20 +1,15 @@
 import type { ReactNode } from "react";
+import type { StudentGradeSubject } from "./student-grades-types";
 
-export interface AcademicRecordSubject {
-  code: string;
-  title: string;
+export interface AcademicRecordSubject extends StudentGradeSubject {
   section: string;
   units: number;
-  midterm: number | null;
-  final: number | null;
-  status: string;
 }
 
 export interface SemesterAcademicRecordData {
   id: string;
   title: string;
   term: string;
-  gpa: number | null;
   subjects: readonly AcademicRecordSubject[];
 }
 
