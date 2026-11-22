@@ -53,11 +53,11 @@ export function PortalLayout({
         href: `/${segments.slice(0, index + 1).join("/")}`,
       });
     }
-  }
 
-  // A page may name its own crumb; ignore a label left over from another path.
-  if (breadcrumbOverride?.pathname === pathname) {
-    breadcrumbs[breadcrumbs.length - 1].label = breadcrumbOverride.label;
+    // A page may name its own crumb; ignore a label left over from another path.
+    if (breadcrumbOverride?.pathname === pathname) {
+      breadcrumbs[breadcrumbs.length - 1].label = breadcrumbOverride.label;
+    }
   }
 
   const title = breadcrumbs[breadcrumbs.length - 1].label;
