@@ -186,7 +186,7 @@ export function EnrollmentContent({
         </p>
       </header>
 
-      <div className="grid min-w-0 items-start gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
+      <div className="grid min-w-0 items-start gap-4 min-[1440px]:grid-cols-[minmax(0,1fr)_360px]">
         <section className="min-w-0 overflow-hidden rounded-lg border border-border bg-background" aria-labelledby="enrollment-offerings-title">
           <h3 id="enrollment-offerings-title" className="sr-only">Available subject offerings</h3>
           <div className="flex flex-col gap-1.5 px-5 py-4">
@@ -233,21 +233,21 @@ export function EnrollmentContent({
           </div>
           <Table
             id="enrollment-offerings-table"
-            className="min-w-206.5 table-fixed"
+            className="min-w-184 table-fixed"
             aria-labelledby="enrollment-offerings-title"
             containerProps={{ ref: offeringsRef, role: "region", "aria-label": "Available offerings; scroll horizontally to view all columns", tabIndex: 0, className: "table-scroll focus-visible:-outline-offset-2" }}
           >
             <colgroup>
-              <col /><col className="w-[84px]" /><col className="w-21" /><col className="w-[140px]" />
-              <col className="w-[84px]" /><col className="w-16" /><col className="w-[60px]" />
+              <col /><col className="w-[84px]" /><col className="w-[140px]" />
+              <col className="w-[84px]" /><col className="w-16" /><col className="w-[60px]" /><col className="w-24" />
             </colgroup>
             <TableHeader className="bg-muted">
               <TableRow className="h-14 hover:bg-transparent [&_th]:h-14 [&_th]:px-1.5 [&_th]:text-xs [&_th]:leading-[1.4] [&_th]:font-semibold [&_th]:text-muted-foreground">
                 <TableHead scope="col" className="pl-5!">Code / Subject title</TableHead>
                 <TableHead scope="col">Section</TableHead>
-                <TableHead scope="col">Slots</TableHead>
                 <TableHead scope="col">Schedule</TableHead><TableHead scope="col">Room(s)</TableHead>
-                <TableHead scope="col">Lec/Lab</TableHead><TableHead scope="col" className="pr-5!">Units</TableHead>
+                <TableHead scope="col">Lec/Lab</TableHead><TableHead scope="col">Units</TableHead>
+                <TableHead scope="col" className="pr-5!">Slots</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -283,14 +283,14 @@ export function EnrollmentContent({
                       </button>
                     </TableHead>
                     <TableCell>{offering.section}</TableCell>
-                    <TableCell className="whitespace-pre-line">
-                      <span aria-hidden="true">{formatEnrollmentSlots(offering.slots)}</span>
-                      <span className="sr-only">{describeEnrollmentSlots(offering.slots)}</span>
-                    </TableCell>
                     <TableCell className="whitespace-pre-line">{formatEnrollmentSchedule(offering.meetings)}</TableCell>
                     <TableCell className="whitespace-pre-line">{offering.rooms}</TableCell>
                     <TableCell>{offering.lectureUnits.toFixed(1)}/{offering.labUnits.toFixed(1)}</TableCell>
-                    <TableCell className="pr-5!">{(offering.lectureUnits + offering.labUnits).toFixed(1)}</TableCell>
+                    <TableCell>{(offering.lectureUnits + offering.labUnits).toFixed(1)}</TableCell>
+                    <TableCell className="pr-5! whitespace-pre-line">
+                      <span aria-hidden="true">{formatEnrollmentSlots(offering.slots)}</span>
+                      <span className="sr-only">{describeEnrollmentSlots(offering.slots)}</span>
+                    </TableCell>
                   </TableRow>
                 );
               })}
