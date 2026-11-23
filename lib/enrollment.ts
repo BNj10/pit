@@ -19,23 +19,27 @@ export function isEnrollmentOfferingAvailable(offering: EnrollmentOffering) {
   return offering.slots.status === "open" && offering.slots.available > 0;
 }
 
-function getTakenSlots(slots: Extract<EnrollmentSlots, { status: "open" }>) {
-  return slots.capacity - slots.available;
+// includesOwnPick counts the student's own summary pick as taken. The slot is
+// only confirmed on submit, so a pick never pushes the count past capacity.
+function getTakenSlots(slots: Extract<EnrollmentSlots, { status: "open" }>, includesOwnPick: boolean) {
+  const taken = slots.capacity - slots.available;
+  return includesOwnPick ? Math.min(slots.capacity, taken + 1) : taken;
 }
 
 /** Visible text for the Slots column: taken of capacity, e.g. "28 / 40" or a full "30 / 30", or the reservation. */
-export function formatEnrollmentSlots(slots: EnrollmentSlots) {
-  if (slots.status === "open") return `${getTakenSlots(slots)} / ${slots.capacity}`;
+export function formatEnrollmentSlots(slots: EnrollmentSlots, includesOwnPick = false) {
+  if (slots.status === "open") return `${getTakenSlots(slots, includesOwnPick)} / ${slots.capacity}`;
   if (slots.opensAt === null) return "Own department only";
   const opensAt = Date.parse(slots.opensAt);
   return Number.isFinite(opensAt) ? `Reserved until\n${slotsOpenDateFormatter.format(opensAt)}` : "Reserved";
 }
 
 /** Screen reader text for the Slots column, which avoids reading "28 / 40" as "28 slash 40". */
-export function describeEnrollmentSlots(slots: EnrollmentSlots) {
+export function describeEnrollmentSlots(slots: EnrollmentSlots, includesOwnPick = false) {
   if (slots.status === "reserved") return formatEnrollmentSlots(slots).replace("\n", " ");
-  const taken = `${getTakenSlots(slots)} of ${slots.capacity} slots taken`;
-  return slots.available > 0 ? taken : `${taken}, full`;
+  const taken = getTakenSlots(slots, includesOwnPick);
+  const text = `${taken} of ${slots.capacity} slots taken${includesOwnPick ? ", including yours" : ""}`;
+  return taken < slots.capacity ? text : `${text}, full`;
 }
 
 export function getEnrollmentTotalUnits(offerings: readonly EnrollmentOffering[]) {
