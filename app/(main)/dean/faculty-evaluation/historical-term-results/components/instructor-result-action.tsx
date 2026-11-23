@@ -28,7 +28,7 @@ export function InstructorResultAction({
         aria-label={`View results for ${instructor.name}, ${evaluationTermLabel(term)}`}
       >
         <ChartColumn aria-hidden="true" strokeWidth={1.5} />
-        View Results
+        View results
       </Link>
     </Button>
   );

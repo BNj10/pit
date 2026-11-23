@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { facultyEvaluationPreview } from "@/types/faculty-evaluation-mocks";
-import { SupervisorEvaluation } from "./components/supervisor-evaluation";
+import { SupervisorEvaluation } from "@/components/shared/faculty-evaluation/supervisor-evaluation";
 
 export const metadata: Metadata = {
   title: "Evaluate Faculty | PIT Enroll",
-  description: "Supervisor’s evaluation of faculty using the prescribed five-point rating scale.",
+  description: "Dean’s evaluation of faculty using the prescribed five-point rating scale.",
 };
 
 export default async function EvaluateFacultyPage({
@@ -19,5 +19,14 @@ export default async function EvaluateFacultyPage({
 
   if (!instructor) notFound();
 
-  return <SupervisorEvaluation key={instructor.id} instructor={instructor} />;
+  return (
+    <SupervisorEvaluation
+      key={instructor.id}
+      instructor={instructor}
+      audience="dean"
+      title="Dean’s Evaluation of Faculty"
+      listHref="/dean/faculty-evaluation/instructors"
+      listLabel="Instructors"
+    />
+  );
 }

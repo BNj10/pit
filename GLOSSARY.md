@@ -35,6 +35,28 @@ An academic unit made up of departments.
 **Department**:
 An academic unit within a college. Each department is run by one Department Chair.
 
+**Degree program**:
+A course of study a student completes for a degree, such as Bachelor of Science in Computer Science, owned by one department. Each Department Chair manages one assigned degree program.
+_Avoid_: Course (when meaning the whole program)
+
+## Curricula
+
+**Curriculum**:
+The set of subjects a degree program requires, identified by its curriculum year (one curriculum per year in a program) and a code such as BSCS-2026. Its year implemented is the year it takes effect, with no set end; it may be several years after its curriculum year. A program may have several active curricula at once for different student cohorts.
+
+**Subject**:
+A course of study listed in one curriculum for one year level and term (1st semester, 2nd semester, or Summer), identified by a code unique within that curriculum and across the program's active curricula. A revised curriculum gives its subjects new codes, even when a subject is otherwise unchanged. Its total units are its lecture units plus its laboratory units, and each unit is one weekly contact hour; this hour rule is a preview assumption until the institution confirms it. Subjects can be added, edited, or deleted only while their curriculum is a draft.
+_Avoid_: Course (when meaning one subject)
+
+**Prerequisite**:
+A subject that must come before another, always from an earlier term in the same curriculum. A subject that another subject requires cannot be deleted or moved to that subject's term or later.
+
+**Corequisite**:
+A subject taken together with another in the same term of the same curriculum. The relation is mutual.
+
+**Curriculum status**:
+Draft, Active, or Archived. Only a draft can be edited. A Department Chair activates a draft directly, with no approval step, but not while any of its subject codes is used by another active curriculum; deactivating returns an active curriculum to draft. Sections can offer subjects only from active curricula; an offering whose curriculum is later archived stays in place. Archiving a draft makes it and its subjects read-only until restored to draft. A draft or archived curriculum can be permanently deleted with its subjects; an active one cannot.
+
 ## Calendar
 
 **Academic term**:
@@ -46,7 +68,21 @@ The window within an academic term when one department accepts enrollment. Each 
 _Avoid_: Enrollment calendar (when meaning one department's window)
 
 **Section**:
-A scheduled class of one subject in an academic term, taught by one faculty member. The Department Chair of the offering department assigns its schedule and a faculty member from that same department.
+A scheduled class of one subject in an academic term, taught by one faculty member. The Department Chair of the offering department assigns its schedule and a faculty member from that same department. Each section's weekly lecture and laboratory hours must equal the subject's lecture and laboratory units. A summer term may also offer the year level's regular-semester subjects and earlier year levels' subjects, so students can retake subjects they failed.
+
+**Enrollment status**:
+Where one student's enrollment in an academic term stands: Not submitted, Pending review, Returned, Approved (after subject approval, awaiting signatures), or Enrolled.
+
+**Not submitted**:
+The enrollment status of a student who has not yet sent their chosen subjects to their Department Chair.
+
+**Pending review**:
+The enrollment status of chosen subjects a student has submitted and their Department Chair has not yet approved or returned.
+_Avoid_: Pending (a grade term), For approval
+
+**Returned**:
+The enrollment status of chosen subjects the Department Chair sent back to the student with a message saying what to change, for the student to revise and resubmit. The chair can return an approved enrollment, withdrawing the approval, until the student is Enrolled.
+_Avoid_: Rejected, Declined
 
 **Subject approval**:
 A Department Chair's approval of the subjects a student chose for an academic term. Only the chair of the student's own department gives it. Approval produces the Certificate of Enrollment.
@@ -63,7 +99,7 @@ The status a Department Chair gives a student once their Certificate of Enrollme
 A grade the Department Chair has entered but not yet published. Students cannot see it.
 
 **Published grade**:
-A grade the Department Chair of the student's own department has released to the student's academic records. Faculty members submit grades to that chair, and the chair decides the grade; grades from another department reach that chair through the offering department's chair. The chair may publish at any time, down to a single subject's grade. A published grade can still be corrected.
+A grade the Department Chair of the student's own department has released to the student's academic records. Faculty members submit grades to that chair, and the chair decides the grade; grades from another department reach that chair through the offering department's chair. The chair may publish at any time, down to a single subject's grade. A published grade can still be corrected. Deans cannot view students' records or grades; only the Department Chair keeps them.
 _Avoid_: Posted grade, Uploaded grade
 
 **INC**:

@@ -13,11 +13,8 @@ import { evaluationTermKey, formatEvaluationDate } from "@/lib/faculty-evaluatio
 import type { EvaluationTermResult } from "@/types/faculty-evaluation-types";
 import { InstructorResultAction } from "../../historical-term-results/components/instructor-result-action";
 import { DepartmentFilter } from "./department-filter";
-
-function instructorInitials(name: string) {
-  const parts = name.replace(/^(Dr\.|Engr\.|Prof\.)\s+/i, "").split(/\s+/);
-  return `${parts[0]?.[0] ?? ""}${parts.at(-1)?.[0] ?? ""}`;
-}
+// Separate from the import above so it merges cleanly with the dean branch, which edits that line.
+import { instructorInitials } from "@/lib/faculty-evaluation";
 
 export function InstructorRecords({ historicalTerm }: { historicalTerm?: EvaluationTermResult }) {
   const { data, window, status, submissions } = useEvaluation();
