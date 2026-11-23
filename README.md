@@ -26,10 +26,31 @@ to avoid conflicts with another local Supabase project using the default ports.
 Optional log analytics is disabled to reduce Docker memory use.
 
 Copy `.env.example` to `.env.local` (PowerShell: `Copy-Item .env.example .env.local`),
-then copy the **Publishable** key from `pnpm supabase:status` into
-`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`. The URL is already set to the local API.
-Restart Next.js after changing environment variables. These values are ready for
-future Supabase client integration; the CLI setup does not connect the login UI.
+then copy the **Publishable** key from `npm run supabase:status` into
+`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` and the **Secret** key into
+`SUPABASE_SECRET_KEY`. The URL is already set to the local API. The secret key is
+used only on the server, to resolve student ID logins. Restart Next.js after
+changing environment variables.
+
+### Signing in
+
+Every page except the login and password-reset pages requires a session. Accounts
+are created by the Administrator in the database (there is no sign-up), and each
+needs a row in `public.profiles` with its portal role. Students can log in with
+their email or their student ID.
+
+`supabase/seed.sql` creates synthetic local accounts, all with the password
+`Preview-Pass-2026`:
+
+| Role | Email | Student ID |
+| --- | --- | --- |
+| Student | student.preview@pit-enroll.test | 99-0000-001 |
+| Department Chair | chair.preview@pit-enroll.test | — |
+| Dean | dean.preview@pit-enroll.test | — |
+
+The seed runs on the first `supabase:start` and on `db:reset`. To add the profiles
+table to an existing local database without deleting its data, run
+`npx supabase migration up --local`, then create accounts in Supabase Studio.
 
 ```sh
 pnpm dev

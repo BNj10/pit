@@ -3,6 +3,8 @@
 import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 
+import { logout } from "@/lib/auth/actions";
+
 import { PortalLayout } from "./portal-layout";
 import type { PortalRole, PortalUser } from "@/types/sidebar-types";
 
@@ -36,6 +38,7 @@ export function PortalRouteLayout({ children }: { children: ReactNode }) {
       role={role}
       activeTerm="AY 2025–2026"
       user={previewUsers[role]}
+      onLogout={logout}
     >
       {children}
     </PortalLayout>
