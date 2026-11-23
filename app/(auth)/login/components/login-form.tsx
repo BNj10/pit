@@ -1,6 +1,14 @@
 "use client";
 
-import { useEffect, useId, useRef, useState, useTransition, type FormEvent } from "react";
+import {
+  useEffect,
+  useEffectEvent,
+  useId,
+  useRef,
+  useState,
+  useTransition,
+  type FormEvent,
+} from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { CircleAlert, X } from "lucide-react";
@@ -10,25 +18,36 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { LOGIN_ERROR_MESSAGE, LOGIN_UNAVAILABLE_MESSAGE } from "@/lib/auth/messages";
+import {
+  GOOGLE_LOGIN_ERRORS,
+  LOGIN_ERROR_MESSAGE,
+  LOGIN_UNAVAILABLE_MESSAGE,
+} from "@/lib/auth/messages";
 import { EMAIL_PATTERN, STUDENT_ID_PATTERN } from "@/lib/auth-validation";
 
 import type { LoginFailure } from "@/types/auth-types";
 
 import { PasswordField } from "../../components/password-field";
-import { login } from "../actions";
+import { login, loginWithGoogle } from "../actions";
 
 type FieldErrors = {
   identifier: boolean;
   password: boolean;
 };
 
-export function LoginForm() {
+interface LoginFormProps {
+  /** Error reported by the Google sign-in callback, shown once on load. */
+  initialError?: string;
+}
+
+export function LoginForm({ initialError }: LoginFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const toastId = useId();
   const toastMessageId = `${toastId}-message`;
   const [isValidationToastVisible, setIsValidationToastVisible] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [isGooglePending, startGoogleTransition] = useTransition();
+  const isBusy = isPending || isGooglePending;
   const [errors, setErrors] = useState<FieldErrors>({
     identifier: false,
     password: false,
@@ -63,6 +82,10 @@ export function LoginForm() {
 
   function showErrorToast(message = LOGIN_ERROR_MESSAGE) {
     setIsValidationToastVisible(true);
+    renderErrorToast(message);
+  }
+
+  function renderErrorToast(message: string) {
     toast.custom(
       () => (
         <div className="flex w-full items-center gap-3 rounded-lg border border-border bg-background px-4 py-3 font-sans shadow-dropdown">
@@ -98,9 +121,20 @@ export function LoginForm() {
     );
   }
 
+  const showInitialError = useEffectEvent(() => {
+    if (!initialError) return;
+    renderErrorToast(initialError);
+    // Drop ?error= so a refresh does not repeat the message.
+    window.history.replaceState(null, "", window.location.pathname);
+  });
+
+  useEffect(() => {
+    showInitialError();
+  }, []);
+
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (isPending) return;
+    if (isBusy) return;
 
     const form = event.currentTarget;
     const formData = new FormData(form);
@@ -144,6 +178,23 @@ export function LoginForm() {
     });
   }
 
+
+  function handleGoogleLogin() {
+    if (isBusy) return;
+
+    dismissToast();
+    startGoogleTransition(async () => {
+      let failure: LoginFailure | undefined;
+      try {
+        // Success leaves the page for Google, so only failures return here.
+        failure = await loginWithGoogle();
+      } catch {
+        failure = { message: GOOGLE_LOGIN_ERRORS.failed };
+      }
+      if (failure) showErrorToast(failure.message);
+    });
+  }
+
   return (
     <form
       ref={formRef}
@@ -169,6 +220,9 @@ export function LoginForm() {
       <Button
         type="button"
         variant="outline"
+        disabled={isBusy}
+        aria-busy={isGooglePending}
+        onClick={handleGoogleLogin}
         className="h-12 w-full gap-2.5 rounded-md bg-card text-sm font-medium"
       >
         <Image
@@ -178,7 +232,7 @@ export function LoginForm() {
           height={25}
           className="size-[25px]"
         />
-        Continue with Google
+        {isGooglePending ? "Redirecting to Google…" : "Continue with Google"}
       </Button>
 
       <div className="flex items-center gap-4">
@@ -239,7 +293,7 @@ export function LoginForm() {
 
       <Button
         type="submit"
-        disabled={isPending}
+        disabled={isBusy}
         className="h-12 w-full rounded-md text-sm font-semibold hover:bg-primary-hover"
       >
         {isPending ? "Logging in…" : "Log in"}

@@ -53,6 +53,21 @@ The seed runs on the first `supabase:start` and on `db:reset`. To add the schema
 existing local database without deleting its data, run
 `npx supabase migration up --local`, then create accounts in Supabase Studio.
 
+### Google login
+
+"Continue with Google" uses Supabase's Google provider; the app never sees Google
+passwords. Google sign-in only works for existing accounts with the same email, so
+keep sign-up disabled in the Supabase project (otherwise a new Google user would get
+a student profile from the trigger). To enable it:
+
+1. In Google Cloud Console, create an OAuth client ID (Web application) with the
+   authorized redirect URI `https://<project-ref>.supabase.co/auth/v1/callback`.
+2. In Supabase, open Authentication → Sign In / Providers → Google, enable it, and
+   paste the client ID and client secret.
+3. In Authentication → URL Configuration, add the app's callback to Redirect URLs,
+   for example `http://localhost:3000/auth/callback` and
+   `https://<vercel-domain>/auth/callback`.
+
 ### Hosted project
 
 The deployed site uses the hosted `pit-enroll` Supabase project. Its schema was first
