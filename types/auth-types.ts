@@ -23,7 +23,7 @@ export type AccountRole = (typeof ACCOUNT_ROLES)[number];
 export interface CurrentAccount {
   userId: string;
   role: AccountRole;
-  /** Present only for students; assigned by the Administrator. */
+  /** Students set it once with set_student_id(); null until then and for other roles. */
   studentId: string | null;
 }
 
