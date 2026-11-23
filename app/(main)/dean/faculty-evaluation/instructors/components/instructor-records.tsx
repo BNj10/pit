@@ -9,7 +9,7 @@ import { InstructorEvaluationAction } from "@/components/shared/faculty-evaluati
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { evaluationTermKey, formatEvaluationDate } from "@/lib/faculty-evaluation";
+import { evaluationTermKey, formatEvaluationDay } from "@/lib/faculty-evaluation";
 import type { EvaluationTermResult } from "@/types/faculty-evaluation-types";
 import { InstructorResultAction } from "../../historical-term-results/components/instructor-result-action";
 import { DepartmentFilter } from "./department-filter";
@@ -80,7 +80,7 @@ export function InstructorRecords({ historicalTerm }: { historicalTerm?: Evaluat
               <>
                 <span>{window.semester === "first" ? "1st" : "2nd"} semester · {window.academicYear}</span>
                 <span className="instructor-window-divider" aria-hidden="true">|</span>
-                <span>{formatEvaluationDate(window.opensAt)} – {formatEvaluationDate(window.closesAt)} · Asia/Manila</span>
+                <span>Starts {formatEvaluationDay(window.opensAt)} · No end date · Asia/Manila</span>
               </>
             ) : (
               <span>No evaluation window has been created yet</span>

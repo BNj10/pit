@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 
 import { AccountProvider, useAccount } from "@/components/shared/account/account-provider";
 import { PortalLayout } from "./portal-layout";
+import { CollegeManagementLayout } from "@/app/(main)/dean/colleges-and-departments/components/college-management-layout";
+import { isPortalPathActive } from "@/role-config";
 import type { AccountProfileDetails } from "@/types/account-types";
 import { deanProfilePreview } from "@/types/dean-account-mocks";
 import { departmentChairAccountPreview } from "@/types/department-chair-account-mocks";
@@ -39,8 +41,13 @@ const previewProfiles: Partial<Record<PortalRole, AccountProfileDetails>> = {
 };
 
 function AccountPortal({ role, children }: { role: PortalRole; children: ReactNode }) {
+  const pathname = usePathname();
   const { user } = useAccount();
-  return <PortalLayout role={role} activeTerm="AY 2025–2026" user={user}>{children}</PortalLayout>;
+  // Colleges & Departments keeps its preview state and breadcrumbs in its own layout.
+  const Layout = role === "dean" && isPortalPathActive(pathname, "/dean/colleges-and-departments")
+    ? CollegeManagementLayout
+    : PortalLayout;
+  return <Layout role={role} activeTerm="AY 2025–2026" user={user}>{children}</Layout>;
 }
 
 export function PortalRouteLayout({ children }: { children: ReactNode }) {

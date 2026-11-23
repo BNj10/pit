@@ -8,7 +8,7 @@ import {
   evaluationWindowStatus,
   validateEvaluationWindow,
 } from "@/lib/faculty-evaluation";
-import { summarizeEvaluationTerm } from "@/lib/faculty-evaluation-results";
+import { evaluationTermCompletion, summarizeEvaluationTerm } from "@/lib/faculty-evaluation-results";
 import type {
   EvaluationContextValue,
   EvaluationSubmission,
@@ -40,6 +40,8 @@ export function EvaluationProvider({
   // Terms whose window has closed in this session; their summaries are derived
   // from the latest submissions so the history row stays consistent.
   const [closedTerms, setClosedTerms] = useState<readonly EvaluationTerm[]>([]);
+  // Hidden from the history list only; archived results keep all their data.
+  const [archivedResultIds, setArchivedResultIds] = useState<readonly string[]>([]);
   const results = [
     ...closedTerms.map((term) => summarizeEvaluationTerm(data, term, submissions)),
     ...data.results.filter((result) =>
@@ -83,10 +85,24 @@ export function EvaluationProvider({
   }
 
   function closeWindow() {
-    if (!window) return;
+    if (!window) return "There is no evaluation window to close.";
+    if (!evaluationTermCompletion(data, window, submissions).complete) {
+      return "Evaluations can be closed once every faculty member has all student, Department Chair, and College Dean evaluations.";
+    }
     const next = { ...window, manuallyClosed: true };
     setWindow(next);
     applyStatus(next, "Closed");
+    // A term that was archived earlier is listed again once it closes anew.
+    restoreResult(evaluationTermId(next));
+    return null;
+  }
+
+  function archiveResult(resultId: string) {
+    setArchivedResultIds((current) => current.includes(resultId) ? current : [...current, resultId]);
+  }
+
+  function restoreResult(resultId: string) {
+    setArchivedResultIds((current) => current.includes(resultId) ? current.filter((id) => id !== resultId) : current);
   }
 
   function submitEvaluation(submission: EvaluationSubmission) {
@@ -135,7 +151,10 @@ export function EvaluationProvider({
 
   return (
     <EvaluationContext.Provider
-      value={{ data, window, status, submissions, results, saveWindow, closeWindow, submitEvaluation }}
+      value={{
+        data, window, status, submissions, results, archivedResultIds,
+        saveWindow, closeWindow, archiveResult, restoreResult, submitEvaluation,
+      }}
     >
       {children}
     </EvaluationContext.Provider>

@@ -66,4 +66,10 @@ export interface PortalSidebarProps {
 export interface PortalLayoutProps extends PortalSidebarProps {
   children: ReactNode;
   header?: ReactNode;
+  breadcrumbs?: readonly PortalBreadcrumbItem[];
+}
+
+export interface PortalBreadcrumbItem {
+  label: string;
+  href: string;
 }

@@ -1,3 +1,4 @@
+import { currentSchoolDay, formatSchoolDay, schoolTimestamp } from "@/lib/school-time";
 import type { EvaluationWindow, EvaluationWindowStatus } from "@/types/faculty-evaluation-types";
 
 export function evaluationTermKey(window: Pick<EvaluationWindow, "academicYear" | "semester">) {
@@ -13,47 +14,27 @@ export function evaluationTermLabel(term: Pick<EvaluationWindow, "academicYear" 
   return `${term.semester === "first" ? "1st" : "2nd"} sem · ${term.academicYear}`;
 }
 
-export function evaluationTimestamp(value: string) {
-  // The institution's timezone must not depend on the evaluator's device.
-  return new Date(`${value}+08:00`).getTime();
-}
+/** School time (Asia/Manila); a bare day means the start of that day. */
+export const evaluationTimestamp = schoolTimestamp;
 
 export function validateEvaluationWindow(window: EvaluationWindow) {
-  const opens = evaluationTimestamp(window.opensAt);
-  const closes = evaluationTimestamp(window.closesAt);
-  if (!Number.isFinite(opens) || !Number.isFinite(closes)) {
-    return "Enter a valid opening and closing date.";
-  }
-  return closes > opens ? null : "The closing date must be after the opening date.";
+  return Number.isFinite(evaluationTimestamp(window.opensAt)) ? null : "Choose the day evaluations start.";
 }
 
+/** Windows have no end date: they are Closed only when the dean closes them. */
 export function evaluationWindowStatus(
   window: EvaluationWindow,
   now: number,
 ): EvaluationWindowStatus {
-  if (
-    window.manuallyClosed ||
-    validateEvaluationWindow(window) ||
-    now >= evaluationTimestamp(window.closesAt)
-  )
-    return "Closed";
+  if (window.manuallyClosed || validateEvaluationWindow(window)) return "Closed";
   return now < evaluationTimestamp(window.opensAt) ? "Scheduled" : "Open";
 }
 
-const windowDateFormatter = new Intl.DateTimeFormat("en-GB", {
-  timeZone: "Asia/Manila",
-  day: "2-digit",
-  month: "short",
-  year: "numeric",
-  hour: "2-digit",
-  minute: "2-digit",
-  hour12: false,
-});
+/** Today in school time as "YYYY-MM-DD", the format of a window's start day. */
+export const currentEvaluationDay = currentSchoolDay;
 
-export function formatEvaluationDate(value: string) {
-  const timestamp = evaluationTimestamp(value);
-  return Number.isFinite(timestamp) ? windowDateFormatter.format(timestamp) : "—";
-}
+/** A window's start day, e.g. "21 Nov 2026". */
+export const formatEvaluationDay = formatSchoolDay;
 
 export function formatEvaluationScore(value: number | null) {
   return value === null ? "—" : value.toFixed(2);
@@ -61,15 +42,15 @@ export function formatEvaluationScore(value: number | null) {
 
 /**
  * Starting values for a new window: the semester after the previous window,
- * or the first semester of the current academic year. Dates are left for the
- * dean to choose.
+ * or the first semester of the current academic year. The start day is left
+ * for the caller to choose.
  */
 export function nextEvaluationWindowDraft(
   academicYears: readonly string[],
   currentAcademicYear: string | undefined,
   previous: EvaluationWindow | null,
 ): EvaluationWindow {
-  const dates = { opensAt: "", closesAt: "", manuallyClosed: false };
+  const dates = { opensAt: "", manuallyClosed: false };
   if (!previous) {
     return { academicYear: currentAcademicYear ?? academicYears.at(-1) ?? "", semester: "first", ...dates };
   }

@@ -1,6 +1,7 @@
 import { evaluationTermId, evaluationTermKey } from "@/lib/faculty-evaluation";
 import type {
   EvaluationClassResult,
+  EvaluationCompletion,
   EvaluationCriterion,
   EvaluationSubmission,
   EvaluationSupervisorResult,
@@ -28,6 +29,46 @@ export function summarizeClassEvaluations(classes: readonly EvaluationClassResul
     highestClass: sorted.at(-1) ?? null,
     lowestClass: sorted[0] ?? null,
     completion: classes.length ? (rated.length / classes.length) * 100 : 0,
+  };
+}
+
+/**
+ * Which evaluation entries are in for a term, across every faculty member: all
+ * of their enrolled students, the Department Chair, and the College Dean. A
+ * window can be closed only once all three are in for everyone. This is a
+ * preview rule until the institution confirms its evaluation policy.
+ *
+ * Chair entries come from the term's reports here; once the Department Chair's
+ * own evaluation form is merged, its submissions should count as well.
+ */
+export function evaluationTermCompletion(
+  data: FacultyEvaluationData,
+  term: Pick<EvaluationWindow, "academicYear" | "semester">,
+  submissions: readonly EvaluationSubmission[],
+): EvaluationCompletion {
+  const key = evaluationTermKey(term);
+  const faculty = data.instructors.map((instructor) => {
+    const report = data.reports?.find((item) => item.instructorId === instructor.id && item.term === key);
+    const students = summarizeClassEvaluations(report?.classes ?? []);
+    return {
+      students,
+      studentsDone: students.enrolled > 0 && students.responses >= students.enrolled,
+      chairDone: supervisorEvaluationPoints(data.criteria, report?.departmentChair ?? null) !== null,
+      deanDone: submissions.some((item) =>
+        item.term === key && item.instructorId === instructor.id && item.audience === "dean",
+      ),
+    };
+  });
+  const countDone = (done: (item: (typeof faculty)[number]) => boolean) => faculty.filter(done).length;
+
+  return {
+    facultyCount: faculty.length,
+    studentResponses: faculty.reduce((sum, item) => sum + item.students.responses, 0),
+    studentEnrolled: faculty.reduce((sum, item) => sum + item.students.enrolled, 0),
+    studentsComplete: countDone((item) => item.studentsDone),
+    chairComplete: countDone((item) => item.chairDone),
+    deanComplete: countDone((item) => item.deanDone),
+    complete: faculty.length > 0 && faculty.every((item) => item.studentsDone && item.chairDone && item.deanDone),
   };
 }
 
