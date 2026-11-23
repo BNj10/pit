@@ -19,7 +19,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  GOOGLE_LOGIN_ERRORS,
+  LOGIN_PAGE_ERRORS,
   LOGIN_ERROR_MESSAGE,
   LOGIN_UNAVAILABLE_MESSAGE,
 } from "@/lib/auth/messages";
@@ -189,7 +189,7 @@ export function LoginForm({ initialError }: LoginFormProps) {
         // Success leaves the page for Google, so only failures return here.
         failure = await loginWithGoogle();
       } catch {
-        failure = { message: GOOGLE_LOGIN_ERRORS.failed };
+        failure = { message: LOGIN_PAGE_ERRORS.failed };
       }
       if (failure) showErrorToast(failure.message);
     });

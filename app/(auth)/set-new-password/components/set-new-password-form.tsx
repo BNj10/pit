@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useState, useTransition, type FormEvent } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { ArrowLeft, LoaderCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -13,24 +12,16 @@ import {
 import type { NewPasswordErrors } from "@/types/auth-types";
 
 import { PasswordField } from "../../components/password-field";
+import { updatePassword } from "../actions";
 
 export function SetNewPasswordForm() {
-  const router = useRouter();
-  const submitTimerRef = useRef<number | null>(null);
   const [errors, setErrors] = useState<NewPasswordErrors>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  useEffect(() => {
-    return () => {
-      if (submitTimerRef.current !== null) {
-        window.clearTimeout(submitTimerRef.current);
-      }
-    };
-  }, []);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [isSubmitting, startTransition] = useTransition();
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (submitTimerRef.current !== null) return;
+    if (isSubmitting) return;
 
     const form = event.currentTarget;
     const formData = new FormData(form);
@@ -49,10 +40,18 @@ export function SetNewPasswordForm() {
       return;
     }
 
-    setIsSubmitting(true);
-    submitTimerRef.current = window.setTimeout(() => {
-      router.replace("/password-updated");
-    }, 1_500);
+    setFormError(null);
+    startTransition(async () => {
+      // Success redirects to /password-updated; only failures return here.
+      const failure = await updatePassword(formData);
+      if (!failure) return;
+      setErrors(failure.fieldErrors);
+      setFormError(failure.message ?? null);
+      const input = form.elements.namedItem(
+        failure.fieldErrors.confirmPassword ? "confirmPassword" : "password",
+      );
+      if (input instanceof HTMLInputElement) input.focus();
+    });
   }
 
   return (
@@ -83,6 +82,12 @@ export function SetNewPasswordForm() {
           again to confirm.
         </p>
       </header>
+
+      {formError && (
+        <p role="alert" className="text-sm text-destructive">
+          {formError}
+        </p>
+      )}
 
       <fieldset
         disabled={isSubmitting}

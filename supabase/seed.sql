@@ -56,7 +56,9 @@ where u.email like '%.preview@pit-enroll.test';
 
 -- The on_auth_user_created trigger already created a student profile for each user.
 update public.profiles as p
-set role = v.role::public.user_role, student_id = v.student_id
+set role = v.role::public.user_role,
+  student_id = v.student_id,
+  account_setup_completed_at = now()
 from (values
   ('11111111-1111-4111-8111-111111111111'::uuid, 'student', '99-0000-001'),
   ('22222222-2222-4222-8222-222222222222'::uuid, 'department-chair', null),

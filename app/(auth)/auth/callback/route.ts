@@ -1,11 +1,11 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-import type { GoogleLoginError } from "@/lib/auth/messages";
-import { LOGIN_PATH, ROLE_HOME_PATHS } from "@/lib/auth/routes";
-import { loadAccount } from "@/lib/auth/session";
+import type { LoginPageError } from "@/lib/auth/messages";
+import { LOGIN_PATH } from "@/lib/auth/routes";
+import { getAccountEntryPath, loadAccount } from "@/lib/auth/session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-function redirectToLogin(request: NextRequest, error: GoogleLoginError) {
+function redirectToLogin(request: NextRequest, error: LoginPageError) {
   const url = new URL(LOGIN_PATH, request.nextUrl.origin);
   url.searchParams.set("error", error);
   return NextResponse.redirect(url);
@@ -28,14 +28,14 @@ export async function GET(request: NextRequest) {
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
     if (error) throw error;
 
-    const account = await loadAccount(supabase, data.user.id);
+    const account = await loadAccount(supabase, data.user);
     if (!account) {
       await supabase.auth.signOut();
       return redirectToLogin(request, "no-account");
     }
 
     return NextResponse.redirect(
-      new URL(ROLE_HOME_PATHS[account.role], request.nextUrl.origin),
+      new URL(getAccountEntryPath(account), request.nextUrl.origin),
     );
   } catch (error) {
     console.error("Google login failed", error);
