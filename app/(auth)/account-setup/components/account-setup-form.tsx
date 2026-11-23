@@ -199,7 +199,7 @@ export function AccountSetupForm({ email, role, studentId }: AccountSetupFormPro
         Not you?{" "}
         <button
           type="submit"
-          className="rounded-sm font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+          className="relative rounded-sm font-medium text-primary underline-offset-4 after:absolute after:-inset-x-2 after:-inset-y-3.5 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
         >
           Log out
         </button>
