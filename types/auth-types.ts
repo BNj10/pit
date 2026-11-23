@@ -40,3 +40,6 @@ export interface AccountFormFailure {
 export interface LoginFailure {
   message: string;
 }
+
+/** Returned by the Google login Server Action: the Google sign-in address, or why it could not start. */
+export type GoogleLoginResult = { url: string } | LoginFailure;

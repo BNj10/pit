@@ -14,7 +14,11 @@ import { getAccountEntryPath, loadAccount } from "@/lib/auth/session";
 import { loginSchema, STUDENT_ID_PATTERN } from "@/lib/auth-validation";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import type { CurrentAccount, LoginFailure } from "@/types/auth-types";
+import type {
+  CurrentAccount,
+  GoogleLoginResult,
+  LoginFailure,
+} from "@/types/auth-types";
 
 const TOO_MANY_ATTEMPTS_MESSAGE =
   "Too many login attempts. Wait a few minutes, then try again.";
@@ -71,8 +75,12 @@ export async function login(formData: FormData): Promise<LoginFailure> {
   redirect(getAccountEntryPath(account));
 }
 
-/** Starts Google sign-in; Supabase returns the user to the auth callback route. */
-export async function loginWithGoogle(): Promise<LoginFailure> {
+/**
+ * Starts Google sign-in and returns the address the browser should open; Supabase
+ * returns the user to the auth callback route. The client navigates itself, because a
+ * Server Action redirect to another site rejects the action's promise on the client.
+ */
+export async function loginWithGoogle(): Promise<GoogleLoginResult> {
   // Next.js checks that a Server Action's Origin matches the host it was sent to.
   const origin = (await headers()).get("origin");
   if (!origin) return { message: LOGIN_PAGE_ERRORS.failed };
@@ -88,5 +96,5 @@ export async function loginWithGoogle(): Promise<LoginFailure> {
     return { message: LOGIN_PAGE_ERRORS.failed };
   }
 
-  redirect(data.url);
+  return { url: data.url };
 }

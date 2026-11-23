@@ -11,6 +11,7 @@ import {
 } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { unstable_rethrow } from "next/navigation";
 import { CircleAlert, X } from "lucide-react";
 import { toast } from "sonner";
 
@@ -25,7 +26,7 @@ import {
 } from "@/lib/auth/messages";
 import { EMAIL_PATTERN, STUDENT_ID_PATTERN } from "@/lib/auth-validation";
 
-import type { LoginFailure } from "@/types/auth-types";
+import type { GoogleLoginResult, LoginFailure } from "@/types/auth-types";
 
 import { PasswordField } from "../../components/password-field";
 import { login, loginWithGoogle } from "../actions";
@@ -46,7 +47,9 @@ export function LoginForm({ initialError }: LoginFormProps) {
   const toastMessageId = `${toastId}-message`;
   const [isValidationToastVisible, setIsValidationToastVisible] = useState(false);
   const [isPending, startTransition] = useTransition();
-  const [isGooglePending, startGoogleTransition] = useTransition();
+  const [isGoogleStarting, startGoogleTransition] = useTransition();
+  const [isLeavingForGoogle, setIsLeavingForGoogle] = useState(false);
+  const isGooglePending = isGoogleStarting || isLeavingForGoogle;
   const isBusy = isPending || isGooglePending;
   const [errors, setErrors] = useState<FieldErrors>({
     identifier: false,
@@ -68,9 +71,16 @@ export function LoginForm({ initialError }: LoginFormProps) {
       }
     }
 
+    // Pressing Back from Google can restore this page from the browser cache.
+    function resetAfterBack(event: PageTransitionEvent) {
+      if (event.persisted) setIsLeavingForGoogle(false);
+    }
+
     document.addEventListener("pointerdown", blurInputOutside, true);
+    window.addEventListener("pageshow", resetAfterBack);
     return () => {
       document.removeEventListener("pointerdown", blurInputOutside, true);
+      window.removeEventListener("pageshow", resetAfterBack);
       toast.dismiss(toastId);
     };
   }, [toastId]);
@@ -161,7 +171,10 @@ export function LoginForm({ initialError }: LoginFormProps) {
       let failure: LoginFailure;
       try {
         failure = await login(formData);
-      } catch {
+      } catch (error) {
+        // A successful login redirects, which rejects the call with Next.js's
+        // redirect error; let Next.js handle it instead of reporting a failure.
+        unstable_rethrow(error);
         failure = { message: LOGIN_UNAVAILABLE_MESSAGE };
       }
 
@@ -184,14 +197,20 @@ export function LoginForm({ initialError }: LoginFormProps) {
 
     dismissToast();
     startGoogleTransition(async () => {
-      let failure: LoginFailure | undefined;
+      let result: GoogleLoginResult;
       try {
-        // Success leaves the page for Google, so only failures return here.
-        failure = await loginWithGoogle();
+        result = await loginWithGoogle();
       } catch {
-        failure = { message: LOGIN_PAGE_ERRORS.failed };
+        result = { message: LOGIN_PAGE_ERRORS.failed };
       }
-      if (failure) showErrorToast(failure.message);
+
+      if ("url" in result) {
+        // Keep the button pending while the browser leaves for Google.
+        setIsLeavingForGoogle(true);
+        window.location.assign(result.url);
+        return;
+      }
+      showErrorToast(result.message);
     });
   }
 
