@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 
 import { AccountProvider, useAccount } from "@/components/shared/account/account-provider";
+import { logout } from "@/lib/auth/actions";
 import { PortalLayout } from "./portal-layout";
 import { CollegeManagementLayout } from "@/app/(main)/dean/colleges-and-departments/components/college-management-layout";
 import { isPortalPathActive } from "@/role-config";
@@ -47,7 +48,11 @@ function AccountPortal({ role, children }: { role: PortalRole; children: ReactNo
   const Layout = role === "dean" && isPortalPathActive(pathname, "/dean/colleges-and-departments")
     ? CollegeManagementLayout
     : PortalLayout;
-  return <Layout role={role} activeTerm="AY 2025–2026" user={user}>{children}</Layout>;
+  return (
+    <Layout role={role} activeTerm="AY 2025–2026" user={user} onLogout={logout}>
+      {children}
+    </Layout>
+  );
 }
 
 export function PortalRouteLayout({ children }: { children: ReactNode }) {
@@ -70,6 +75,7 @@ export function PortalRouteLayout({ children }: { children: ReactNode }) {
       role={role}
       activeTerm="AY 2025–2026"
       user={previewUsers[role]}
+      onLogout={logout}
     >
       {children}
     </PortalLayout>

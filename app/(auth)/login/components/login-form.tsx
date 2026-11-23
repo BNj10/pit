@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState, type FormEvent } from "react";
+import { useEffect, useId, useRef, useState, useTransition, type FormEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { CircleAlert, X } from "lucide-react";
@@ -10,11 +10,13 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { LOGIN_ERROR_MESSAGE, LOGIN_UNAVAILABLE_MESSAGE } from "@/lib/auth/messages";
 import { EMAIL_PATTERN, STUDENT_ID_PATTERN } from "@/lib/auth-validation";
 
-import { PasswordField } from "../../components/password-field";
+import type { LoginFailure } from "@/types/auth-types";
 
-const LOGIN_ERROR_MESSAGE = "Invalid login credentials.";
+import { PasswordField } from "../../components/password-field";
+import { login } from "../actions";
 
 type FieldErrors = {
   identifier: boolean;
@@ -26,6 +28,7 @@ export function LoginForm() {
   const toastId = useId();
   const toastMessageId = `${toastId}-message`;
   const [isValidationToastVisible, setIsValidationToastVisible] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const [errors, setErrors] = useState<FieldErrors>({
     identifier: false,
     password: false,
@@ -58,7 +61,7 @@ export function LoginForm() {
     toast.dismiss(toastId);
   }
 
-  function showErrorToast() {
+  function showErrorToast(message = LOGIN_ERROR_MESSAGE) {
     setIsValidationToastVisible(true);
     toast.custom(
       () => (
@@ -71,7 +74,7 @@ export function LoginForm() {
             id={toastMessageId}
             className="min-w-0 flex-1 text-sm leading-body font-medium text-destructive"
           >
-            {LOGIN_ERROR_MESSAGE}
+            {message}
           </p>
           <Button
             type="button"
@@ -97,6 +100,7 @@ export function LoginForm() {
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (isPending) return;
 
     const form = event.currentTarget;
     const formData = new FormData(form);
@@ -119,6 +123,25 @@ export function LoginForm() {
     }
 
     dismissToast();
+    startTransition(async () => {
+      let failure: LoginFailure;
+      try {
+        failure = await login(formData);
+      } catch {
+        failure = { message: LOGIN_UNAVAILABLE_MESSAGE };
+      }
+
+      // Success redirects to the portal, so only failures return here.
+      const isCredentialError = failure.message === LOGIN_ERROR_MESSAGE;
+      setErrors({ identifier: isCredentialError, password: isCredentialError });
+      showErrorToast(failure.message);
+
+      const password = form.elements.namedItem("password");
+      if (password instanceof HTMLInputElement) {
+        password.select();
+        password.focus();
+      }
+    });
   }
 
   return (
@@ -127,6 +150,7 @@ export function LoginForm() {
       aria-labelledby="login-heading"
       method="post"
       noValidate
+      aria-busy={isPending}
       onSubmit={handleSubmit}
       className="flex w-full max-w-[420px] flex-col gap-6"
     >
@@ -215,9 +239,10 @@ export function LoginForm() {
 
       <Button
         type="submit"
+        disabled={isPending}
         className="h-12 w-full rounded-md text-sm font-semibold hover:bg-primary-hover"
       >
-        Log in
+        {isPending ? "Logging in…" : "Log in"}
       </Button>
 
       <p className="text-center text-xs leading-[15px] text-muted-foreground">
