@@ -54,8 +54,12 @@ select
 from auth.users as u
 where u.email like '%.preview@pit-enroll.test';
 
-insert into public.profiles (id, role, student_id)
-values
-  ('11111111-1111-4111-8111-111111111111', 'student', '99-0000-001'),
-  ('22222222-2222-4222-8222-222222222222', 'department-chair', null),
-  ('33333333-3333-4333-8333-333333333333', 'dean', null);
+-- The on_auth_user_created trigger already created a student profile for each user.
+update public.profiles as p
+set role = v.role::public.user_role, student_id = v.student_id
+from (values
+  ('11111111-1111-4111-8111-111111111111'::uuid, 'student', '99-0000-001'),
+  ('22222222-2222-4222-8222-222222222222'::uuid, 'department-chair', null),
+  ('33333333-3333-4333-8333-333333333333'::uuid, 'dean', null)
+) as v (id, role, student_id)
+where p.id = v.id;

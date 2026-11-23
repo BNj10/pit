@@ -35,9 +35,10 @@ changing environment variables.
 ### Signing in
 
 Every page except the login and password-reset pages requires a session. Accounts
-are created by the Administrator in the database (there is no sign-up), and each
-needs a row in `public.profiles` with its portal role. Students can log in with
-their email or their student ID.
+are created by the Administrator (sign-up is disabled). A database trigger gives each
+new user a `public.profiles` row with the `student` role; change `role` to
+`department-chair` or `dean` for staff. Students can log in with their email, or with
+their student ID once they have set it through `set_student_id()`.
 
 `supabase/seed.sql` creates synthetic local accounts, all with the password
 `Preview-Pass-2026`:
@@ -48,9 +49,18 @@ their email or their student ID.
 | Department Chair | chair.preview@pit-enroll.test | — |
 | Dean | dean.preview@pit-enroll.test | — |
 
-The seed runs on the first `supabase:start` and on `db:reset`. To add the profiles
-table to an existing local database without deleting its data, run
+The seed runs on the first `supabase:start` and on `db:reset`. To add the schema to an
+existing local database without deleting its data, run
 `npx supabase migration up --local`, then create accounts in Supabase Studio.
+
+### Hosted project
+
+The deployed site uses the hosted `pit-enroll` Supabase project. Its schema was first
+created in the dashboard; `supabase/migrations/20261123160000_hosted_baseline.sql`
+records it and is marked as applied there. Add schema changes as new migrations and
+apply them with `npx supabase db push --linked` after `npx supabase link`.
+The deployment needs `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`,
+and `SUPABASE_SECRET_KEY` from the hosted project.
 
 ```sh
 pnpm dev
