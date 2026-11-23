@@ -1,24 +1,27 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, useTransition, type FormEvent } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, LoaderCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { EMAIL_PATTERN } from "@/lib/auth-validation";
 
+import { requestPasswordReset } from "../actions";
+
 export function ForgotPasswordForm() {
-  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (isPending) return;
 
     const form = event.currentTarget;
-    const email = String(new FormData(form).get("email") ?? "").trim();
+    const formData = new FormData(form);
+    const email = String(formData.get("email") ?? "").trim();
     let nextError: string | null = null;
 
     if (!email) {
@@ -35,7 +38,11 @@ export function ForgotPasswordForm() {
       return;
     }
 
-    router.push("/request-sent");
+    startTransition(async () => {
+      // Success redirects to /request-sent; only validation errors return here.
+      const result = await requestPasswordReset(formData);
+      if (result?.error) setError(result.error);
+    });
   }
 
   return (
@@ -104,9 +111,17 @@ export function ForgotPasswordForm() {
 
       <Button
         type="submit"
+        disabled={isPending}
+        aria-busy={isPending}
         className="h-12 w-full gap-2.5 rounded-md text-sm font-semibold hover:bg-primary-hover"
       >
-        Send reset instructions
+        {isPending && (
+          <LoaderCircle
+            aria-hidden="true"
+            className="size-4 animate-spin motion-reduce:animate-none"
+          />
+        )}
+        {isPending ? "Sending…" : "Send reset instructions"}
       </Button>
     </form>
   );

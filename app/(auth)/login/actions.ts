@@ -4,17 +4,21 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import {
-  GOOGLE_LOGIN_ERRORS,
+  LOGIN_PAGE_ERRORS,
   LOGIN_ERROR_MESSAGE,
   LOGIN_UNAVAILABLE_MESSAGE,
   NO_PORTAL_ACCOUNT_MESSAGE,
 } from "@/lib/auth/messages";
-import { AUTH_CALLBACK_PATH, ROLE_HOME_PATHS } from "@/lib/auth/routes";
-import { loadAccount } from "@/lib/auth/session";
+import { AUTH_CALLBACK_PATH } from "@/lib/auth/routes";
+import { getAccountEntryPath, loadAccount } from "@/lib/auth/session";
 import { loginSchema, STUDENT_ID_PATTERN } from "@/lib/auth-validation";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import type { CurrentAccount, LoginFailure } from "@/types/auth-types";
+import type {
+  CurrentAccount,
+  GoogleLoginResult,
+  LoginFailure,
+} from "@/types/auth-types";
 
 const TOO_MANY_ATTEMPTS_MESSAGE =
   "Too many login attempts. Wait a few minutes, then try again.";
@@ -56,7 +60,7 @@ export async function login(formData: FormData): Promise<LoginFailure> {
     if (error?.status === 400) return { message: LOGIN_ERROR_MESSAGE };
     if (error) throw error;
 
-    account = await loadAccount(supabase, data.user.id);
+    account = await loadAccount(supabase, data.user);
   } catch (error) {
     console.error("Login failed", error);
     await supabase.auth.signOut();
@@ -68,14 +72,18 @@ export async function login(formData: FormData): Promise<LoginFailure> {
     return { message: NO_PORTAL_ACCOUNT_MESSAGE };
   }
 
-  redirect(ROLE_HOME_PATHS[account.role]);
+  redirect(getAccountEntryPath(account));
 }
 
-/** Starts Google sign-in; Supabase returns the user to the auth callback route. */
-export async function loginWithGoogle(): Promise<LoginFailure> {
+/**
+ * Starts Google sign-in and returns the address the browser should open; Supabase
+ * returns the user to the auth callback route. The client navigates itself, because a
+ * Server Action redirect to another site rejects the action's promise on the client.
+ */
+export async function loginWithGoogle(): Promise<GoogleLoginResult> {
   // Next.js checks that a Server Action's Origin matches the host it was sent to.
   const origin = (await headers()).get("origin");
-  if (!origin) return { message: GOOGLE_LOGIN_ERRORS.failed };
+  if (!origin) return { message: LOGIN_PAGE_ERRORS.failed };
 
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.auth.signInWithOAuth({
@@ -85,8 +93,8 @@ export async function loginWithGoogle(): Promise<LoginFailure> {
 
   if (error || !data.url) {
     console.error("Google login failed to start", error);
-    return { message: GOOGLE_LOGIN_ERRORS.failed };
+    return { message: LOGIN_PAGE_ERRORS.failed };
   }
 
-  redirect(data.url);
+  return { url: data.url };
 }

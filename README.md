@@ -38,7 +38,7 @@ Every page except the login and password-reset pages requires a session. Account
 are created by the Administrator (sign-up is disabled). A database trigger gives each
 new user a `public.profiles` row with the `student` role; change `role` to
 `department-chair` or `dean` for staff. Students can log in with their email, or with
-their student ID once they have set it through `set_student_id()`.
+their student ID once they have set it during account setup.
 
 `supabase/seed.sql` creates synthetic local accounts, all with the password
 `Preview-Pass-2026`:
@@ -52,6 +52,29 @@ their student ID once they have set it through `set_student_id()`.
 The seed runs on the first `supabase:start` and on `db:reset`. To add the schema to an
 existing local database without deleting its data, run
 `npx supabase migration up --local`, then create accounts in Supabase Studio.
+
+### Inviting accounts
+
+1. In Supabase, open Authentication → Users → **Invite user** and enter the email.
+   The trigger creates a `student` profile. For a Department Chair or Dean, change
+   `role` in `public.profiles` before they open the link.
+2. The invite email links to `/auth/confirm`, which signs the person in and opens
+   **Set up your account** (`/account-setup`). Students enter their student ID and a
+   password; staff choose a password. Portal pages stay closed until this is done.
+3. From then on, students can log in with their email or student ID.
+
+"Forgot password" emails use the same route and open `/set-new-password`.
+
+The email templates are in `supabase/templates/` and are used by the local stack. For
+the hosted project:
+
+- Paste `invite.html` into Authentication → Emails → Templates → **Invite user**, and
+  `recovery.html` into **Reset password**.
+- Set the Site URL to the deployed address; the links are built from it.
+- Configure custom SMTP (Authentication → Emails → SMTP Settings). Supabase's built-in
+  email only reaches members of the project's team, at a low hourly limit.
+- Email links expire after the project's email OTP expiry (1 hour by default). Send
+  a new invite if one expires.
 
 ### Google login
 
