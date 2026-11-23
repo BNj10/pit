@@ -59,6 +59,6 @@ export const instructorEvaluationPreview: InstructorEvaluationData = {
     { id: "preview-evaluation-003", code: "CS 315", title: "Human–Computer Interaction", instructor: "Dr. Ana P. Cruz", section: "BSIT 3A", department: null, evaluationStatus: "pending" },
     { id: "preview-evaluation-004", code: "GE 106", title: "Ethics", instructor: "Prof. Liza M. Mendoza", section: "BSIT 3A", department: null, evaluationStatus: "pending" },
     { id: "preview-evaluation-005", code: "IT 323", title: "Systems Integration and Architecture", instructor: "Engr. Paolo R. Lim", section: "BSIT 3A", department: null, evaluationStatus: "submitted" },
-    { id: "preview-evaluation-006", code: "PE 4", title: "Team Sports", instructor: "Coach Rafael B. Diaz", section: "BSIT 3A", department: null, evaluationStatus: "pending" },
+    { id: "preview-evaluation-006", code: "PE 4", title: "Team Sports", instructor: "Rafael B. Diaz", section: "BSIT 3A", department: null, evaluationStatus: "pending" },
   ],
 };
