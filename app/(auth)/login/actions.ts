@@ -1,9 +1,15 @@
 "use server";
 
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-import { LOGIN_ERROR_MESSAGE, LOGIN_UNAVAILABLE_MESSAGE } from "@/lib/auth/messages";
-import { ROLE_HOME_PATHS } from "@/lib/auth/routes";
+import {
+  GOOGLE_LOGIN_ERRORS,
+  LOGIN_ERROR_MESSAGE,
+  LOGIN_UNAVAILABLE_MESSAGE,
+  NO_PORTAL_ACCOUNT_MESSAGE,
+} from "@/lib/auth/messages";
+import { AUTH_CALLBACK_PATH, ROLE_HOME_PATHS } from "@/lib/auth/routes";
 import { loadAccount } from "@/lib/auth/session";
 import { loginSchema, STUDENT_ID_PATTERN } from "@/lib/auth-validation";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
@@ -12,8 +18,6 @@ import type { CurrentAccount, LoginFailure } from "@/types/auth-types";
 
 const TOO_MANY_ATTEMPTS_MESSAGE =
   "Too many login attempts. Wait a few minutes, then try again.";
-const NO_PORTAL_ACCOUNT_MESSAGE =
-  "This account has no portal access yet. Contact the registrar’s office.";
 
 /** Student IDs resolve to the account email on the server; unknown IDs return null. */
 async function resolveLoginEmail(identifier: string) {
@@ -65,4 +69,24 @@ export async function login(formData: FormData): Promise<LoginFailure> {
   }
 
   redirect(ROLE_HOME_PATHS[account.role]);
+}
+
+/** Starts Google sign-in; Supabase returns the user to the auth callback route. */
+export async function loginWithGoogle(): Promise<LoginFailure> {
+  // Next.js checks that a Server Action's Origin matches the host it was sent to.
+  const origin = (await headers()).get("origin");
+  if (!origin) return { message: GOOGLE_LOGIN_ERRORS.failed };
+
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: { redirectTo: new URL(AUTH_CALLBACK_PATH, origin).toString() },
+  });
+
+  if (error || !data.url) {
+    console.error("Google login failed to start", error);
+    return { message: GOOGLE_LOGIN_ERRORS.failed };
+  }
+
+  redirect(data.url);
 }
