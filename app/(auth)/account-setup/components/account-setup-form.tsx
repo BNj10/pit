@@ -95,15 +95,16 @@ export function AccountSetupForm({ email, role, studentId }: AccountSetupFormPro
             Set up your account
           </h1>
           <p className="text-sm leading-relaxed text-muted-foreground">
-            {email ? (
-              <>
-                Signed in as <span className="font-medium text-foreground">{email}</span>.{" "}
-              </>
-            ) : null}
             {asksForStudentId
-              ? "Add your student ID and choose a password to finish setting up your University Portal account."
-              : "Choose a password to finish setting up your University Portal account."}
+              ? "Enter your student ID and create a password. You'll use them to log in from now on."
+              : "Create a password. You'll use it with your email to log in from now on."}
           </p>
+          {email && (
+            <p className="text-sm text-muted-foreground">
+              Signed in as{" "}
+              <span className="font-medium break-all text-foreground">{email}</span>
+            </p>
+          )}
         </header>
 
         {formError && (
@@ -135,7 +136,7 @@ export function AccountSetupForm({ email, role, studentId }: AccountSetupFormPro
                 className="h-12 rounded-md border-border bg-card px-3.5 text-base aria-invalid:ring-0 focus-visible:aria-invalid:ring-3 md:text-sm"
               />
               <p id="student-id-hint" className="text-xs leading-[15px] text-muted-foreground">
-                Use the ID from your registration form. Next time you can log in with it.
+                Use the ID printed on your registration form.
               </p>
               {errors.studentId && (
                 <p id="student-id-error" role="alert" className="text-sm text-destructive">
@@ -147,8 +148,7 @@ export function AccountSetupForm({ email, role, studentId }: AccountSetupFormPro
 
           {role === "student" && studentId !== null && (
             <p className="text-sm text-muted-foreground">
-              Student ID: <span className="font-medium text-foreground">{studentId}</span>. You
-              can log in with it next time.
+              Student ID: <span className="font-medium text-foreground">{studentId}</span>
             </p>
           )}
 
