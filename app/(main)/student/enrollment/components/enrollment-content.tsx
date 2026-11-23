@@ -288,8 +288,8 @@ export function EnrollmentContent({
                     <TableCell>{offering.lectureUnits.toFixed(1)}/{offering.labUnits.toFixed(1)}</TableCell>
                     <TableCell>{(offering.lectureUnits + offering.labUnits).toFixed(1)}</TableCell>
                     <TableCell className="pr-5! whitespace-pre-line">
-                      <span aria-hidden="true">{formatEnrollmentSlots(offering.slots)}</span>
-                      <span className="sr-only">{describeEnrollmentSlots(offering.slots)}</span>
+                      <span aria-hidden="true">{formatEnrollmentSlots(offering.slots, enrollmentIds.includes(offering.id))}</span>
+                      <span className="sr-only">{describeEnrollmentSlots(offering.slots, enrollmentIds.includes(offering.id))}</span>
                     </TableCell>
                   </TableRow>
                 );
