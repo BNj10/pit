@@ -265,12 +265,11 @@ const historicalTerms = [term2024Second, term2024First, term2023Second];
 export const facultyEvaluationPreview: FacultyEvaluationData = {
   // Preview window for the term the sample submissions and reports use, so the
   // chair and dean rosters can be evaluated. Set to null to preview the dean's
-  // "no window yet" empty state. After closesAt passes, the window shows as Closed.
+  // "no window yet" empty state. Windows stay open until the dean closes them.
   window: {
     academicYear: "2026–2027",
     semester: "first",
-    opensAt: "2026-08-01T08:00",
-    closesAt: "2027-01-31T17:00",
+    opensAt: "2026-08-01",
     manuallyClosed: false,
   },
   academicYears: ["2025–2026", "2026–2027"],
