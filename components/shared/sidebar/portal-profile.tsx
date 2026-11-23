@@ -20,7 +20,7 @@ export function PortalProfile({ user, account, onNavigate }: PortalProfileProps)
       onClick={onNavigate}
       aria-current={active ? "page" : undefined}
       aria-label={`${account.label} — ${user.name}`}
-      className={cn("flex shrink-0 items-center gap-2.5 border-t border-sidebar-border px-6 pt-3.5 pb-[18px] text-sidebar-foreground outline-sidebar-ring hover:bg-sidebar-accent focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-sidebar-ring", active && "bg-sidebar-accent")}
+      className={cn("flex shrink-0 items-center gap-2.5 border-t border-sidebar-border px-6 pt-3.5 pb-[18px] text-sidebar-foreground outline-sidebar-ring hover:bg-sidebar-accent focus-visible:outline-2 focus-visible:-outline-offset-4", active && "bg-sidebar-accent")}
     >
       <Avatar className="size-9">
         {user.avatarUrl && <AvatarImage src={user.avatarUrl} alt={user.name} />}

@@ -59,7 +59,7 @@ export function PortalLayout({
           Skip to content
         </a>
         <PortalSidebar {...sidebarProps} />
-        <SidebarInset className="portal-shell min-h-0 min-w-0">
+        <SidebarInset data-route={pathname} className="portal-shell min-h-0 min-w-0">
           <PortalHeader>
             {header ?? (
               <>

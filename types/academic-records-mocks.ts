@@ -1,6 +1,6 @@
 import type { AcademicRecordsData } from "./academic-records-types";
 
-// Synthetic preview fixtures. These years, grades, statuses, and GPA values
+// Synthetic preview fixtures. These years and grades
 // are design examples, not the active institutional term or grading policy.
 export const academicRecordsPreview: AcademicRecordsData = {
   initialSemesterValue: "2025-2026-first",
@@ -33,7 +33,6 @@ export const academicRecordsPreview: AcademicRecordsData = {
       id: "first-semester",
       title: "First semester academic record",
       term: "1st Semester · A.Y. 2025–2026",
-      gpa: 1.90,
       subjects: [
         { code: "EE 12", title: "Electrical Standards & Practice", units: 1 },
         { code: "EE 13", title: "Electrical Systems & Illumination Engineering Design", units: 5 },
@@ -49,14 +48,12 @@ export const academicRecordsPreview: AcademicRecordsData = {
         section: "BSEE IV-A",
         midterm: null,
         final: null,
-        status: "Pending",
       })),
     },
     "2024-2025-summer": {
       id: "summer-2024-2025",
       title: "Summer academic record",
       term: "Summer · A.Y. 2024–2025",
-      gpa: 1.38,
       subjects: [
         {
           code: "EE 11",
@@ -65,7 +62,6 @@ export const academicRecordsPreview: AcademicRecordsData = {
           units: 3,
           midterm: 1.75,
           final: 1.5,
-          status: "Passed",
         },
         {
           code: "GE 5",
@@ -74,7 +70,6 @@ export const academicRecordsPreview: AcademicRecordsData = {
           units: 3,
           midterm: 1.5,
           final: 1.25,
-          status: "Passed",
         },
       ],
     },

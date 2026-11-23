@@ -8,6 +8,7 @@ import { PortalLayout } from "./portal-layout";
 import type { AccountProfileDetails } from "@/types/account-types";
 import { deanProfilePreview } from "@/types/dean-account-mocks";
 import { departmentChairAccountPreview } from "@/types/department-chair-account-mocks";
+import { studentAccountPreview } from "@/types/student-account-mocks";
 import type { PortalRole, PortalUser } from "@/types/sidebar-types";
 
 // Design preview data. Replace with the authenticated role, user, and active term.
@@ -32,6 +33,7 @@ const previewUsers: Record<PortalRole, PortalUser> = {
 // Portals with an account page keep saved profile edits in AccountProvider so
 // the sidebar profile reflects them.
 const previewProfiles: Partial<Record<PortalRole, AccountProfileDetails>> = {
+  student: studentAccountPreview.profile,
   "department-chair": departmentChairAccountPreview.profile,
   dean: deanProfilePreview,
 };
