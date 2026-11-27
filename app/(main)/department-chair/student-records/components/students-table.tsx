@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { StudentsTableProps } from "@/types/student-records-exports";
 
+import { InvitationBadge } from "./invitation-badge";
+
 export function StudentsTable({ students, recordsHref }: StudentsTableProps) {
   return (
     <Table
@@ -44,7 +46,10 @@ export function StudentsTable({ students, recordsHref }: StudentsTableProps) {
                 <Avatar className="student-records-avatar" aria-hidden="true">
                   <AvatarFallback className="student-records-avatar-fallback">{student.initials}</AvatarFallback>
                 </Avatar>
-                <span>{student.name}</span>
+                <span className="student-records-student-name">
+                  <span>{student.name}</span>
+                  {student.invitation && <InvitationBadge student={student} invitation={student.invitation} />}
+                </span>
               </div>
             </TableHead>
             <TableCell className="student-records-muted student-records-email">{student.email}</TableCell>

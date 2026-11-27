@@ -16,7 +16,7 @@ type StudentGradeRecordsAction = {
   semester: StudentGradesSemester;
   canEditRecord: boolean;
 } & (
-  | { type: "create"; subjects: StudentGradesData["subjects"] }
+  | { type: "create"; subjects: NonNullable<StudentGradesData["enrolledSubjects"]> }
   | { type: "change-grade"; code: string; period: GradePeriod; grade: StudentGrade }
   | { type: "edit" | "save-draft" | "publish" | "reload" }
 );

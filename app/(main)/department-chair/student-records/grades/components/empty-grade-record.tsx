@@ -6,6 +6,7 @@ import type { EmptyGradeRecordProps } from "@/types/student-grades-exports";
 export function EmptyGradeRecord({
   semester,
   onCreate,
+  notice,
 }: EmptyGradeRecordProps) {
   return (
     <div className="student-grades-empty">
@@ -20,6 +21,7 @@ export function EmptyGradeRecord({
           </>
         )}
       </p>
+      {notice && <p className="student-grades-empty-notice" role="alert">{notice}</p>}
       {semester.schoolYearStatus === "current" && (
         <div className="student-grades-empty-actions">
           <Button className="student-grades-create" onClick={onCreate} disabled={!onCreate}>

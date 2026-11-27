@@ -21,6 +21,7 @@ export function SemesterGrades({
   isEditing,
   semester,
   onCreate,
+  createNotice,
   onGradeChange,
   onSaveDraft,
   onPublish,
@@ -134,7 +135,7 @@ export function SemesterGrades({
             })}
           </TableBody>
         </Table>
-        {!record && <EmptyGradeRecord semester={semester} onCreate={onCreate} />}
+        {!record && <EmptyGradeRecord semester={semester} onCreate={onCreate} notice={createNotice} />}
         {record && (
           <CardFooter className="student-grades-footer">
             <p className="student-grades-publication">
