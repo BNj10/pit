@@ -25,6 +25,11 @@ export interface StudentRecordsContextValue extends StudentRecordsData {
   now: number;
   /** Adds the student and records that their invitation was sent. */
   addStudent: (student: StudentRecordStudent) => void;
+  /**
+   * Replaces a student's details. An invited student whose email changes is sent a
+   * new invitation at the new address.
+   */
+  updateStudent: (studentNumber: string, details: StudentRecordStudent) => void;
   resendInvitation: (studentNumber: string) => void;
 }
 
@@ -44,7 +49,7 @@ export interface StudentsTableProps {
   recordsHref: string;
 }
 
-export interface NewStudentFormValues {
+export interface StudentFormValues {
   name: string;
   email: string;
   studentNumber: string;
@@ -52,11 +57,21 @@ export interface NewStudentFormValues {
   batch: string;
 }
 
-export type NewStudentFormErrors = Partial<Record<keyof NewStudentFormValues, string>>;
+export type StudentFormErrors = Partial<Record<keyof StudentFormValues, string>>;
 
 export interface AddStudentDialogProps {
   students: readonly StudentRecordStudent[];
   onAdd: (student: StudentRecordStudent) => void;
+}
+
+export interface StudentDetailsFormProps {
+  students: readonly StudentRecordStudent[];
+  /** The student being edited; omit to add a student. */
+  student?: StudentRecordStudent;
+  /** Prefixes field IDs, which must be unique on the page. */
+  idPrefix: string;
+  submitLabel: string;
+  onSubmit: (student: StudentRecordStudent) => void;
 }
 
 export interface StudentRecordsPaginationProps {

@@ -3,8 +3,8 @@ import * as z from "zod";
 import { EMAIL_PATTERN, STUDENT_ID_PATTERN } from "@/lib/auth-validation";
 import { studentInitials } from "@/lib/enrollment-review";
 import type {
-  NewStudentFormErrors,
-  NewStudentFormValues,
+  StudentFormErrors,
+  StudentFormValues,
   StudentRecordStudent,
 } from "@/types/student-records-types";
 
@@ -32,7 +32,7 @@ export function isInvitationExpired(invitation: { sentAt: string }, now: number)
 /** Year standings a student can hold; matches the database check on profiles. */
 export const studentYearStandings = ["1st Year", "2nd Year", "3rd Year", "4th Year"] as const;
 
-export const emptyNewStudent: NewStudentFormValues = {
+export const emptyStudentForm: StudentFormValues = {
   name: "",
   email: "",
   studentNumber: "",
@@ -51,10 +51,10 @@ const batchSchema = z
   .transform(([start, end]) => `${start}–${end}`);
 
 /**
- * Fields of a new student. Reuse it on the server when adding students moves there,
- * where it becomes authoritative. The ID matches the format students log in with.
+ * A student's details, when adding or editing them. Reuse it on the server when this
+ * moves there, where it becomes authoritative. The ID matches the login format.
  */
-export const newStudentSchema = z.object({
+export const studentDetailsSchema = z.object({
   name: z
     .string()
     .trim()
@@ -76,32 +76,52 @@ export const newStudentSchema = z.object({
 });
 
 /** First error message for each invalid field. */
-export function newStudentFieldErrors(error: z.ZodError): NewStudentFormErrors {
-  const errors: NewStudentFormErrors = {};
+export function studentFieldErrors(error: z.ZodError): StudentFormErrors {
+  const errors: StudentFormErrors = {};
   for (const issue of error.issues) {
-    const field = issue.path[0] as keyof NewStudentFormValues;
+    const field = issue.path[0] as keyof StudentFormValues;
     errors[field] ??= issue.message;
   }
   return errors;
 }
 
 /**
- * Checks field formats and duplicates among the listed students. Returns the
- * student to add, or the first error for each invalid field.
+ * The student ID is how a student logs in, so it can only change while they are
+ * still invited. Once they finish account setup it is fixed.
  */
-export function validateNewStudent(
-  values: NewStudentFormValues,
+export function canEditStudentId(student: StudentRecordStudent) {
+  return student.invitation !== undefined;
+}
+
+/** Form values for a student's current details. */
+export function studentFormValues(student: StudentRecordStudent): StudentFormValues {
+  const { name, email, studentNumber, yearStanding, batch } = student;
+  return { name, email, studentNumber, yearStanding, batch };
+}
+
+/**
+ * Checks field formats and duplicates among the listed students. When editing,
+ * `current` is the student being changed: it isn't its own duplicate, and its ID
+ * stays fixed once it has finished account setup. Returns the student's details,
+ * or the first error for each invalid field.
+ */
+export function validateStudentDetails(
+  values: StudentFormValues,
   students: readonly StudentRecordStudent[],
-): { errors: NewStudentFormErrors; student: StudentRecordStudent | null } {
-  const result = newStudentSchema.safeParse(values);
-  if (!result.success) return { errors: newStudentFieldErrors(result.error), student: null };
+  current?: StudentRecordStudent,
+): { errors: StudentFormErrors; student: StudentRecordStudent | null } {
+  const result = studentDetailsSchema.safeParse(values);
+  if (!result.success) return { errors: studentFieldErrors(result.error), student: null };
 
   const { name, email, studentNumber, yearStanding, batch } = result.data;
-  const errors: NewStudentFormErrors = {};
-  if (students.some((student) => student.email.toLowerCase() === email)) {
+  const others = students.filter((student) => student.studentNumber !== current?.studentNumber);
+  const errors: StudentFormErrors = {};
+  if (others.some((student) => student.email.toLowerCase() === email)) {
     errors.email = "Another student already uses this email.";
   }
-  if (students.some((student) => student.studentNumber === studentNumber)) {
+  if (current && !canEditStudentId(current) && studentNumber !== current.studentNumber) {
+    errors.studentNumber = "The student ID can't change after the student sets up their account.";
+  } else if (others.some((student) => student.studentNumber === studentNumber)) {
     errors.studentNumber = "Another student already has this student ID.";
   }
   if (Object.keys(errors).length > 0) return { errors, student: null };

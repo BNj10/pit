@@ -42,6 +42,15 @@ export function StudentRecordsProvider({ data, children }: { data: StudentRecord
       setStudents((current) => [{ ...student, invitation: { sentAt } }, ...current]);
       setNow(Date.now());
     },
+    updateStudent(studentNumber, details) {
+      const sentAt = new Date().toISOString();
+      setStudents((current) => current.map((student) => {
+        if (student.studentNumber !== studentNumber) return student;
+        const reinvite = student.invitation && student.email !== details.email;
+        return { ...details, invitation: reinvite ? { sentAt } : student.invitation };
+      }));
+      setNow(Date.now());
+    },
     resendInvitation(studentNumber) {
       const sentAt = new Date().toISOString();
       setStudents((current) => current.map((student) => (
