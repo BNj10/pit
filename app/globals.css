@@ -4574,15 +4574,59 @@
   text-align: center;
 }
 
-.student-records-new-badge {
+.student-records-student-name {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+}
+
+.student-records-invited-badge {
+  display: inline-flex;
   flex: none;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid var(--warning-border);
   border-radius: 999px;
-  padding: 1px 8px;
-  background: var(--success-soft);
-  color: var(--primary);
+  padding: 0 8px;
+  background: var(--warning-soft);
+  color: var(--warning);
   font-size: 10px;
   font-weight: var(--weight-semibold);
   line-height: 16px;
+  white-space: nowrap;
+}
+
+.student-records-invited-badge[data-expired] {
+  padding-right: 2px;
+  border-color: var(--destructive-border);
+  background: var(--destructive-soft);
+  color: var(--destructive);
+}
+
+.student-records-resend-button {
+  display: grid;
+  width: 18px;
+  height: 18px;
+  place-items: center;
+  border-radius: 999px;
+  color: inherit;
+  cursor: pointer;
+}
+
+.student-records-resend-button:hover {
+  background: var(--background);
+}
+
+.student-records-resend-button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+.student-records-resend-button svg {
+  width: 11px;
+  height: 11px;
 }
 
 .student-records-dialog {
@@ -4757,6 +4801,11 @@
 
   .student-records-records-button {
     min-height: 40px;
+  }
+
+  .student-records-resend-button {
+    width: 28px;
+    height: 28px;
   }
 
   .student-records-field [data-slot="input"],

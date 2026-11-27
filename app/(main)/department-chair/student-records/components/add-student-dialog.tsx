@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { emptyNewStudent, studentNameMaxLength, validateNewStudent } from "@/lib/student-records";
+import { emptyNewStudent, studentNameMaxLength, studentYearStandings, validateNewStudent } from "@/lib/student-records";
 import type {
   AddStudentDialogProps,
   NewStudentFormErrors,
@@ -25,7 +25,7 @@ import type {
 
 const fieldOrder = ["name", "email", "studentNumber", "yearStanding", "batch"] as const;
 
-export function AddStudentDialog(props: AddStudentDialogProps) {
+export function AddStudentDialog({ students, onAdd }: AddStudentDialogProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -39,14 +39,16 @@ export function AddStudentDialog(props: AddStudentDialogProps) {
       <DialogContent className="student-records-dialog">
         <DialogHeader className="student-records-dialog-header">
           <DialogTitle>Add student</DialogTitle>
-          <DialogDescription>Add a student to your department&apos;s student records.</DialogDescription>
+          <DialogDescription>
+            Add a student to your department. They&apos;ll get an email invitation to set up their account.
+          </DialogDescription>
         </DialogHeader>
         {/* Mounted only while open, so each opening starts from empty fields. */}
         <AddStudentForm
-          {...props}
+          students={students}
           onAdd={(student) => {
-            props.onAdd(student);
             setOpen(false);
+            onAdd(student);
           }}
         />
       </DialogContent>
@@ -54,7 +56,7 @@ export function AddStudentDialog(props: AddStudentDialogProps) {
   );
 }
 
-function AddStudentForm({ students, yearStandings, batches, onAdd }: AddStudentDialogProps) {
+function AddStudentForm({ students, onAdd }: AddStudentDialogProps) {
   const [values, setValues] = useState<NewStudentFormValues>(emptyNewStudent);
   const [errors, setErrors] = useState<NewStudentFormErrors>({});
 
@@ -65,7 +67,7 @@ function AddStudentForm({ students, yearStandings, batches, onAdd }: AddStudentD
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const result = validateNewStudent(values, students, { yearStandings, batches });
+    const result = validateNewStudent(values, students);
     setErrors(result.errors);
     if (!result.student) {
       const firstInvalid = fieldOrder.find((field) => result.errors[field]);
@@ -148,21 +150,23 @@ function AddStudentForm({ students, yearStandings, batches, onAdd }: AddStudentD
                 <SelectValue placeholder="Choose year" />
               </SelectTrigger>
               <SelectContent position="popper">
-                {yearStandings.map((option) => <SelectItem key={option} value={option}>{option}</SelectItem>)}
+                {studentYearStandings.map((option) => <SelectItem key={option} value={option}>{option}</SelectItem>)}
               </SelectContent>
             </Select>
             {fieldError("yearStanding")}
           </div>
           <div className="student-records-field">
             <label htmlFor={fieldId("batch")}>Batch <span aria-hidden="true">*</span></label>
-            <Select value={values.batch} onValueChange={(value) => update("batch", value)}>
-              <SelectTrigger {...fieldProps("batch")}>
-                <SelectValue placeholder="Choose batch" />
-              </SelectTrigger>
-              <SelectContent position="popper">
-                {batches.map((option) => <SelectItem key={option} value={option}>{option}</SelectItem>)}
-              </SelectContent>
-            </Select>
+            <Input
+              {...fieldProps("batch")}
+              name="batch"
+              value={values.batch}
+              placeholder="e.g. 2026–2030"
+              maxLength={11}
+              autoComplete="off"
+              required
+              onChange={(event) => update("batch", event.target.value)}
+            />
             {fieldError("batch")}
           </div>
         </div>
@@ -171,7 +175,7 @@ function AddStudentForm({ students, yearStandings, batches, onAdd }: AddStudentD
         <DialogClose asChild>
           <Button type="button" variant="outline">Cancel</Button>
         </DialogClose>
-        <Button type="submit">Add student</Button>
+        <Button type="submit">Add and send invite</Button>
       </DialogFooter>
     </form>
   );

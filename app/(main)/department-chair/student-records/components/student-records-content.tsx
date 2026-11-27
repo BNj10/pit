@@ -9,21 +9,19 @@ import type { StudentRecordsContentProps, StudentRecordStudent } from "@/types/s
 import { AddStudentDialog } from "./add-student-dialog";
 import { StudentRecordsFilters } from "./student-records-filters";
 import { StudentRecordsPagination } from "./student-records-pagination";
+import { useStudentRecords } from "./student-records-provider";
 import { StudentsTable } from "./students-table";
 
-export function StudentRecordsContent({ data, recordsHref }: StudentRecordsContentProps) {
-  // Students added on this page stay in browser memory only; the preview has no data source yet.
-  const [addedStudents, setAddedStudents] = useState<readonly StudentRecordStudent[]>([]);
+export function StudentRecordsContent({ recordsHref }: StudentRecordsContentProps) {
+  const data = useStudentRecords();
   const [search, setSearch] = useState("");
   const [batch, setBatch] = useState("all");
   const [yearStanding, setYearStanding] = useState("all");
   const [page, setPage] = useState(1);
-  const allStudents = [...addedStudents, ...data.students];
-  const addedStudentNumbers = new Set(addedStudents.map((student) => student.studentNumber));
   const batches = [...new Set(data.students.map((student) => student.batch))].sort();
   const yearStandings = [...new Set(data.students.map((student) => student.yearStanding))].sort();
   const query = search.trim().toLowerCase();
-  const filteredStudents = allStudents.filter((student) => (
+  const filteredStudents = data.students.filter((student) => (
     (batch === "all" || student.batch === batch) &&
     (yearStanding === "all" || student.yearStanding === yearStanding) &&
     [student.name, student.email, student.studentNumber].some((field) => field.toLowerCase().includes(query))
@@ -33,13 +31,13 @@ export function StudentRecordsContent({ data, recordsHref }: StudentRecordsConte
   const students = filteredStudents.slice((currentPage - 1) * data.pageSize, currentPage * data.pageSize);
 
   function addStudent(student: StudentRecordStudent) {
-    setAddedStudents((current) => [student, ...current]);
-    // Show the new student at the top of the first page.
+    data.addStudent(student);
+    // New students are listed first, so the new one is at the top of page 1.
     setSearch("");
     setBatch("all");
     setYearStanding("all");
     setPage(1);
-    toast.success(`${student.name} was added.`);
+    toast.success(`${student.name} was added. An invitation was sent to ${student.email}.`);
   }
 
   return (
@@ -49,12 +47,7 @@ export function StudentRecordsContent({ data, recordsHref }: StudentRecordsConte
           <h1 id="student-records-title">Students</h1>
           <p>{data.department}</p>
         </div>
-        <AddStudentDialog
-          students={allStudents}
-          yearStandings={yearStandings}
-          batches={batches}
-          onAdd={addStudent}
-        />
+        <AddStudentDialog students={data.students} onAdd={addStudent} />
       </header>
       <StudentRecordsFilters
         search={search}
@@ -67,7 +60,7 @@ export function StudentRecordsContent({ data, recordsHref }: StudentRecordsConte
         onYearStandingChange={(value) => { setYearStanding(value); setPage(1); }}
       />
       <Card className="student-records-card">
-        <StudentsTable students={students} recordsHref={recordsHref} addedStudentNumbers={addedStudentNumbers} />
+        <StudentsTable students={students} recordsHref={recordsHref} />
         <StudentRecordsPagination
           page={currentPage}
           pageCount={pageCount}

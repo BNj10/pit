@@ -32,8 +32,13 @@ const additionalStudents: StudentRecordStudent[] = Array.from({ length: 237 }, (
   };
 });
 
+// Invited students who haven't finished account setup; the first invitation has expired.
+const invitedStudents: readonly StudentRecordStudent[] = [
+  { studentNumber: "26-0001-042", name: "Paolo Miguel Ramos", initials: "PR", email: "paolo.ramos@university.edu", yearStanding: "1st Year", batch: "2026–2030", invitation: { sentAt: "2026-11-20T09:00:00+08:00" } },
+];
+
 export const studentRecordsPreview: StudentRecordsData = {
   department: "Computer Science Department",
   pageSize: 7,
-  students: [...referenceStudents, ...additionalStudents],
+  students: [...invitedStudents, ...referenceStudents, ...additionalStudents],
 };

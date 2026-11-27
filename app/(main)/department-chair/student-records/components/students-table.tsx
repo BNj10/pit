@@ -6,7 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { StudentsTableProps } from "@/types/student-records-exports";
 
-export function StudentsTable({ students, recordsHref, addedStudentNumbers }: StudentsTableProps) {
+import { InvitationBadge } from "./invitation-badge";
+
+export function StudentsTable({ students, recordsHref }: StudentsTableProps) {
   return (
     <Table
       className="student-records-table"
@@ -44,8 +46,10 @@ export function StudentsTable({ students, recordsHref, addedStudentNumbers }: St
                 <Avatar className="student-records-avatar" aria-hidden="true">
                   <AvatarFallback className="student-records-avatar-fallback">{student.initials}</AvatarFallback>
                 </Avatar>
-                <span>{student.name}</span>
-                {addedStudentNumbers.has(student.studentNumber) && <span className="student-records-new-badge">New</span>}
+                <span className="student-records-student-name">
+                  <span>{student.name}</span>
+                  {student.invitation && <InvitationBadge student={student} invitation={student.invitation} />}
+                </span>
               </div>
             </TableHead>
             <TableCell className="student-records-muted student-records-email">{student.email}</TableCell>
@@ -53,25 +57,12 @@ export function StudentsTable({ students, recordsHref, addedStudentNumbers }: St
             <TableCell>{student.yearStanding}</TableCell>
             <TableCell>{student.batch}</TableCell>
             <TableCell>
-              {addedStudentNumbers.has(student.studentNumber) ? (
-                // A preview-only student has no saved record for the grades page to open.
-                <Button
-                  variant="outline"
-                  className="student-records-records-button"
-                  disabled
-                  aria-label={`Records for ${student.name} are unavailable until the student is saved`}
-                >
+              <Button variant="outline" className="student-records-records-button" asChild>
+                <Link href={`${recordsHref}?student=${encodeURIComponent(student.studentNumber)}`} aria-label={`Records for ${student.name}`}>
                   <GraduationCap aria-hidden="true" />
                   Records
-                </Button>
-              ) : (
-                <Button variant="outline" className="student-records-records-button" asChild>
-                  <Link href={`${recordsHref}?student=${encodeURIComponent(student.studentNumber)}`} aria-label={`Records for ${student.name}`}>
-                    <GraduationCap aria-hidden="true" />
-                    Records
-                  </Link>
-                </Button>
-              )}
+                </Link>
+              </Button>
             </TableCell>
           </TableRow>
         ))}

@@ -5,6 +5,8 @@ export interface StudentRecordStudent {
   email: string;
   yearStanding: string;
   batch: string;
+  /** The latest invitation, kept until the student finishes account setup. */
+  invitation?: { sentAt: string };
 }
 
 export interface StudentRecordsData {
@@ -14,8 +16,16 @@ export interface StudentRecordsData {
 }
 
 export interface StudentRecordsContentProps {
-  data: StudentRecordsData;
   recordsHref: string;
+}
+
+/** Preview students shared by the Student Records list and grades pages. */
+export interface StudentRecordsContextValue extends StudentRecordsData {
+  /** Current time in milliseconds, updated periodically so invitations can expire on screen. */
+  now: number;
+  /** Adds the student and records that their invitation was sent. */
+  addStudent: (student: StudentRecordStudent) => void;
+  resendInvitation: (studentNumber: string) => void;
 }
 
 export interface StudentRecordsFiltersProps {
@@ -32,8 +42,6 @@ export interface StudentRecordsFiltersProps {
 export interface StudentsTableProps {
   students: readonly StudentRecordStudent[];
   recordsHref: string;
-  /** Students added on this page that have no saved record to open yet. */
-  addedStudentNumbers: ReadonlySet<string>;
 }
 
 export interface NewStudentFormValues {
@@ -48,8 +56,6 @@ export type NewStudentFormErrors = Partial<Record<keyof NewStudentFormValues, st
 
 export interface AddStudentDialogProps {
   students: readonly StudentRecordStudent[];
-  yearStandings: readonly string[];
-  batches: readonly string[];
   onAdd: (student: StudentRecordStudent) => void;
 }
 

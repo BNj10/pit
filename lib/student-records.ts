@@ -19,6 +19,19 @@ export function findStudentRecord(
 
 export const studentNameMaxLength = 100;
 
+/**
+ * How long an invitation link works. Shortened to 10 seconds so the expired state is
+ * quick to see in the preview; real auth email links last 1 hour (otp_expiry).
+ */
+export const invitationLifetimeMs = 10 * 1000;
+
+export function isInvitationExpired(invitation: { sentAt: string }, now: number) {
+  return Date.parse(invitation.sentAt) + invitationLifetimeMs <= now;
+}
+
+/** Year standings a student can hold; matches the database check on profiles. */
+export const studentYearStandings = ["1st Year", "2nd Year", "3rd Year", "4th Year"] as const;
+
 export const emptyNewStudent: NewStudentFormValues = {
   name: "",
   email: "",
@@ -27,8 +40,21 @@ export const emptyNewStudent: NewStudentFormValues = {
   batch: "",
 };
 
-/** Field formats for a new student; the ID matches the format students log in with. */
-const newStudentSchema = z.object({
+/** Accepts 2026–2030 or 2026-2030 and stores it with an en dash. */
+const batchSchema = z
+  .string()
+  .trim()
+  .min(1, "Enter the batch.")
+  .regex(/^\d{4}\s*[–-]\s*\d{4}$/, "Enter the batch as two years, e.g. 2026–2030.")
+  .transform((value) => value.split(/\s*[–-]\s*/).map(Number))
+  .refine(([start, end]) => end > start, "The end year must come after the start year.")
+  .transform(([start, end]) => `${start}–${end}`);
+
+/**
+ * Fields of a new student. Reuse it on the server when adding students moves there,
+ * where it becomes authoritative. The ID matches the format students log in with.
+ */
+export const newStudentSchema = z.object({
   name: z
     .string()
     .trim()
@@ -38,48 +64,46 @@ const newStudentSchema = z.object({
     .string()
     .trim()
     .min(1, "Enter the student's university email.")
-    .regex(EMAIL_PATTERN, "Enter a valid email address (e.g. name@university.edu)."),
+    .regex(EMAIL_PATTERN, "Enter a valid email address (e.g. name@university.edu).")
+    .transform((value) => value.toLowerCase()),
   studentNumber: z
     .string()
     .trim()
     .min(1, "Enter the student ID.")
     .regex(STUDENT_ID_PATTERN, "Enter the student ID in the format 00-0000-000."),
-  yearStanding: z.string().min(1, "Choose a year standing."),
-  batch: z.string().min(1, "Choose a batch."),
+  yearStanding: z.enum(studentYearStandings, "Choose a year standing."),
+  batch: batchSchema,
 });
 
+/** First error message for each invalid field. */
+export function newStudentFieldErrors(error: z.ZodError): NewStudentFormErrors {
+  const errors: NewStudentFormErrors = {};
+  for (const issue of error.issues) {
+    const field = issue.path[0] as keyof NewStudentFormValues;
+    errors[field] ??= issue.message;
+  }
+  return errors;
+}
+
 /**
- * Validates a new student against the listed students. Returns the student to
- * add, or the first error for each invalid field.
+ * Checks field formats and duplicates among the listed students. Returns the
+ * student to add, or the first error for each invalid field.
  */
 export function validateNewStudent(
   values: NewStudentFormValues,
   students: readonly StudentRecordStudent[],
-  options: { yearStandings: readonly string[]; batches: readonly string[] },
 ): { errors: NewStudentFormErrors; student: StudentRecordStudent | null } {
-  const errors: NewStudentFormErrors = {};
   const result = newStudentSchema.safeParse(values);
+  if (!result.success) return { errors: newStudentFieldErrors(result.error), student: null };
 
-  if (!result.success) {
-    for (const issue of result.error.issues) {
-      const field = issue.path[0] as keyof NewStudentFormValues;
-      errors[field] ??= issue.message;
-    }
-    return { errors, student: null };
-  }
-
-  const { name, studentNumber, yearStanding, batch } = result.data;
-  const email = result.data.email.toLowerCase();
-
+  const { name, email, studentNumber, yearStanding, batch } = result.data;
+  const errors: NewStudentFormErrors = {};
   if (students.some((student) => student.email.toLowerCase() === email)) {
     errors.email = "Another student already uses this email.";
   }
   if (students.some((student) => student.studentNumber === studentNumber)) {
     errors.studentNumber = "Another student already has this student ID.";
   }
-  if (!options.yearStandings.includes(yearStanding)) errors.yearStanding = "Choose a year standing.";
-  if (!options.batches.includes(batch)) errors.batch = "Choose a batch.";
-
   if (Object.keys(errors).length > 0) return { errors, student: null };
 
   return {

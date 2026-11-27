@@ -5,6 +5,7 @@ export type {
   NewStudentFormValues,
   StudentRecordStudent,
   StudentRecordsContentProps,
+  StudentRecordsContextValue,
   StudentRecordsData,
   StudentRecordsFiltersProps,
   StudentRecordsPaginationProps,
