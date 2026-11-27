@@ -32,6 +32,25 @@ export interface StudentRecordsFiltersProps {
 export interface StudentsTableProps {
   students: readonly StudentRecordStudent[];
   recordsHref: string;
+  /** Students added on this page that have no saved record to open yet. */
+  addedStudentNumbers: ReadonlySet<string>;
+}
+
+export interface NewStudentFormValues {
+  name: string;
+  email: string;
+  studentNumber: string;
+  yearStanding: string;
+  batch: string;
+}
+
+export type NewStudentFormErrors = Partial<Record<keyof NewStudentFormValues, string>>;
+
+export interface AddStudentDialogProps {
+  students: readonly StudentRecordStudent[];
+  yearStandings: readonly string[];
+  batches: readonly string[];
+  onAdd: (student: StudentRecordStudent) => void;
 }
 
 export interface StudentRecordsPaginationProps {

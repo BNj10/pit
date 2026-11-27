@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { StudentsTableProps } from "@/types/student-records-exports";
 
-export function StudentsTable({ students, recordsHref }: StudentsTableProps) {
+export function StudentsTable({ students, recordsHref, addedStudentNumbers }: StudentsTableProps) {
   return (
     <Table
       className="student-records-table"
@@ -45,6 +45,7 @@ export function StudentsTable({ students, recordsHref }: StudentsTableProps) {
                   <AvatarFallback className="student-records-avatar-fallback">{student.initials}</AvatarFallback>
                 </Avatar>
                 <span>{student.name}</span>
+                {addedStudentNumbers.has(student.studentNumber) && <span className="student-records-new-badge">New</span>}
               </div>
             </TableHead>
             <TableCell className="student-records-muted student-records-email">{student.email}</TableCell>
@@ -52,12 +53,25 @@ export function StudentsTable({ students, recordsHref }: StudentsTableProps) {
             <TableCell>{student.yearStanding}</TableCell>
             <TableCell>{student.batch}</TableCell>
             <TableCell>
-              <Button variant="outline" className="student-records-records-button" asChild>
-                <Link href={`${recordsHref}?student=${encodeURIComponent(student.studentNumber)}`} aria-label={`Records for ${student.name}`}>
+              {addedStudentNumbers.has(student.studentNumber) ? (
+                // A preview-only student has no saved record for the grades page to open.
+                <Button
+                  variant="outline"
+                  className="student-records-records-button"
+                  disabled
+                  aria-label={`Records for ${student.name} are unavailable until the student is saved`}
+                >
                   <GraduationCap aria-hidden="true" />
                   Records
-                </Link>
-              </Button>
+                </Button>
+              ) : (
+                <Button variant="outline" className="student-records-records-button" asChild>
+                  <Link href={`${recordsHref}?student=${encodeURIComponent(student.studentNumber)}`} aria-label={`Records for ${student.name}`}>
+                    <GraduationCap aria-hidden="true" />
+                    Records
+                  </Link>
+                </Button>
+              )}
             </TableCell>
           </TableRow>
         ))}
