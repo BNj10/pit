@@ -5246,6 +5246,18 @@
   line-height: 18px;
 }
 
+.student-grades-empty-notice {
+  max-width: 420px;
+  margin-top: 16px;
+  border: 1px solid var(--warning-border);
+  border-radius: var(--radius-control);
+  padding: 8px 12px;
+  background: var(--warning-soft);
+  color: var(--warning);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
 .student-grades-empty-actions {
   display: flex;
   justify-content: center;

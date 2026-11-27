@@ -20,6 +20,7 @@ export function StudentGradesContent({ data, student, canCreateRecord = false }:
   const [state, dispatch] = useReducer(studentGradeRecordsReducer, data.records, createStudentGradeRecordsState);
   const [isReloading, startReload] = useTransition();
   const [announcement, setAnnouncement] = useState("");
+  const [createNotice, setCreateNotice] = useState("");
   const semester = data.semesters.find((option) => option.value === selectedSemester);
   const record = state.records[selectedSemester];
 
@@ -47,6 +48,7 @@ export function StudentGradesContent({ data, student, canCreateRecord = false }:
           if (data.semesters.some((option) => option.value === value)) {
             setSelectedSemester(value);
             setAnnouncement("");
+            setCreateNotice("");
           }
         }}
         onReload={() => startReload(() => {
@@ -65,9 +67,15 @@ export function StudentGradesContent({ data, student, canCreateRecord = false }:
           semester={semester}
           disabled={isReloading}
           onCreate={canManage && !record && !isReloading ? () => {
-            dispatch({ ...actionContext, type: "create", subjects: data.subjects });
+            // A grade record lists the subjects the student is enrolled in this term.
+            if (!data.enrolledSubjects || data.enrolledSubjects.length === 0) {
+              setCreateNotice(`${student.name} isn't enrolled in ${semester.label.replace(" · ", ", ")} yet. You can create a grade record once their enrollment is approved.`);
+              return;
+            }
+            dispatch({ ...actionContext, type: "create", subjects: data.enrolledSubjects });
             setAnnouncement("Grade record created in this preview.");
           } : undefined}
+          createNotice={createNotice}
           onGradeChange={updateGrade}
           onSaveDraft={() => {
             if (!isEditing || isReloading) return;

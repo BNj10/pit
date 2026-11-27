@@ -31,7 +31,8 @@ export interface StudentGradesData {
   initialSemester: string;
   semesters: readonly StudentGradesSemester[];
   records: Readonly<Partial<Record<string, StudentGradeRecord>>>;
-  subjects: readonly Pick<StudentGradeSubject, "code" | "title">[];
+  /** Subjects the student is enrolled in for the current term; null when not enrolled. */
+  enrolledSubjects: readonly Pick<StudentGradeSubject, "code" | "title">[] | null;
 }
 
 export interface StudentGradesContentProps {
@@ -51,6 +52,8 @@ export interface GradesToolbarProps {
 export interface EmptyGradeRecordProps {
   semester: StudentGradesSemester;
   onCreate?: () => void;
+  /** Explains why a grade record couldn't be created, such as the student not being enrolled. */
+  notice?: string;
 }
 
 export interface GradeDialogProps {
@@ -68,6 +71,7 @@ export interface SemesterGradesProps {
   isEditing: boolean;
   semester: StudentGradesSemester;
   onCreate?: () => void;
+  createNotice?: string;
   onGradeChange: (code: string, period: GradePeriod, grade: StudentGrade) => void;
   onSaveDraft: () => void;
   onPublish: () => void;
