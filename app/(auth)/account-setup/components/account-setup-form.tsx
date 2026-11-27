@@ -96,13 +96,13 @@ export function AccountSetupForm({ email, role, studentId }: AccountSetupFormPro
           </h1>
           <p className="text-sm leading-relaxed text-muted-foreground">
             {asksForStudentId
-              ? "Enter your student ID and create a password. You'll use them to log in from now on."
+              ? "Enter your student ID and create a password. From now on, you can log in with your email or this student ID, using the same password."
               : "Create a password. You'll use it with your email to log in from now on."}
           </p>
           {email && (
             <p className="text-sm text-muted-foreground">
               Signed in as{" "}
-              <span className="font-medium break-all text-foreground">{email}</span>
+              <span className="font-medium break-all text-primary">{email}</span>
             </p>
           )}
         </header>
