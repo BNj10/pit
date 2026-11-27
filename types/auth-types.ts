@@ -24,7 +24,7 @@ export interface CurrentAccount {
   userId: string;
   email: string | null;
   role: AccountRole;
-  /** Students set it once with set_student_id(); null until then and for other roles. */
+  /** Recorded before a student is invited; null for other roles. */
   studentId: string | null;
   /** False until an invited user has chosen a password (and, for students, a student ID). */
   setupComplete: boolean;
@@ -32,7 +32,7 @@ export interface CurrentAccount {
 
 /** Field and form errors returned by the account setup and new-password Server Actions. */
 export interface AccountFormFailure {
-  fieldErrors: Partial<Record<"studentId" | "password" | "confirmPassword", string>>;
+  fieldErrors: Partial<Record<"password" | "confirmPassword", string>>;
   message?: string;
 }
 
