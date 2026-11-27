@@ -37,8 +37,8 @@ changing environment variables.
 Every page except the login and password-reset pages requires a session. Accounts
 are created by the Administrator (sign-up is disabled). A database trigger gives each
 new user a `public.profiles` row with the `student` role; change `role` to
-`department-chair` or `dean` for staff. Students can log in with their email, or with
-their student ID once they have set it during account setup.
+`department-chair` or `dean` for staff. Students can log in with their email or their
+student ID, which is recorded before they are invited.
 
 `supabase/seed.sql` creates synthetic local accounts, all with the password
 `Preview-Pass-2026`:
@@ -56,11 +56,13 @@ existing local database without deleting its data, run
 ### Inviting accounts
 
 1. In Supabase, open Authentication → Users → **Invite user** and enter the email.
-   The trigger creates a `student` profile. For a Department Chair or Dean, change
-   `role` in `public.profiles` before they open the link.
+   The trigger creates a `student` profile. For a student, set `student_id` in
+   `public.profiles` (format `00-0000-000`) before they open the link; students can't
+   enter it themselves, and setup can't finish without it. For a Department Chair or
+   Dean, change `role` instead.
 2. The invite email links to `/auth/confirm`, which signs the person in and opens
-   **Set up your account** (`/account-setup`). Students enter their student ID and a
-   password; staff choose a password. Portal pages stay closed until this is done.
+   **Set up your account** (`/account-setup`), where they choose a password. Portal
+   pages stay closed until this is done.
 3. From then on, students can log in with their email or student ID.
 
 "Forgot password" emails use the same route and open `/set-new-password`.

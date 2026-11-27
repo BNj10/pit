@@ -41,6 +41,11 @@ export async function loadAccount(
   };
 }
 
+/** Students are invited with their ID already recorded; setup can't finish without it. */
+export function isMissingStudentId(account: CurrentAccount) {
+  return account.role === "student" && account.studentId === null;
+}
+
 /** Where a signed-in account should go: account setup first, then its portal. */
 export function getAccountEntryPath(account: CurrentAccount) {
   return account.setupComplete ? ROLE_HOME_PATHS[account.role] : ACCOUNT_SETUP_PATH;

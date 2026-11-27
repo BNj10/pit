@@ -4,15 +4,13 @@ import { useState, useTransition, type FormEvent } from "react";
 import { LoaderCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { logout } from "@/lib/auth/actions";
-import { STUDENT_ID_PATTERN } from "@/lib/auth-validation";
+import { STUDENT_ID_MISSING_MESSAGE } from "@/lib/auth/messages";
 import {
   MIN_PASSWORD_LENGTH,
   validateNewPassword,
 } from "@/lib/new-password-validation";
-import type { AccountFormFailure, AccountRole } from "@/types/auth-types";
+import type { AccountFormFailure } from "@/types/auth-types";
 
 import { PasswordField } from "../../components/password-field";
 import { completeAccountSetup } from "../actions";
@@ -20,19 +18,18 @@ import { completeAccountSetup } from "../actions";
 type FieldErrors = AccountFormFailure["fieldErrors"];
 
 interface AccountSetupFormProps {
-  email: string | null;
-  role: AccountRole;
-  /** Already recorded student ID, if an earlier attempt saved it. */
+  /** The student ID recorded before the student was invited; null for staff. */
   studentId: string | null;
+  /** A student whose ID wasn't recorded; setup can't finish until it is. */
+  missingStudentId: boolean;
 }
 
-const FIELD_ORDER = ["studentId", "password", "confirmPassword"] as const;
+const FIELD_ORDER = ["password", "confirmPassword"] as const;
 
-export function AccountSetupForm({ email, role, studentId }: AccountSetupFormProps) {
+export function AccountSetupForm({ studentId, missingStudentId }: AccountSetupFormProps) {
   const [errors, setErrors] = useState<FieldErrors>({});
-  const [formError, setFormError] = useState<string | null>(null);
+  const [formError, setFormError] = useState<string | null>(missingStudentId ? STUDENT_ID_MISSING_MESSAGE : null);
   const [isPending, startTransition] = useTransition();
-  const asksForStudentId = role === "student" && studentId === null;
 
   function focusFirstError(form: HTMLFormElement, fieldErrors: FieldErrors) {
     const field = FIELD_ORDER.find((name) => fieldErrors[name]);
@@ -46,19 +43,10 @@ export function AccountSetupForm({ email, role, studentId }: AccountSetupFormPro
 
     const form = event.currentTarget;
     const formData = new FormData(form);
-    const enteredId = String(formData.get("studentId") ?? "").trim();
-    const nextErrors: FieldErrors = {
-      ...validateNewPassword(
-        String(formData.get("password") ?? ""),
-        String(formData.get("confirmPassword") ?? ""),
-      ),
-    };
-
-    if (asksForStudentId && !enteredId) {
-      nextErrors.studentId = "Enter your student ID.";
-    } else if (asksForStudentId && !STUDENT_ID_PATTERN.test(enteredId)) {
-      nextErrors.studentId = "Enter your student ID in the format 00-0000-000.";
-    }
+    const nextErrors: FieldErrors = validateNewPassword(
+      String(formData.get("password") ?? ""),
+      String(formData.get("confirmPassword") ?? ""),
+    );
 
     setErrors(nextErrors);
     setFormError(null);
@@ -95,16 +83,10 @@ export function AccountSetupForm({ email, role, studentId }: AccountSetupFormPro
             Set up your account
           </h1>
           <p className="text-sm leading-relaxed text-muted-foreground">
-            {asksForStudentId
-              ? "Enter your student ID and create a password. From now on, you can log in with your email or this student ID, using the same password."
-              : "Create a password. You'll use it with your email to log in from now on."}
+            {studentId
+              ? "Choose a password to finish setting up your account. You can then log in with your email or student ID."
+              : "Choose a password to finish setting up your account. You can then log in with your email."}
           </p>
-          {email && (
-            <p className="text-sm text-muted-foreground">
-              Signed in as{" "}
-              <span className="font-medium break-all text-primary">{email}</span>
-            </p>
-          )}
         </header>
 
         {formError && (
@@ -113,44 +95,7 @@ export function AccountSetupForm({ email, role, studentId }: AccountSetupFormPro
           </p>
         )}
 
-        <fieldset disabled={isPending} className="flex min-w-0 flex-col gap-6">
-          {asksForStudentId && (
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="student-id" className="text-[13px] leading-4 font-medium">
-                Student ID
-              </Label>
-              <Input
-                id="student-id"
-                name="studentId"
-                type="text"
-                inputMode="numeric"
-                autoComplete="username"
-                autoCapitalize="none"
-                spellCheck={false}
-                placeholder="00-0000-000"
-                required
-                aria-invalid={Boolean(errors.studentId)}
-                aria-describedby={
-                  errors.studentId ? "student-id-hint student-id-error" : "student-id-hint"
-                }
-                className="h-12 rounded-md border-border bg-card px-3.5 text-base aria-invalid:ring-0 focus-visible:aria-invalid:ring-3 md:text-sm"
-              />
-              <p id="student-id-hint" className="text-xs leading-[15px] text-muted-foreground">
-                Use the ID printed on your registration form.
-              </p>
-              {errors.studentId && (
-                <p id="student-id-error" role="alert" className="text-sm text-destructive">
-                  {errors.studentId}
-                </p>
-              )}
-            </div>
-          )}
-
-          {role === "student" && studentId !== null && (
-            <p className="text-sm text-muted-foreground">
-              Student ID: <span className="font-medium text-foreground">{studentId}</span>
-            </p>
-          )}
+        <fieldset disabled={isPending || missingStudentId} className="flex min-w-0 flex-col gap-6">
 
           <PasswordField
             id="new-password"

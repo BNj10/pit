@@ -24,10 +24,6 @@ export function getLoginErrorMessage(code: unknown) {
     : undefined;
 }
 
-/** Errors raised by set_student_id() and complete_account_setup(), keyed by their message. */
-export const STUDENT_ID_ERRORS: Partial<Record<string, string>> = {
-  student_id_taken:
-    "That student ID is already registered. Check it, or contact the registrar’s office.",
-  student_id_invalid: "Enter your student ID in the format 00-0000-000.",
-  student_id_required: "Enter your student ID.",
-};
+/** Shown when a student's ID wasn't recorded before they were invited; setup can't finish. */
+export const STUDENT_ID_MISSING_MESSAGE =
+  "Your student ID hasn’t been recorded yet, so your account can’t be set up. Contact your Department Chair.";

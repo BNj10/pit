@@ -18,8 +18,6 @@ export const loginSchema = z.object({
   password: z.string().min(1, "Enter your password.").max(72),
 });
 
-const STUDENT_ID_FORMAT_MESSAGE = "Enter your student ID in the format 00-0000-000.";
-
 /** A new password and its confirmation; matches validateNewPassword() on the client. */
 export const newPasswordSchema = z
   .object({
@@ -37,13 +35,6 @@ export const newPasswordSchema = z
     path: ["confirmPassword"],
     message: "Both passwords must match.",
   });
-
-/** Student ID entered during account setup. */
-export const studentIdSchema = z
-  .string()
-  .trim()
-  .min(1, "Enter your student ID.")
-  .regex(STUDENT_ID_PATTERN, STUDENT_ID_FORMAT_MESSAGE);
 
 export const forgotPasswordSchema = z.object({
   email: z
