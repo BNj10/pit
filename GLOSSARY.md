@@ -12,7 +12,7 @@ _Avoid_: Registrar, Supervisor, Faculty (as a role)
 A user who enrolls in subjects, views their own academic records, and evaluates the faculty members who teach them.
 
 **Department Chair**:
-The user who reviews and approves enrollment and keeps official records for one department, including posting grades.
+The user who adds students to one department by invitation, reviews and approves their enrollment, and keeps their official records, including posting grades.
 _Avoid_: Registrar, Supervisor
 
 **Dean**:
@@ -20,8 +20,12 @@ A user who leads all colleges in the university. Deans manage colleges, departme
 _Avoid_: Supervisor
 
 **Administrator**:
-The person who maintains the system through direct database access. Creates all user accounts and registers faculty member profiles. Not a portal role.
+The person who maintains the system through direct database access. Creates Department Chair and Dean accounts and registers faculty member profiles. Not a portal role.
 _Avoid_: Registrar, Admin role
+
+**Invitation**:
+The email that lets a new user set up their account. A Department Chair sends one when adding a student to their department, and can resend it until the student finishes account setup.
+_Avoid_: Invite link, Registration
 
 **Faculty member**:
 A person who teaches sections, listed under exactly one department. Faculty members have a profile in the system but no account and no access. A Department Chair who teaches also has a separate faculty member profile.

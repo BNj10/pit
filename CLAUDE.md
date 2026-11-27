@@ -2,7 +2,7 @@
 
 ## Direction and Sources of Truth
 
-- Build a role-based enrollment and academic records portal with three portal roles: students, department chairs, and deans. The Administrator maintains the system through direct database access, creates all accounts, and has no portal UI. See [docs/adr/0001-three-portal-roles.md](docs/adr/0001-three-portal-roles.md).
+- Build a role-based enrollment and academic records portal with three portal roles: students, department chairs, and deans. The Administrator maintains the system through direct database access, creates Department Chair and Dean accounts, and has no portal UI. Department Chairs invite students to their own department. See [docs/adr/0001-three-portal-roles.md](docs/adr/0001-three-portal-roles.md) and [docs/adr/0003-chairs-invite-students.md](docs/adr/0003-chairs-invite-students.md).
 - Use [GLOSSARY.md](GLOSSARY.md) for domain vocabulary. Update it when a term is settled.
 - The current stage is UI implementation with preview data. The shared portal shell and student Academic Records screen exist; authentication and database integration are pending.
 - Read [README.md](README.md) for setup and [docs/PROJECT_PLAN.md](docs/PROJECT_PLAN.md) for status, priorities, dependencies, and completion criteria. Update them when implemented behavior changes.

@@ -1,6 +1,6 @@
 # Three portal roles; administration happens outside the portal
 
-PIT Enroll has exactly three portal roles: Student, Department Chair, and Dean. There is no registrar, administrator, or faculty login. The Administrator maintains the system through direct database access: they create every user account and register faculty member profiles. There is no administrator UI for now. Faculty members have profiles (used for faculty evaluations) but no accounts.
+PIT Enroll has exactly three portal roles: Student, Department Chair, and Dean. There is no registrar, administrator, or faculty login. The Administrator maintains the system through direct database access: they create Department Chair and Dean accounts and register faculty member profiles. Department Chairs invite students instead (see [ADR 0003](0003-chairs-invite-students.md)). There is no administrator UI for now. Faculty members have profiles (used for faculty evaluations) but no accounts.
 
 The Department Chair of a student's own department approves that student's subjects and enters, decides, and publishes all of that student's grades, including grades for subjects offered by other departments. Faculty members hand grades to chairs outside the system, and chairs get other departments' grades from those departments' chairs. Deans lead all colleges and have school-wide authority over colleges, departments, academic terms, and faculty evaluations. Deans cannot view students' records or grades, and cannot enter, change, or publish grades.
 
