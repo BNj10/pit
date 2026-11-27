@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { StudentsTableProps } from "@/types/student-records-exports";
 
+import { EditStudentDialog } from "./edit-student-dialog";
 import { InvitationBadge } from "./invitation-badge";
 
 export function StudentsTable({ students, recordsHref }: StudentsTableProps) {
@@ -57,12 +58,15 @@ export function StudentsTable({ students, recordsHref }: StudentsTableProps) {
             <TableCell>{student.yearStanding}</TableCell>
             <TableCell>{student.batch}</TableCell>
             <TableCell>
-              <Button variant="outline" className="student-records-records-button" asChild>
-                <Link href={`${recordsHref}?student=${encodeURIComponent(student.studentNumber)}`} aria-label={`Records for ${student.name}`}>
-                  <GraduationCap aria-hidden="true" />
-                  Records
-                </Link>
-              </Button>
+              <div className="student-records-actions">
+                <EditStudentDialog student={student} />
+                <Button variant="outline" className="student-records-records-button" asChild>
+                  <Link href={`${recordsHref}?student=${encodeURIComponent(student.studentNumber)}`} aria-label={`Records for ${student.name}`}>
+                    <GraduationCap aria-hidden="true" />
+                    Records
+                  </Link>
+                </Button>
+              </div>
             </TableCell>
           </TableRow>
         ))}

@@ -4468,15 +4468,17 @@
 
 .student-records-table {
   width: 100%;
-  min-width: 980px;
+  /* Fits the content area beside the sidebar at 1280px; narrower screens scroll. */
+  min-width: 940px;
   table-layout: fixed;
 }
 
-.student-records-name-column { width: 24%; }
+.student-records-name-column { width: 21%; }
 .student-records-email-column { width: 21%; }
-.student-records-id-column { width: 13%; }
+.student-records-id-column { width: 12%; }
 .student-records-year-column { width: 10%; }
-.student-records-action-column { width: 13%; }
+/* Fits Edit and Records side by side. */
+.student-records-action-column { width: 22%; }
 
 .student-records-table thead tr {
   border: 0;
@@ -4565,6 +4567,35 @@
   width: 13px;
   height: 13px;
   color: var(--primary);
+  stroke-width: 1.5;
+}
+
+.student-records-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Matches the Edit action in the curriculum subjects table. */
+.student-records-edit-button {
+  height: 30px;
+  flex: none;
+  gap: 6px;
+  border-radius: var(--radius-control);
+  padding-inline: 12px;
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 11px;
+  font-weight: var(--weight-medium);
+}
+
+.student-records-edit-button:hover:not(:disabled) {
+  background: var(--primary-soft);
+}
+
+.student-records-edit-button svg {
+  width: 13px;
+  height: 13px;
   stroke-width: 1.5;
 }
 
@@ -4679,7 +4710,14 @@
   font-size: 12px;
 }
 
-/* Sit error text close to its input (4px with the field gap). */
+/* A locked field, such as the student ID after account setup. */
+.student-records-field [data-slot="input"]:read-only {
+  background: var(--muted);
+  color: var(--text-secondary);
+}
+
+/* Sit helper and error text close to their input (4px with the field gap). */
+.student-records-field .field-help,
 .student-records-field .field-error {
   margin-top: -2px;
   font-size: 11px;
@@ -4793,6 +4831,10 @@
 
   .student-records-records-button {
     min-height: 40px;
+  }
+
+  .student-records-edit-button {
+    height: 40px;
   }
 
   .student-records-invited-badge[data-expired] {
